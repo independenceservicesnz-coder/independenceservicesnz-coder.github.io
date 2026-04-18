@@ -207,6 +207,18 @@ nav {
   white-space: nowrap;
 }
 .nav-call:hover { background: #1e3520 !important; color: white !important; }
+.nav-login {
+  display: flex; align-items: center;
+  background: var(--white);
+  border: 1.5px solid var(--border-mid);
+  color: var(--stone) !important;
+  padding: 10px 15px; border-radius: 60px;
+  font-size: 13px !important; font-weight: 500 !important;
+  transition: background .18s, border-color .18s !important;
+  text-decoration: none; flex-shrink: 0;
+  white-space: nowrap; cursor: pointer;
+}
+.nav-login:hover { border-color: var(--forest); background: var(--forest-pale); color: var(--forest) !important; }
 .nav-hamburger {
   display: none; flex-direction: column;
   justify-content: center; gap: 5px;
@@ -251,6 +263,7 @@ nav {
   .nav-links { display: none; }
   .nav-call { display: none; }
   .nav-book { display: none; }
+  .nav-login { display: none; }
   .nav-hamburger { display: flex; }
 }
 
@@ -627,6 +640,79 @@ nav {
 .contact-card .btn { width: 100%; justify-content: center; margin-bottom: 10px; font-size: 16px; }
 .cc-note { font-size: 13px; color: var(--stone-light); font-weight: 300; line-height: 1.5; margin-top: 14px; }
 
+/* ─── AUTH MODAL ──────────────────── */
+.auth-overlay {
+  position: fixed; inset: 0;
+  background: rgba(36,29,23,.45);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px; z-index: 200;
+}
+.auth-overlay.open { display: flex; }
+.auth-modal {
+  width: min(520px, 100%);
+  max-height: 92vh; overflow: auto;
+  background: var(--white);
+  border-radius: 28px;
+  border: 1.5px solid var(--border);
+  box-shadow: 0 24px 60px rgba(58,50,40,.18);
+}
+.auth-head {
+  padding: 26px 26px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+}
+.auth-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; line-height: 1.2; color: var(--stone);
+  margin-bottom: 6px;
+}
+.auth-sub { font-size: 15px; color: var(--stone-light); font-weight: 300; line-height: 1.55; }
+.auth-close {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--white);
+  cursor: pointer; font-size: 22px; color: var(--stone-mid);
+}
+.auth-close:hover { border-color: var(--forest); color: var(--forest); }
+.auth-body { padding: 20px 26px 26px; }
+.auth-tabs {
+  display: grid; grid-template-columns: repeat(2,1fr);
+  border: 1.5px solid var(--border); border-radius: 12px;
+  overflow: hidden; margin-bottom: 18px;
+}
+.auth-tab {
+  border: none; background: var(--white); color: var(--stone-mid);
+  padding: 12px 14px; font-size: 14px; cursor: pointer;
+  font-family: 'Source Serif 4', serif;
+}
+.auth-tab.active { background: var(--forest); color: white; }
+.auth-pane { display: none; }
+.auth-pane.active { display: block; }
+.af-field { margin-bottom: 14px; }
+.af-field label {
+  display:block; font-size:14px; color: var(--stone-light);
+  margin-bottom: 6px; font-weight: 300;
+}
+.af-field input, .af-field select, .af-field textarea {
+  width:100%; padding:13px 16px; border:1.5px solid var(--border-mid);
+  border-radius: var(--r); font-family:'Source Serif 4',serif;
+  font-size:16px; color:var(--stone); background:var(--white); outline:none;
+}
+.af-field textarea { resize: vertical; min-height: 92px; }
+.af-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.af-message {
+  display:none; margin-bottom:14px; padding:12px 14px;
+  border-radius: 12px; font-size:14px; line-height:1.5;
+}
+.af-message.show { display:block; }
+.af-error { background:#fdf0ee; border:1px solid #e9b8b0; color:#8f3535; }
+.af-success { background:#eef8ef; border:1px solid #b7dbbd; color:#2f6b39; }
+.auth-note { font-size:13px; color: var(--stone-light); font-weight:300; line-height:1.5; margin-top: 12px; }
+
+@media (max-width: 640px) {
+  .af-grid { grid-template-columns: 1fr; }
+  .auth-head, .auth-body { padding-left: 18px; padding-right: 18px; }
+}
+
 /* ─── FAQ ─────────────────────────── */
 .faq-sec { background: var(--cream); padding: 96px 0; }
 .faq-inner { display: grid; grid-template-columns: 280px 1fr; gap: 72px; align-items: start; }
@@ -755,6 +841,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
       <li><a href="#trust">Why trust us</a></li>
       <li><a href="#faq">Questions</a></li>
     </ul>
+    <button class="nav-login" type="button" onclick="openAuth('login')">Customer Login</button>
     <a href="#booking-form" class="nav-book" aria-label="Book a free Needs Assessment">
       Book Needs Assessment
     </a>
@@ -771,6 +858,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
     <a href="#who-we-help" onclick="closeMenu()">Who we help</a>
     <a href="#trust" onclick="closeMenu()">Why trust us</a>
     <a href="#faq" onclick="closeMenu()">Questions</a>
+    <a href="#customer-access" onclick="openAuth('login'); closeMenu();">Customer login</a>
     <a href="#booking-form" onclick="closeMenu()">Book a Needs Assessment</a>
     <a href="tel:0273259707" class="nav-mobile-call">📞 Call us: 027 325 9707</a>
   </div>
@@ -796,6 +884,9 @@ footer { background: var(--stone); padding: 68px 0 38px; }
 
         <div class="hero-or">or</div>
         <a href="#booking-form" class="btn btn-green">Book a free Needs Assessment</a>
+        <div style="margin-top:12px;">
+          <button type="button" class="btn btn-outline" onclick="openAuth('signup')">Create customer account</button>
+        </div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;">
           <div style="display:flex;align-items:center;gap:8px;background:var(--forest-pale);border:1px solid #c0d4c0;border-radius:60px;padding:8px 16px;font-size:14px;color:var(--forest-mid);">🏠 In person</div>
           <div style="display:flex;align-items:center;gap:8px;background:var(--forest-pale);border:1px solid #c0d4c0;border-radius:60px;padding:8px 16px;font-size:14px;color:var(--forest-mid);">📞 By phone</div>
@@ -1209,8 +1300,10 @@ footer { background: var(--stone); padding: 68px 0 38px; }
         <a href="tel:0273259707" class="cc-num">027 325 9707</a>
         <div class="cc-hours">Monday – Saturday<br>8am – 6pm<br>Evening appointments available on request</div>
         <div class="cc-div">or</div>
+        <button type="button" class="btn btn-gold" style="font-size:16px" onclick="openAuth('signup')">Create account</button>
         <a href="#contact" class="btn btn-outline" style="font-size:16px">Fill in the form</a>
-        <p class="cc-note">Not sure where to start? Just call — we'll have a friendly chat and book your free Needs Assessment in whatever way suits you.</p>
+        <button type="button" class="btn btn-outline" style="font-size:16px;margin-bottom:0" onclick="openAuth('login')">Customer login</button>
+        <p class="cc-note">Not sure where to start? Just call — we'll have a friendly chat and book your free Needs Assessment in whatever way suits you. If you already have an account, you can log in and go straight to your dashboard.</p>
       </div>
     </div>
   </div>
@@ -1331,7 +1424,118 @@ footer { background: var(--stone); padding: 68px 0 38px; }
   </div>
 </footer>
 
+<div class="auth-overlay" id="auth-overlay" aria-hidden="true">
+  <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="auth-head">
+      <div>
+        <div class="auth-title" id="auth-modal-title">Customer access</div>
+        <div class="auth-sub">Create your account or log in to continue to your Independence dashboard.</div>
+      </div>
+      <button class="auth-close" type="button" aria-label="Close customer access" onclick="closeAuth()">×</button>
+    </div>
+    <div class="auth-body" id="customer-access">
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" data-pane="signup-pane" onclick="setAuthPane('signup')">Sign up</button>
+        <button type="button" class="auth-tab" data-pane="login-pane" onclick="setAuthPane('login')">Log in</button>
+      </div>
+
+      <div id="auth-message" class="af-message" aria-live="polite"></div>
+
+      <div class="auth-pane active" id="signup-pane">
+        <form id="signup-form" novalidate>
+          <div class="af-grid">
+            <div class="af-field">
+              <label for="signup-name">Full name</label>
+              <input id="signup-name" name="name" required>
+            </div>
+            <div class="af-field">
+              <label for="signup-phone">Phone number</label>
+              <input id="signup-phone" name="phone" type="tel" required>
+            </div>
+          </div>
+          <div class="af-field">
+            <label for="signup-email">Email address</label>
+            <input id="signup-email" name="email" type="email" required>
+          </div>
+          <div class="af-grid">
+            <div class="af-field">
+              <label for="signup-town">Town or city</label>
+              <input id="signup-town" name="town" required>
+            </div>
+            <div class="af-field">
+              <label for="signup-plan">Service focus</label>
+              <select id="signup-plan" name="plan" required>
+                <option value="Housecleaning">Housecleaning</option>
+                <option value="Gardening">Gardening</option>
+                <option value="Home maintenance">Home maintenance</option>
+                <option value="Fitness and health">Fitness and health</option>
+                <option value="Meals">Meals</option>
+                <option value="Transport">Transport</option>
+                <option value="Pet assistance">Pet assistance</option>
+              </select>
+            </div>
+          </div>
+          <div class="af-field">
+            <label for="signup-address">Home address</label>
+            <input id="signup-address" name="address" required>
+          </div>
+          <div class="af-grid">
+            <div class="af-field">
+              <label for="signup-assessment-type">Preferred assessment</label>
+              <select id="signup-assessment-type" name="assessmentType" required>
+                <option value="In person - at home">In person - at home</option>
+                <option value="By phone">By phone</option>
+                <option value="By Zoom or Teams">By Zoom or Teams</option>
+                <option value="Not sure yet">Not sure yet</option>
+              </select>
+            </div>
+            <div class="af-field">
+              <label for="signup-best-time">Best time to contact</label>
+              <select id="signup-best-time" name="bestTime" required>
+                <option value="Morning (8am-12pm)">Morning (8am-12pm)</option>
+                <option value="Afternoon (12pm-3pm)">Afternoon (12pm-3pm)</option>
+                <option value="Late afternoon (3pm-6pm)">Late afternoon (3pm-6pm)</option>
+                <option value="Any time is fine">Any time is fine</option>
+              </select>
+            </div>
+          </div>
+          <div class="af-field">
+            <label for="signup-notes">Anything we should know?</label>
+            <textarea id="signup-notes" name="notes" placeholder="Optional notes about support, family involvement, or preferences."></textarea>
+          </div>
+          <div class="af-field">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" name="password" type="password" minlength="6" required>
+          </div>
+          <button type="submit" class="btn btn-green" style="width:100%;justify-content:center;">Create account</button>
+          <p class="auth-note">Your customer account will open in this browser and take you straight to <strong>dashboard-latest.html</strong>.</p>
+        </form>
+      </div>
+
+      <div class="auth-pane" id="login-pane">
+        <form id="login-form" novalidate>
+          <div class="af-field">
+            <label for="login-email">Email address</label>
+            <input id="login-email" name="email" type="email" required>
+          </div>
+          <div class="af-field">
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" required>
+          </div>
+          <button type="submit" class="btn btn-green" style="width:100%;justify-content:center;">Log in to dashboard</button>
+          <p class="auth-note">Returning customers will be sent directly to <strong>dashboard-latest.html</strong>.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+const STORAGE_KEYS = {
+  users: "independenceUsers",
+  session: "independenceSession"
+};
+
 function faq(btn) {
   const item = btn.parentElement;
   const open = item.classList.contains('open');
@@ -1373,6 +1577,189 @@ function closeMenu() {
 document.addEventListener('click', function(e) {
   const nav = document.querySelector('nav');
   if (!nav.contains(e.target)) closeMenu();
+});
+
+function readUsers() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]');
+  } catch (error) {
+    return [];
+  }
+}
+
+function writeUsers(users) {
+  localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+}
+
+function setSession(email) {
+  localStorage.setItem(STORAGE_KEYS.session, JSON.stringify({
+    email: email.toLowerCase(),
+    signedInAt: new Date().toISOString()
+  }));
+}
+
+function sampleCustomerData(name, email, phone, address, plan, town, assessmentType, bestTime, notes) {
+  return {
+    name,
+    email: email.toLowerCase(),
+    phone,
+    address,
+    town,
+    plan,
+    assessmentType,
+    bestTime,
+    intakeNotes: notes,
+    createdAt: new Date().toISOString(),
+    concierge: 'Mia Thompson',
+    familyContact: {
+      name: 'Add a family contact',
+      relation: 'Not yet provided',
+      phone: 'Update in dashboard'
+    },
+    notifications: [
+      {
+        icon: '✓',
+        title: 'Welcome to Independence',
+        detail: 'Your customer account is ready and your dashboard has been created.',
+        time: 'Just now'
+      }
+    ],
+    upcomingServices: [
+      {
+        id: crypto.randomUUID(),
+        service: plan,
+        date: 'Monday, 22 April',
+        time: '10:00am',
+        location: address,
+        provider: 'Anna R.',
+        status: 'Confirmed',
+        notes: 'Initial welcome visit and support review.'
+      }
+    ],
+    serviceHistory: [
+      {
+        id: crypto.randomUUID(),
+        service: 'Consultation call',
+        date: 'Today',
+        amount: '$0.00',
+        status: 'Completed'
+      }
+    ],
+    payments: [
+      {
+        id: crypto.randomUUID(),
+        service: plan + ' setup',
+        date: 'Today',
+        amount: '$85.00'
+      }
+    ],
+    reviews: [],
+    requests: []
+  };
+}
+
+function openAuth(pane) {
+  const overlay = document.getElementById('auth-overlay');
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+  setAuthPane(pane || 'signup');
+}
+
+function closeAuth() {
+  const overlay = document.getElementById('auth-overlay');
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  clearAuthMessage();
+}
+
+function setAuthPane(pane) {
+  document.querySelectorAll('.auth-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.pane === pane + '-pane');
+  });
+  document.querySelectorAll('.auth-pane').forEach(section => {
+    section.classList.toggle('active', section.id === pane + '-pane');
+  });
+  clearAuthMessage();
+}
+
+function showAuthMessage(text, type) {
+  const box = document.getElementById('auth-message');
+  box.textContent = text;
+  box.className = 'af-message show ' + (type === 'error' ? 'af-error' : 'af-success');
+}
+
+function clearAuthMessage() {
+  const box = document.getElementById('auth-message');
+  box.textContent = '';
+  box.className = 'af-message';
+}
+
+document.getElementById('auth-overlay').addEventListener('click', function(event) {
+  if (event.target === event.currentTarget) closeAuth();
+});
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') closeAuth();
+});
+
+document.getElementById('signup-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+  clearAuthMessage();
+  const formData = new FormData(event.currentTarget);
+  const name = String(formData.get('name') || '').trim();
+  const email = String(formData.get('email') || '').trim().toLowerCase();
+  const phone = String(formData.get('phone') || '').trim();
+  const town = String(formData.get('town') || '').trim();
+  const plan = String(formData.get('plan') || '').trim();
+  const address = String(formData.get('address') || '').trim();
+  const assessmentType = String(formData.get('assessmentType') || '').trim();
+  const bestTime = String(formData.get('bestTime') || '').trim();
+  const notes = String(formData.get('notes') || '').trim();
+  const password = String(formData.get('password') || '');
+
+  if (!name || !email || !phone || !town || !plan || !address || !assessmentType || !bestTime || password.length < 6) {
+    showAuthMessage('Please complete every field and use a password with at least 6 characters.', 'error');
+    return;
+  }
+
+  const users = readUsers();
+  if (users.find(user => user.email === email)) {
+    showAuthMessage('An account with that email already exists. Please log in instead.', 'error');
+    return;
+  }
+
+  users.push({
+    email,
+    password,
+    customer: sampleCustomerData(name, email, phone, address, plan, town, assessmentType, bestTime, notes)
+  });
+  writeUsers(users);
+  setSession(email);
+  showAuthMessage('Account created. Redirecting to your dashboard now.', 'success');
+  window.setTimeout(function() {
+    window.location.href = 'dashboard-latest.html';
+  }, 700);
+});
+
+document.getElementById('login-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+  clearAuthMessage();
+  const formData = new FormData(event.currentTarget);
+  const email = String(formData.get('email') || '').trim().toLowerCase();
+  const password = String(formData.get('password') || '');
+  const users = readUsers();
+  const user = users.find(entry => entry.email === email && entry.password === password);
+
+  if (!user) {
+    showAuthMessage("We couldn't match that email and password. Please try again.", 'error');
+    return;
+  }
+
+  setSession(email);
+  showAuthMessage('Welcome back. Redirecting to your dashboard.', 'success');
+  window.setTimeout(function() {
+    window.location.href = 'dashboard-latest.html';
+  }, 600);
 });
 </script>
 </body>
