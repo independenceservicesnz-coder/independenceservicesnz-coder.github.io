@@ -183,6 +183,18 @@ nav {
   white-space: nowrap;
 }
 .nav-links a:hover { color: var(--forest); background: var(--forest-light); }
+.nav-book {
+  display: flex; align-items: center;
+  background: var(--gold-light);
+  border: 1.5px solid #d8c090;
+  color: #7a5010 !important;
+  padding: 10px 16px; border-radius: 60px;
+  font-size: 13px !important; font-weight: 500 !important;
+  transition: background .18s, border-color .18s !important;
+  text-decoration: none; flex-shrink: 0;
+  white-space: nowrap;
+}
+.nav-book:hover { background: var(--gold); color: white !important; border-color: var(--gold) !important; }
 .nav-call {
   display: flex; align-items: center; gap: 7px;
   background: var(--forest);
@@ -238,6 +250,7 @@ nav {
 @media (max-width: 820px) {
   .nav-links { display: none; }
   .nav-call { display: none; }
+  .nav-book { display: none; }
   .nav-hamburger { display: flex; }
 }
 
@@ -617,7 +630,7 @@ nav {
 /* ─── FAQ ─────────────────────────── */
 .faq-sec { background: var(--cream); padding: 96px 0; }
 .faq-inner { display: grid; grid-template-columns: 280px 1fr; gap: 72px; align-items: start; }
-.faq-side { position: sticky; top: 96px; }
+.faq-side { position: static; }
 .faq-side h2.sec { font-size: 28px; }
 .faq-side p { font-size: 16px; color: var(--stone-light); font-weight: 300; line-height: 1.65; margin-bottom: 22px; }
 .faq-phone-block {
@@ -742,6 +755,9 @@ footer { background: var(--stone); padding: 68px 0 38px; }
       <li><a href="#trust">Why trust us</a></li>
       <li><a href="#faq">Questions</a></li>
     </ul>
+    <a href="#booking-form" class="nav-book" aria-label="Book a free Needs Assessment">
+      Book Needs Assessment
+    </a>
     <a href="tel:0273259707" class="nav-call" aria-label="Call us on 027 325 9707">
       📞 027 325 9707
     </a>
@@ -755,7 +771,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
     <a href="#who-we-help" onclick="closeMenu()">Who we help</a>
     <a href="#trust" onclick="closeMenu()">Why trust us</a>
     <a href="#faq" onclick="closeMenu()">Questions</a>
-    <a href="#contact" onclick="closeMenu()">Book a Needs Assessment</a>
+    <a href="#booking-form" onclick="closeMenu()">Book a Needs Assessment</a>
     <a href="tel:0273259707" class="nav-mobile-call">📞 Call us: 027 325 9707</a>
   </div>
 </nav>
@@ -779,7 +795,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
         </div>
 
         <div class="hero-or">or</div>
-        <a href="#contact" class="btn btn-green">Book a free Needs Assessment</a>
+        <a href="#booking-form" class="btn btn-green">Book a free Needs Assessment</a>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;">
           <div style="display:flex;align-items:center;gap:8px;background:var(--forest-pale);border:1px solid #c0d4c0;border-radius:60px;padding:8px 16px;font-size:14px;color:var(--forest-mid);">🏠 In person</div>
           <div style="display:flex;align-items:center;gap:8px;background:var(--forest-pale);border:1px solid #c0d4c0;border-radius:60px;padding:8px 16px;font-size:14px;color:var(--forest-mid);">📞 By phone</div>
@@ -1114,7 +1130,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
         </div>
 
         <!-- Simple contact form -->
-        <form action="https://formspree.io/f/xbdqoqvl" method="POST" style="margin-top:36px" aria-label="Request a callback">
+        <form id="booking-form" action="https://formspree.io/f/xbdqoqvl" method="POST" style="margin-top:36px" aria-label="Request a callback">
           <input type="hidden" name="_replyto" value="independenceservicesnz@gmail.com">
           <input type="hidden" name="_subject" value="New Needs Assessment booking — Independence New Zealand">
           <input type="text" name="_gotcha" style="display:none">
@@ -1207,11 +1223,12 @@ footer { background: var(--stone); padding: 68px 0 38px; }
       <div class="faq-side">
         <div class="eyebrow">Questions</div>
         <h2 class="sec" id="faq-h" style="font-size:28px">We're here to answer every question</h2>
-        <p>Can't find what you need? Just call — we genuinely enjoy talking to people.</p>
-        <div class="faq-phone-block">
-          <div class="fpb-label">Free call</div>
-          <a href="tel:0273259707" class="fpb-num">027 325 9707</a>
-          <div class="fpb-hours">Mon–Sat · 8am–6pm<br>Evening appointments available</div>
+        <p style="font-size:16px;color:var(--stone-light);font-weight:300;line-height:1.65;margin-bottom:20px">Can't find what you need? Just give us a call — we genuinely enjoy talking to people.</p>
+        <div style="background:var(--forest-pale);border:1.5px solid #c0d4c0;border-radius:var(--rl);padding:22px 24px;margin-bottom:0;">
+          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--stone-light);margin-bottom:8px;font-weight:400;">Call us free</div>
+          <a href="tel:0273259707" style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--forest);text-decoration:none;display:block;margin-bottom:6px;line-height:1.1;">027 325 9707</a>
+          <div style="font-size:13px;color:var(--stone-light);font-weight:300;line-height:1.6;">Monday – Saturday<br>8am – 6pm<br>Evening appointments on request</div>
+          <a href="mailto:independenceservicesnz@gmail.com" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--forest-mid);text-decoration:none;font-weight:300;">✉ independenceservicesnz@gmail.com</a>
         </div>
       </div>
       <div class="faq-list" role="list">
