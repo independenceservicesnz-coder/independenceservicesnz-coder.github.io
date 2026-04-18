@@ -268,6 +268,7 @@ nav {
 .svi-d { background: #faeaee; }
 .svi-e { background: #f0ebe8; }
 .svi-f { background: #eef4e8; }
+.svi-g { background: #e8f4fb; }
 .svc-row-name { font-size: 15px; color: var(--stone); font-weight: 400; }
 .svc-row-tag {
   margin-left: auto; font-size: 11px; font-weight: 500;
@@ -718,6 +719,11 @@ footer { background: var(--stone); padding: 68px 0 38px; }
             <span class="svc-row-name">Pet assistance</span>
             <span class="svc-row-tag">Available</span>
           </div>
+          <div class="svc-row">
+            <div class="svc-icon svi-g">💪</div>
+            <span class="svc-row-name">Fitness &amp; personal training</span>
+            <span class="svc-row-tag">Available</span>
+          </div>
         </div>
         <div class="trust-mini-card">
           <div class="tmc-icon">✓</div>
@@ -844,6 +850,18 @@ footer { background: var(--stone); padding: 68px 0 38px; }
           <span class="ex-tag">Pet grooming</span>
           <span class="ex-tag">Vet transport</span>
           <span class="ex-tag">Pet sitting</span>
+        </div>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-card-ico svi-g">💪</div>
+        <h3>Fitness, personal training &amp; health</h3>
+        <p>Staying active is one of the most powerful ways to maintain independence at home. We connect you with qualified trainers and health professionals who specialise in working with older adults — at your pace, in your own home.</p>
+        <div class="svc-examples">
+          <span class="ex-tag">Personal training</span>
+          <span class="ex-tag">Gentle exercise</span>
+          <span class="ex-tag">Balance &amp; mobility</span>
+          <span class="ex-tag">Strength coaching</span>
+          <span class="ex-tag">Health check-ins</span>
         </div>
       </div>
     </div>
@@ -984,26 +1002,60 @@ footer { background: var(--stone); padding: 68px 0 38px; }
         <!-- Simple contact form -->
         <form action="https://formspree.io/f/xbdqoqvl" method="POST" style="margin-top:36px" aria-label="Request a callback">
           <input type="hidden" name="_replyto" value="independenceservicesnz@gmail.com">
-          <input type="hidden" name="_subject" value="New enquiry — Independence New Zealand">
+          <input type="hidden" name="_subject" value="New Needs Assessment booking — Independence New Zealand">
           <input type="text" name="_gotcha" style="display:none">
-          <p style="font-size:16px;font-weight:500;color:var(--stone);margin-bottom:18px">Fill in your details and we'll call you back:</p>
+
+          <p style="font-size:15px;font-weight:500;color:var(--stone);margin-bottom:14px">Your contact details</p>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
             <div>
-              <label for="f-name" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Your name</label>
+              <label for="f-name" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Your name <span style="color:var(--gold)">*</span></label>
               <input id="f-name" name="name" type="text" placeholder="e.g. Margaret Thomson" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none" required>
             </div>
             <div>
-              <label for="f-phone" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Phone number</label>
+              <label for="f-phone" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Phone number <span style="color:var(--gold)">*</span></label>
               <input id="f-phone" name="phone" type="tel" placeholder="e.g. 027 123 4567" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none" required>
             </div>
           </div>
-          <div style="margin-bottom:14px">
-            <label for="f-need" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">What do you need help with? (optional)</label>
-            <textarea id="f-need" name="message" rows="3" placeholder="e.g. House cleaning every fortnight, and help with the garden" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;resize:vertical"></textarea>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div>
+              <label for="f-email" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Email address (optional)</label>
+              <input id="f-email" name="email" type="email" placeholder="e.g. margaret@email.com" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none">
+            </div>
+            <div>
+              <label for="f-town" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Town or city <span style="color:var(--gold)">*</span></label>
+              <input id="f-town" name="town" type="text" placeholder="e.g. New Plymouth" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none" required>
+            </div>
           </div>
           <div style="margin-bottom:14px">
-            <label for="f-assessment" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">How would you like to do your Needs Assessment?</label>
-            <select id="f-assessment" name="assessment_type" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;appearance:none">
+            <label for="f-best-time" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Best time for us to call you back <span style="color:var(--gold)">*</span></label>
+            <select id="f-best-time" name="best_time_to_call" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;appearance:none" required>
+              <option value="">Please select…</option>
+              <option>Morning (8am – 12pm)</option>
+              <option>Afternoon (12pm – 3pm)</option>
+              <option>Late afternoon (3pm – 6pm)</option>
+              <option>Any time is fine</option>
+            </select>
+          </div>
+
+          <div style="height:1px;background:var(--border);margin:22px 0;"></div>
+          <p style="font-size:15px;font-weight:500;color:var(--stone);margin-bottom:14px">About your Needs Assessment</p>
+
+          <div style="margin-bottom:14px">
+            <label for="f-who" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Are you enquiring for yourself or a family member? <span style="color:var(--gold)">*</span></label>
+            <select id="f-who" name="enquiry_type" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;appearance:none" required onchange="document.getElementById('f-relative-block').style.display=this.value==='For myself'||this.value===''?'none':'block'">
+              <option value="">Please select…</option>
+              <option>For myself</option>
+              <option>For a family member</option>
+              <option>For someone else I help look after</option>
+            </select>
+          </div>
+          <div id="f-relative-block" style="margin-bottom:14px;display:none">
+            <label for="f-relative" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Name of the person needing support</label>
+            <input id="f-relative" name="person_needing_support" type="text" placeholder="e.g. Betty Thomson" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none">
+          </div>
+          <div style="margin-bottom:14px">
+            <label for="f-assessment" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">How would you like to do your Needs Assessment? <span style="color:var(--gold)">*</span></label>
+            <select id="f-assessment" name="assessment_type" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;appearance:none" required>
               <option value="">Please select…</option>
               <option>In person — at my home</option>
               <option>By phone</option>
@@ -1012,16 +1064,12 @@ footer { background: var(--stone); padding: 68px 0 38px; }
             </select>
           </div>
           <div style="margin-bottom:20px">
-            <label for="f-who" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Are you enquiring for yourself or a family member?</label>
-            <select id="f-who" name="enquiry_type" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;appearance:none">
-              <option value="">Please select…</option>
-              <option>For myself</option>
-              <option>For a family member</option>
-              <option>For someone else I help look after</option>
-            </select>
+            <label for="f-need" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">What kind of help are you looking for? (optional)</label>
+            <textarea id="f-need" name="help_needed" rows="3" placeholder="e.g. Help with cleaning and the garden, and transport to medical appointments" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;resize:vertical"></textarea>
           </div>
+          <p style="font-size:13px;color:var(--stone-light);margin-bottom:16px;font-weight:300"><span style="color:var(--gold)">*</span> Required fields</p>
           <button type="submit" class="btn btn-green" style="font-size:18px">Book my free Needs Assessment</button>
-          <p style="margin-top:14px;font-size:14px;color:var(--stone-light);font-weight:300">We aim to call back within a few hours. For urgent help, please call us directly on <a href="tel:0273259707" style="color:var(--forest)">027 325 9707</a>.</p>
+          <p style="margin-top:14px;font-size:13px;color:var(--stone-light);font-weight:300">We aim to call back within a few hours during business hours. For urgent help, call us directly on <a href="tel:0273259707" style="color:var(--forest)">027 325 9707</a>.</p>
         </form>
       </div>
 
@@ -1126,6 +1174,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
         <a href="#">Transport</a>
         <a href="#">Meal support</a>
         <a href="#">Pet assistance</a>
+        <a href="#">Fitness &amp; personal training</a>
       </div>
       <div class="foot-col">
         <h4>Company</h4>
