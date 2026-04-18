@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Independence — Client Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #2d4a2d;
+  --forest-mid: #3d6b3d;
+  --forest-light: #edf3ed;
+  --forest-pale: #f4f8f4;
+  --gold: #b5813c;
+  --gold-light: #fdf4e7;
+  --cream: #faf7f2;
+  --white: #ffffff;
+  --stone: #3a3228;
+  --stone-mid: #6b5f52;
+  --stone-light: #a89880;
+  --border: #e2ddd6;
+  --border-mid: #c8bfb0;
+  --sidebar-w: 260px;
+  --nav-h: 64px;
+  --r: 14px;
+  --rl: 20px;
+  --shadow: 0 2px 16px rgba(45,74,45,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:17px;scroll-behavior:smooth;}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--cream);color:var(--stone);line-height:1.7;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{font-family:'Source Serif 4',Georgia,serif;cursor:pointer;}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ══════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════ */
+.login-wrap{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+.login-left{
+  background:var(--forest);
+  padding:60px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  overflow:hidden;
+}
+.login-left::before{
+  content:'';
+  position:absolute;
+  bottom:-120px;right:-120px;
+  width:420px;height:420px;
+  border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.login-logo{
+  font-family:'Playfair Display',serif;
+  font-size:26px;font-weight:700;
+  color:white;
+}
+.login-logo span{color:#a8d8a8;}
+.login-tagline{
+  font-size:36px;font-weight:700;
+  font-family:'Playfair Display',serif;
+  color:white;line-height:1.25;
+  margin-bottom:16px;
+}
+.login-tagline em{font-style:italic;color:#a8d8a8;}
+.login-sub{font-size:17px;color:rgba(255,255,255,.65);font-weight:300;line-height:1.65;max-width:340px;}
+.login-features{display:flex;flex-direction:column;gap:14px;margin-top:40px;}
+.lf-item{display:flex;align-items:center;gap:12px;font-size:15px;color:rgba(255,255,255,.75);}
+.lf-dot{width:8px;height:8px;border-radius:50%;background:#7bc47b;flex-shrink:0;}
+
+.login-right{
+  background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  padding:60px 48px;
+}
+.login-form-wrap{width:100%;max-width:400px;}
+.login-form-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;
+  color:var(--stone);margin-bottom:8px;
+}
+.login-form-sub{font-size:15px;color:var(--stone-light);font-weight:300;margin-bottom:36px;line-height:1.55;}
+
+.tab-row{display:flex;gap:0;margin-bottom:28px;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;}
+.tab-btn{
+  flex:1;padding:11px;border:none;
+  background:var(--white);color:var(--stone-mid);
+  font-family:'Source Serif 4',serif;font-size:14px;font-weight:400;
+  transition:all .15s;cursor:pointer;
+}
+.tab-btn.active{background:var(--forest);color:white;}
+.tab-btn:first-child{border-right:1.5px solid var(--border);}
+
+.form-field{margin-bottom:18px;}
+.form-label{display:block;font-size:13px;color:var(--stone-light);margin-bottom:7px;font-weight:400;letter-spacing:.02em;}
+.form-input{
+  width:100%;padding:13px 16px;
+  border:1.5px solid var(--border-mid);
+  border-radius:10px;
+  font-family:'Source Serif 4',serif;
+  font-size:16px;color:var(--stone);
+  background:var(--white);outline:none;
+  transition:border-color .15s;
+}
+.form-input:focus{border-color:var(--forest);}
+.form-hint{font-size:13px;color:var(--stone-light);margin-top:28px;text-align:center;font-weight:300;}
+.form-hint a{color:var(--forest);font-weight:400;}
+.form-forgot{font-size:13px;color:var(--stone-light);text-align:right;margin-top:-12px;margin-bottom:20px;}
+.form-forgot a{color:var(--forest);}
+
+.btn-primary{
+  width:100%;padding:15px;
+  background:var(--forest);color:white;
+  border:none;border-radius:10px;
+  font-size:17px;font-weight:400;
+  font-family:'Source Serif 4',serif;
+  transition:background .18s;
+  cursor:pointer;
+}
+.btn-primary:hover{background:#1e3520;}
+.trust-note{
+  display:flex;align-items:center;gap:8px;
+  background:var(--forest-pale);border:1px solid #c0d4c0;
+  border-radius:10px;padding:12px 14px;
+  font-size:13px;color:var(--forest-mid);
+  margin-top:20px;font-weight:300;line-height:1.5;
+}
+.trust-icon{font-size:16px;flex-shrink:0;}
+
+/* ══════════════════════════════════════
+   DASHBOARD SHELL
+══════════════════════════════════════ */
+.dash-shell{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--forest);
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;
+  z-index:50;overflow-y:auto;
+  transition:transform .3s;
+}
+.sidebar-logo{
+  padding:28px 24px 20px;
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:white;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.sidebar-logo span{color:#a8d8a8;}
+.sidebar-logo small{
+  display:block;font-family:'Source Serif 4',serif;
+  font-size:10px;font-weight:300;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.45);
+  margin-top:2px;
+}
+.sidebar-user{
+  padding:18px 24px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;gap:12px;
+}
+.user-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-weight:700;color:white;
+  flex-shrink:0;
+}
+.user-name{font-size:14px;color:white;font-weight:500;line-height:1.3;}
+.user-type{font-size:11px;color:rgba(255,255,255,.5);font-weight:300;}
+
+.sidebar-nav{padding:16px 12px;flex:1;}
+.sidebar-nav-label{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);padding:0 12px;margin:16px 0 8px;
+  font-weight:400;
+}
+.sidebar-nav-label:first-child{margin-top:0;}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 14px;border-radius:10px;
+  font-size:15px;color:rgba(255,255,255,.7);
+  font-weight:300;cursor:pointer;
+  transition:all .15s;margin-bottom:2px;
+  border:none;background:none;width:100%;text-align:left;
+  font-family:'Source Serif 4',serif;
+}
+.nav-item:hover{background:rgba(255,255,255,.1);color:white;}
+.nav-item.active{background:rgba(255,255,255,.15);color:white;font-weight:400;}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;background:var(--gold);
+  color:white;font-size:10px;font-weight:500;
+  padding:2px 7px;border-radius:20px;
+}
+
+.sidebar-footer{
+  padding:16px 24px;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+.sidebar-footer a{
+  display:flex;align-items:center;gap:8px;
+  font-size:14px;color:rgba(255,255,255,.5);
+  font-weight:300;transition:color .15s;
+}
+.sidebar-footer a:hover{color:white;}
+
+/* TOP NAV */
+.dash-topnav{
+  position:fixed;top:0;left:var(--sidebar-w);right:0;
+  height:var(--nav-h);background:var(--white);
+  border-bottom:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;z-index:40;
+  box-shadow:0 1px 8px rgba(45,74,45,.05);
+}
+.topnav-title{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--stone);
+}
+.topnav-right{display:flex;align-items:center;gap:16px;}
+.notif-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--cream);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;position:relative;
+}
+.notif-dot{
+  position:absolute;top:5px;right:5px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--gold);border:2px solid white;
+}
+.topnav-help{
+  display:flex;align-items:center;gap:7px;
+  background:var(--forest-light);border:1.5px solid #c0d4c0;
+  color:var(--forest);padding:8px 16px;border-radius:60px;
+  font-size:14px;font-weight:400;cursor:pointer;
+  transition:background .15s;
+}
+.topnav-help:hover{background:var(--forest);color:white;}
+.mobile-menu-btn{
+  display:none;width:38px;height:38px;
+  border:1.5px solid var(--border);border-radius:8px;
+  background:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:5px;
+  cursor:pointer;
+}
+.mobile-menu-btn span{display:block;width:18px;height:2px;background:var(--stone);border-radius:2px;}
+
+/* MAIN CONTENT */
+.dash-main{
+  margin-left:var(--sidebar-w);
+  margin-top:var(--nav-h);
+  padding:36px 36px 60px;
+  min-height:calc(100vh - var(--nav-h));
+  flex:1;
+}
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── SHARED COMPONENTS ── */
+.page-header{margin-bottom:32px;}
+.page-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;
+  color:var(--stone);margin-bottom:6px;
+}
+.page-sub{font-size:16px;color:var(--stone-light);font-weight:300;}
+
+.card{
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:var(--rl);
+  padding:24px;
+  box-shadow:var(--shadow);
+}
+.card-title{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:700;
+  color:var(--stone);margin-bottom:16px;
+}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 22px;border-radius:60px;
+  font-family:'Source Serif 4',serif;
+  font-size:15px;font-weight:400;
+  border:none;cursor:pointer;
+  transition:all .18s;text-decoration:none;
+}
+.btn-green{background:var(--forest);color:white;}
+.btn-green:hover{background:#1e3520;}
+.btn-gold{background:var(--gold);color:white;}
+.btn-gold:hover{background:#9a6c2e;}
+.btn-outline{background:transparent;color:var(--stone-mid);border:1.5px solid var(--border-mid);}
+.btn-outline:hover{border-color:var(--forest);background:var(--forest-pale);color:var(--forest);}
+.btn-sm{padding:8px 16px;font-size:13px;}
+
+.status-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:500;
+  padding:4px 11px;border-radius:20px;
+}
+.s-confirmed{background:#edf3ed;color:#2d5a2d;}
+.s-upcoming{background:var(--gold-light);color:#7a5010;}
+.s-inprog{background:#e8f0f8;color:#1a4a7a;}
+.s-completed{background:var(--cream);color:var(--stone-mid);border:1px solid var(--border);}
+.s-dot{width:6px;height:6px;border-radius:50%;}
+.sd-g{background:#3d8b3d;}
+.sd-a{background:var(--gold);}
+.sd-b{background:#2a6aaa;}
+.sd-gr{background:var(--stone-light);}
+
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* ══════════════════════════════════════
+   DASHBOARD HOME
+══════════════════════════════════════ */
+.welcome-banner{
+  background:var(--forest);
+  border-radius:var(--rl);
+  padding:28px 32px;
+  display:flex;align-items:center;
+  justify-content:space-between;
+  margin-bottom:28px;
+  position:relative;overflow:hidden;
+}
+.welcome-banner::before{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.welcome-text h2{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:700;color:white;margin-bottom:4px;
+}
+.welcome-text p{font-size:15px;color:rgba(255,255,255,.65);font-weight:300;}
+.welcome-concierge{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;padding:14px 18px;
+  text-align:center;flex-shrink:0;
+}
+.wc-label{font-size:11px;color:rgba(255,255,255,.55);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.wc-name{font-size:16px;color:white;font-weight:500;font-family:'Playfair Display',serif;}
+.wc-avail{display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;}
+.wc-dot{width:7px;height:7px;border-radius:50%;background:#7bc47b;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:20px 22px;
+  box-shadow:var(--shadow);
+}
+.stat-icon{font-size:22px;margin-bottom:10px;}
+.stat-val{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;
+  color:var(--stone);line-height:1;margin-bottom:4px;
+}
+.stat-lbl{font-size:13px;color:var(--stone-light);font-weight:300;}
+
+.home-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;}
+
+.next-service-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:24px;box-shadow:var(--shadow);
+}
+.nsc-label{
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--stone-light);margin-bottom:16px;font-weight:400;
+}
+.nsc-service{display:flex;align-items:flex-start;gap:16px;}
+.nsc-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--forest-light);display:flex;
+  align-items:center;justify-content:center;
+  font-size:24px;flex-shrink:0;
+}
+.nsc-name{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--stone);margin-bottom:4px;
+}
+.nsc-meta{font-size:14px;color:var(--stone-mid);font-weight:300;margin-bottom:8px;}
+.nsc-provider{
+  display:flex;align-items:center;gap:8px;
+  background:var(--forest-pale);border:1px solid #c8d8c8;
+  border-radius:8px;padding:8px 12px;
+  font-size:14px;color:var(--forest-mid);
+  margin-bottom:16px;
+}
+.provider-av{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--forest-mid);color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;flex-shrink:0;
+}
+
+.quick-actions{display:flex;flex-direction:column;gap:12px;}
+.qa-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:20px;box-shadow:var(--shadow);
+}
+.qa-btn{
+  width:100%;padding:13px;
+  border-radius:10px;border:none;
+  font-family:'Source Serif 4',serif;
+  font-size:15px;font-weight:400;
+  cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:10px;
+}
+.qa-btn:last-child{margin-bottom:0;}
+.qa-btn-green{background:var(--forest);color:white;}
+.qa-btn-green:hover{background:#1e3520;}
+.qa-btn-outline{background:var(--cream);color:var(--stone-mid);border:1.5px solid var(--border);}
+.qa-btn-outline:hover{border-color:var(--forest);color:var(--forest);}
+
+.notif-list{display:flex;flex-direction:column;gap:10px;}
+.notif-card{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--cream);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;
+}
+.notif-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.notif-text{font-size:14px;color:var(--stone-mid);font-weight:300;line-height:1.5;}
+.notif-text strong{color:var(--stone);font-weight:500;}
+.notif-time{font-size:12px;color:var(--stone-light);margin-top:2px;}
+
+/* ══════════════════════════════════════
+   UPCOMING SERVICES
+══════════════════════════════════════ */
+.services-list{display:flex;flex-direction:column;gap:16px;}
+.service-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:22px 24px;
+  box-shadow:var(--shadow);transition:border-color .2s;
+  cursor:pointer;
+}
+.service-card:hover{border-color:var(--forest-mid);}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;}
+.sc-left{display:flex;align-items:flex-start;gap:14px;}
+.sc-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.sci-a{background:var(--forest-light);}
+.sci-b{background:var(--gold-light);}
+.sci-c{background:#e8f0f8;}
+.sci-d{background:#faeaee;}
+.sci-e{background:#f0ebe8;}
+.sci-f{background:#eef4e8;}
+.sc-name{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;color:var(--stone);margin-bottom:3px;
+}
+.sc-date{font-size:14px;color:var(--stone-mid);font-weight:300;}
+.sc-meta-row{
+  display:flex;align-items:center;gap:24px;
+  flex-wrap:wrap;
+}
+.sc-meta-item{
+  display:flex;align-items:center;gap:6px;
+  font-size:14px;color:var(--stone-mid);font-weight:300;
+}
+.sc-meta-icon{font-size:14px;}
+.sc-notes{
+  margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--border);
+  font-size:14px;color:var(--stone-light);
+  font-weight:300;font-style:italic;
+}
+.sc-actions{display:flex;gap:10px;margin-top:16px;}
+
+/* ══════════════════════════════════════
+   WEEKLY SCHEDULE
+══════════════════════════════════════ */
+.week-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+}
+.week-nav-title{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--stone);
+}
+.week-nav-btns{display:flex;gap:8px;}
+.week-nav-btn{
+  width:36px;height:36px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;transition:all .15s;
+  color:var(--stone-mid);
+}
+.week-nav-btn:hover{border-color:var(--forest);background:var(--forest-light);color:var(--forest);}
+
+.week-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:12px;
+}
+.day-col{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.day-col.today{border-color:var(--forest);}
+.day-header{
+  padding:12px 10px;
+  text-align:center;
+  border-bottom:1px solid var(--border);
+}
+.day-header.today{background:var(--forest);}
+.day-name{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--stone-light);font-weight:400;}
+.day-header.today .day-name{color:rgba(255,255,255,.65);}
+.day-num{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--stone);
+  line-height:1;margin-top:3px;
+}
+.day-header.today .day-num{color:white;}
+.day-events{padding:8px;}
+.day-event{
+  border-radius:8px;padding:8px 10px;
+  margin-bottom:6px;font-size:12px;
+  line-height:1.4;
+}
+.day-event:last-child{margin-bottom:0;}
+.de-green{background:var(--forest-light);color:var(--forest);}
+.de-gold{background:var(--gold-light);color:#7a5010;}
+.de-blue{background:#e8f0f8;color:#1a4a7a;}
+.de-rose{background:#faeaee;color:#8a3050;}
+.de-time{font-weight:500;display:block;margin-bottom:2px;}
+.de-name{font-weight:300;}
+.day-empty{
+  padding:16px 8px;text-align:center;
+  font-size:12px;color:var(--border-mid);font-style:italic;
+}
+
+/* ══════════════════════════════════════
+   HISTORY
+══════════════════════════════════════ */
+.history-list{display:flex;flex-direction:column;gap:14px;}
+.history-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:20px 24px;
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:16px;
+}
+.hc-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  background:var(--cream);
+}
+.hc-info{flex:1;}
+.hc-name{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:700;
+  color:var(--stone);margin-bottom:3px;
+}
+.hc-meta{font-size:13px;color:var(--stone-light);font-weight:300;}
+.hc-right{text-align:right;flex-shrink:0;}
+.hc-amount{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;
+  color:var(--stone);margin-bottom:6px;
+}
+.hc-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+
+/* ══════════════════════════════════════
+   PAYMENTS
+══════════════════════════════════════ */
+.payments-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;}
+.pay-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:24px;box-shadow:var(--shadow);
+}
+.pay-card-label{
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--stone-light);margin-bottom:14px;font-weight:400;
+}
+.card-display{
+  background:var(--forest);border-radius:12px;
+  padding:20px;margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.card-display::before{
+  content:'';position:absolute;right:-30px;top:-30px;
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.card-type{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:12px;}
+.card-num{
+  font-family:'Playfair Display',serif;
+  font-size:18px;color:white;letter-spacing:.12em;
+  margin-bottom:14px;
+}
+.card-bottom{display:flex;justify-content:space-between;}
+.card-field-label{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase;}
+.card-field-val{font-size:13px;color:white;margin-top:2px;}
+
+.pay-secure-note{
+  display:flex;align-items:center;gap:8px;
+  background:var(--forest-pale);border:1px solid #c0d4c0;
+  border-radius:8px;padding:10px 14px;
+  font-size:13px;color:var(--forest-mid);font-weight:300;
+  margin-bottom:14px;line-height:1.5;
+}
+
+.payment-history{display:flex;flex-direction:column;gap:10px;}
+.ph-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.ph-row:last-child{border-bottom:none;}
+.ph-left{}
+.ph-service{font-size:15px;color:var(--stone);font-weight:400;}
+.ph-date{font-size:13px;color:var(--stone-light);font-weight:300;}
+.ph-amount{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:700;color:var(--stone);
+}
+
+/* ══════════════════════════════════════
+   REVIEWS
+══════════════════════════════════════ */
+.review-form-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:28px;box-shadow:var(--shadow);
+  margin-bottom:28px;
+}
+.review-service-select{
+  display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;
+}
+.rss-item{
+  flex:1;min-width:140px;
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:14px;cursor:pointer;transition:all .15s;
+  text-align:center;
+}
+.rss-item:hover,.rss-item.selected{border-color:var(--forest);background:var(--forest-pale);}
+.rss-icon{font-size:22px;margin-bottom:6px;}
+.rss-name{font-size:13px;color:var(--stone-mid);font-weight:300;}
+.rss-date{font-size:12px;color:var(--stone-light);}
+
+.star-row{display:flex;gap:8px;margin:16px 0;}
+.star-btn{
+  font-size:28px;background:none;border:none;
+  cursor:pointer;color:var(--border-mid);
+  transition:color .15s;line-height:1;
+  padding:0;
+}
+.star-btn.active,.star-btn:hover{color:var(--gold);}
+.review-textarea{
+  width:100%;padding:14px 16px;
+  border:1.5px solid var(--border-mid);
+  border-radius:10px;
+  font-family:'Source Serif 4',serif;
+  font-size:15px;color:var(--stone);
+  background:var(--white);outline:none;
+  resize:vertical;min-height:100px;
+  transition:border-color .15s;
+  margin-bottom:16px;
+}
+.review-textarea:focus{border-color:var(--forest);}
+
+.reviews-list{display:flex;flex-direction:column;gap:16px;}
+.review-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:22px 24px;box-shadow:var(--shadow);
+}
+.rc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.rc-service{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:700;color:var(--stone);margin-bottom:2px;
+}
+.rc-date{font-size:13px;color:var(--stone-light);font-weight:300;}
+.rc-stars{color:var(--gold);font-size:16px;letter-spacing:2px;}
+.rc-text{font-size:15px;color:var(--stone-mid);font-weight:300;line-height:1.65;font-style:italic;}
+
+/* ══════════════════════════════════════
+   FAMILY VIEW
+══════════════════════════════════════ */
+.family-banner{
+  background:var(--gold-light);border:1.5px solid #d8c090;
+  border-radius:var(--rl);padding:20px 24px;
+  margin-bottom:24px;
+  display:flex;align-items:center;gap:16px;
+}
+.family-banner-icon{font-size:28px;}
+.family-banner-text strong{display:block;font-size:16px;color:var(--stone);font-weight:500;margin-bottom:2px;}
+.family-banner-text p{font-size:14px;color:var(--stone-mid);font-weight:300;}
+.loved-one-card{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--rl);padding:22px;box-shadow:var(--shadow);
+  margin-bottom:24px;display:flex;align-items:center;gap:18px;
+}
+.loc-avatar{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--forest-mid);color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+  flex-shrink:0;
+}
+.loc-name{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--stone);margin-bottom:2px;
+}
+.loc-meta{font-size:14px;color:var(--stone-light);font-weight:300;}
+.loc-status{
+  margin-left:auto;display:flex;align-items:center;gap:6px;
+  background:var(--forest-light);border:1px solid #b8d4b8;
+  border-radius:20px;padding:6px 14px;
+  font-size:13px;color:var(--forest-mid);
+}
+
+/* ══════════════════════════════════════
+   NOTIFICATIONS PANEL
+══════════════════════════════════════ */
+.notif-panel{
+  position:fixed;top:var(--nav-h);right:0;
+  width:360px;height:calc(100vh - var(--nav-h));
+  background:var(--white);border-left:1.5px solid var(--border);
+  padding:24px;overflow-y:auto;z-index:45;
+  transform:translateX(100%);transition:transform .3s;
+  box-shadow:-4px 0 24px rgba(45,74,45,.1);
+}
+.notif-panel.open{transform:translateX(0);}
+.notif-panel-title{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--stone);
+  margin-bottom:20px;
+}
+.np-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 0;border-bottom:1px solid var(--border);
+}
+.np-item:last-child{border-bottom:none;}
+.np-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.npi-green{background:var(--forest-light);}
+.npi-gold{background:var(--gold-light);}
+.npi-blue{background:#e8f0f8;}
+.np-content strong{display:block;font-size:14px;color:var(--stone);font-weight:500;margin-bottom:2px;}
+.np-content p{font-size:13px;color:var(--stone-mid);font-weight:300;line-height:1.5;}
+.np-time{font-size:12px;color:var(--stone-light);margin-top:3px;}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .home-grid{grid-template-columns:1fr;}
+  .payments-grid{grid-template-columns:1fr;}
+  .week-grid{grid-template-columns:repeat(4,1fr);}
+}
+@media (max-width: 820px) {
+  .login-wrap{grid-template-columns:1fr;}
+  .login-left{display:none;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.mobile-open{transform:translateX(0);}
+  .dash-topnav{left:0;}
+  .dash-main{margin-left:0;padding:20px 16px 60px;}
+  .mobile-menu-btn{display:flex;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .week-grid{grid-template-columns:repeat(3,1fr);}
+  .notif-panel{width:100%;}
+  .history-card{flex-wrap:wrap;}
+  .hc-right{width:100%;text-align:left;}
+  .hc-actions{justify-content:flex-start;}
+}
+@media (max-width: 500px) {
+  .stats-grid{grid-template-columns:1fr;}
+  .week-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ── FADE ANIMATION ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.page.active{animation:fadeIn .3s ease both;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════ -->
+<div class="screen active" id="screen-login">
+  <div class="login-wrap">
+    <div class="login-left">
+      <div class="login-logo">Indepen<span>dence</span></div>
+      <div>
+        <div class="login-tagline">Your home.<br>Your <em>independence.</em></div>
+        <p class="login-sub">Log in to see your upcoming services, manage your schedule, and stay connected with your Independence team.</p>
+        <div class="login-features">
+          <div class="lf-item"><span class="lf-dot"></span>View your upcoming and past services</div>
+          <div class="lf-item"><span class="lf-dot"></span>Stay in touch with your concierge</div>
+          <div class="lf-item"><span class="lf-dot"></span>Manage payments securely</div>
+          <div class="lf-item"><span class="lf-dot"></span>Family members can view and help</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:rgba(255,255,255,.3);">© 2026 Independence Ltd. Aotearoa New Zealand.</p>
+    </div>
+
+    <div class="login-right">
+      <div class="login-form-wrap">
+        <h1 class="login-form-title">Access your account</h1>
+        <p class="login-form-sub">Welcome back. Sign in to see your Independence services and schedule.</p>
+
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="setLoginTab('client',this)">I'm a client</button>
+          <button class="tab-btn" onclick="setLoginTab('family',this)">I'm a family member</button>
+        </div>
+
+        <div id="login-client-form">
+          <div class="form-field">
+            <label class="form-label">Email address</label>
+            <input class="form-input" type="email" placeholder="e.g. margaret@email.com" value="margaret.thomson@email.com">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" placeholder="Your password" value="••••••••">
+          </div>
+          <div class="form-forgot"><a href="#">Forgot your password?</a></div>
+          <button class="btn-primary" onclick="login('client')">Sign in to my account</button>
+          <div class="trust-note">
+            <span class="trust-icon">🔒</span>
+            Your information is kept private and secure. We will never share your details with anyone.
+          </div>
+        </div>
+
+        <div id="login-family-form" style="display:none">
+          <div class="form-field">
+            <label class="form-label">Your email address</label>
+            <input class="form-input" type="email" placeholder="e.g. sarah@email.com" value="sarah.thomson@email.com">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" placeholder="Your password" value="••••••••">
+          </div>
+          <div class="form-forgot"><a href="#">Forgot your password?</a></div>
+          <button class="btn-primary" onclick="login('family')">Sign in as a family member</button>
+          <div class="trust-note">
+            <span class="trust-icon">💚</span>
+            As a family member, you can view services, make payments, and help manage your loved one's care — with their permission.
+          </div>
+        </div>
+
+        <p class="form-hint">New to Independence? <a href="index.html">Book a free Needs Assessment →</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DASHBOARD SCREEN
+══════════════════════════════════════ -->
+<div class="screen" id="screen-dashboard">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">Indepen<span>dence</span><small>Client Area</small></div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="user-avatar">M</div>
+      <div>
+        <div class="user-name" id="user-name">Margaret Thomson</div>
+        <div class="user-type" id="user-type">Independence client</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-label">My account</div>
+      <button class="nav-item active" onclick="showPage('home',this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('upcoming',this)">
+        <span class="nav-icon">📅</span> Upcoming services
+        <span class="nav-badge">3</span>
+      </button>
+      <button class="nav-item" onclick="showPage('schedule',this)">
+        <span class="nav-icon">🗓</span> Weekly schedule
+      </button>
+      <button class="nav-item" onclick="showPage('history',this)">
+        <span class="nav-icon">📋</span> Past bookings
+      </button>
+      <div class="sidebar-nav-label">Payments & reviews</div>
+      <button class="nav-item" onclick="showPage('payments',this)">
+        <span class="nav-icon">💳</span> Payments
+      </button>
+      <button class="nav-item" onclick="showPage('reviews',this)">
+        <span class="nav-icon">⭐</span> Leave a review
+      </button>
+      <div class="sidebar-nav-label" id="family-nav-label">Family</div>
+      <button class="nav-item" onclick="showPage('family',this)" id="family-nav-btn">
+        <span class="nav-icon">👨‍👩‍👧</span> <span id="family-nav-text">Family access</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#" onclick="logout()">← Sign out</a>
+    </div>
+  </aside>
+
+  <!-- TOP NAV -->
+  <div class="dash-topnav">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="mobile-menu-btn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+      <div class="topnav-title" id="topnav-title">Dashboard</div>
+    </div>
+    <div class="topnav-right">
+      <div class="notif-btn" onclick="toggleNotif()">
+        🔔<div class="notif-dot"></div>
+      </div>
+      <button class="topnav-help" onclick="window.location.href='index.html#contact'">
+        📞 Contact us
+      </button>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS PANEL -->
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-panel-title">Notifications</div>
+    <div class="np-item">
+      <div class="np-icon npi-green">✅</div>
+      <div class="np-content">
+        <strong>Service confirmed</strong>
+        <p>Your house cleaning with Jenny is confirmed for Thursday 24 April at 10:00am.</p>
+        <div class="np-time">Today, 9:14am</div>
+      </div>
+    </div>
+    <div class="np-item">
+      <div class="np-icon npi-gold">⏰</div>
+      <div class="np-content">
+        <strong>Reminder: tomorrow's service</strong>
+        <p>Gardening with Mike is scheduled for tomorrow, Wednesday 23 April at 9:00am.</p>
+        <div class="np-time">Today, 8:00am</div>
+      </div>
+    </div>
+    <div class="np-item">
+      <div class="np-icon npi-green">💳</div>
+      <div class="np-content">
+        <strong>Payment received</strong>
+        <p>Your payment of $95.00 for last week's transport service has been processed.</p>
+        <div class="np-time">Yesterday, 3:22pm</div>
+      </div>
+    </div>
+    <div class="np-item">
+      <div class="np-icon npi-blue">📅</div>
+      <div class="np-content">
+        <strong>Schedule updated</strong>
+        <p>Your meal preparation has been rescheduled to Friday 25 April at 12:30pm.</p>
+        <div class="np-time">Mon 21 Apr, 11:00am</div>
+      </div>
+    </div>
+    <div class="np-item">
+      <div class="np-icon npi-green">🚗</div>
+      <div class="np-content">
+        <strong>Your driver is on the way</strong>
+        <p>David is 10 minutes away for your GP appointment transport.</p>
+        <div class="np-time">Fri 18 Apr, 1:50pm</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="dash-main">
+
+    <!-- ── HOME PAGE ── -->
+    <div class="page active" id="page-home">
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2 id="welcome-name">Good morning, Margaret 🌿</h2>
+          <p id="welcome-sub">You have 3 upcoming services this week. Everything is on track.</p>
+        </div>
+        <div class="welcome-concierge">
+          <div class="wc-label">Your concierge</div>
+          <div class="wc-name">Sarah M.</div>
+          <div class="wc-avail"><span class="wc-dot"></span> Available now</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-val">3</div>
+          <div class="stat-lbl">Upcoming services</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-val">18</div>
+          <div class="stat-lbl">Services completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💳</div>
+          <div class="stat-val">$0</div>
+          <div class="stat-lbl">Balance owing</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-val">4.9</div>
+          <div class="stat-lbl">Your average rating</div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <div>
+          <div class="next-service-card">
+            <div class="nsc-label">Next service — tomorrow</div>
+            <div class="nsc-service">
+              <div class="nsc-icon">🌿</div>
+              <div style="flex:1">
+                <div class="nsc-name">Gardening &amp; lawns</div>
+                <div class="nsc-meta">Wednesday 23 April · 9:00am – 11:00am</div>
+                <div class="nsc-provider">
+                  <div class="provider-av">M</div>
+                  <div>
+                    <div style="font-size:13px;color:var(--forest);font-weight:500;">Mike P. — your gardener</div>
+                    <div style="font-size:12px;color:var(--stone-light);">Rated 5.0 · 6 visits with you</div>
+                  </div>
+                </div>
+                <span class="status-pill s-confirmed"><span class="s-dot sd-g"></span>Confirmed</span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-outline btn-sm" onclick="showPage('upcoming',document.querySelector('.nav-item:nth-child(2)'))">View all services</button>
+              <button class="btn btn-green btn-sm">Contact concierge</button>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;">
+            <div class="card-title" style="margin-bottom:14px;font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--stone);">Recent notifications</div>
+            <div class="notif-list">
+              <div class="notif-card">
+                <div class="notif-icon">✅</div>
+                <div>
+                  <div class="notif-text"><strong>Confirmed:</strong> House cleaning with Jenny — Thursday 24 Apr, 10am</div>
+                  <div class="notif-time">Today, 9:14am</div>
+                </div>
+              </div>
+              <div class="notif-card">
+                <div class="notif-icon">⏰</div>
+                <div>
+                  <div class="notif-text"><strong>Reminder:</strong> Gardening with Mike is tomorrow at 9am</div>
+                  <div class="notif-time">Today, 8:00am</div>
+                </div>
+              </div>
+              <div class="notif-card">
+                <div class="notif-icon">💳</div>
+                <div>
+                  <div class="notif-text"><strong>Payment confirmed:</strong> $95.00 received for last week's transport</div>
+                  <div class="notif-time">Yesterday</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <div class="card">
+            <div class="card-title">Quick actions</div>
+            <button class="qa-btn qa-btn-green" onclick="window.location.href='index.html#booking-form'">📋 Book a Needs Assessment</button>
+            <button class="qa-btn qa-btn-outline" onclick="showPage('upcoming',null)">📅 View upcoming services</button>
+            <button class="qa-btn qa-btn-outline" onclick="showPage('payments',null)">💳 View payments</button>
+            <button class="qa-btn qa-btn-outline" onclick="showPage('reviews',null)">⭐ Leave a review</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Need help?</div>
+            <p style="font-size:14px;color:var(--stone-light);font-weight:300;margin-bottom:16px;line-height:1.6;">Your concierge Sarah is available Monday to Saturday, 8am–6pm. Just call or send a message.</p>
+            <a href="tel:0273259707" class="btn btn-green btn-sm" style="width:100%;justify-content:center;margin-bottom:10px;">📞 027 325 9707</a>
+            <a href="mailto:independenceservicesnz@gmail.com" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;">✉ Send an email</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── UPCOMING PAGE ── -->
+    <div class="page" id="page-upcoming">
+      <div class="page-header">
+        <div class="page-title">Upcoming services</div>
+        <div class="page-sub">Your confirmed and scheduled services coming up</div>
+      </div>
+      <div class="services-list">
+        <div class="service-card">
+          <div class="sc-top">
+            <div class="sc-left">
+              <div class="sc-icon sci-b">🌿</div>
+              <div>
+                <div class="sc-name">Gardening &amp; lawns</div>
+                <div class="sc-date">Wednesday 23 April — Tomorrow</div>
+              </div>
+            </div>
+            <span class="status-pill s-confirmed"><span class="s-dot sd-g"></span>Confirmed</span>
+          </div>
+          <div class="sc-meta-row">
+            <div class="sc-meta-item"><span class="sc-meta-icon">🕘</span>9:00am – 11:00am</div>
+            <div class="sc-meta-item"><span class="sc-meta-icon">👤</span>Mike P.</div>
+            <div class="sc-meta-item"><span class="sc-meta-icon">📍</span>14 Rata Street, New Plymouth</div>
+          </div>
+          <div class="sc-notes">"Please focus on the back lawn and tidy the hedge along the fence."</div>
+          <div class="sc-actions">
+            <button class="btn btn-outline btn-sm">View details</button>
+            <button class="btn btn-outline btn-sm">Contact Sarah</button>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="sc-top">
+            <div class="sc-left">
+              <div class="sc-icon sci-a">🧹</div>
+              <div>
+                <div class="sc-name">House cleaning</div>
+                <div class="sc-date">Thursday 24 April</div>
+              </div>
+            </div>
+            <span class="status-pill s-confirmed"><span class="s-dot sd-g"></span>Confirmed</span>
+          </div>
+          <div class="sc-meta-row">
+            <div class="sc-meta-item"><span class="sc-meta-icon">🕙</span>10:00am – 12:30pm</div>
+            <div class="sc-meta-item"><span class="sc-meta-icon">👤</span>Jenny R.</div>
+            <div class="sc-meta-item"><span class="sc-meta-icon">📍</span>14 Rata Street, New Plymouth</div>
+          </div>
+          <div class="sc-notes">"Full house clean — please pay extra attention to the bathroom and kitchen."</div>
+          <div class="sc-actions">
+            <button class="btn btn-outline btn-sm">View details</button>
+            <button class="btn btn-outline btn-sm">Contact Sarah</button>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="sc-top">
+            <div class="sc-left">
+              <div class="sc-icon sci-d">🍲</div>
+              <div>
+                <div class="sc-name">Meal preparation</div>
+                <div class="sc-date">Friday 25 April</div>
+              </div>
+            </div>
+            <span class="status-pill s-upcoming"><span class="s-dot sd-a"></span>Upcoming</span>
+          </div>
+          <div class="sc-meta-row">
+            <div class="sc-meta-item"><span class="sc-meta-icon">🕧</span>12:30pm – 2:00pm</div>
+            <div class="sc-meta-item"><span class="sc-meta-icon">👤</span>Linda T.</div>
+            <div class="sc-meta-item"><span class="sc-meta-icon">📍</span>14 Rata Street, New Plymouth</div>
+          </div>
+          <div class="sc-notes">"Preparing 3 days of dinners. Margaret prefers simple, easy-to-reheat meals."</div>
+          <div class="sc-actions">
+            <button class="btn btn-outline btn-sm">View details</button>
+            <button class="btn btn-outline btn-sm">Contact Sarah</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCHEDULE PAGE ── -->
+    <div class="page" id="page-schedule">
+      <div class="page-header">
+        <div class="page-title">Weekly schedule</div>
+        <div class="page-sub">A simple view of what's happening this week</div>
+      </div>
+      <div class="week-nav">
+        <div class="week-nav-title">21 April – 27 April 2026</div>
+        <div class="week-nav-btns">
+          <button class="week-nav-btn">←</button>
+          <button class="week-nav-btn">→</button>
+        </div>
+      </div>
+      <div class="week-grid">
+        <div class="day-col">
+          <div class="day-header"><div class="day-name">Mon</div><div class="day-num">21</div></div>
+          <div class="day-events"><div class="day-empty">Nothing scheduled</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header"><div class="day-name">Tue</div><div class="day-num">22</div></div>
+          <div class="day-events"><div class="day-empty">Nothing scheduled</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header today"><div class="day-name">Wed</div><div class="day-num">23</div></div>
+          <div class="day-events">
+            <div class="day-event de-green"><span class="de-time">9:00am</span><span class="de-name">🌿 Gardening — Mike</span></div>
+          </div>
+        </div>
+        <div class="day-col">
+          <div class="day-header"><div class="day-name">Thu</div><div class="day-num">24</div></div>
+          <div class="day-events">
+            <div class="day-event de-gold"><span class="de-time">10:00am</span><span class="de-name">🧹 Cleaning — Jenny</span></div>
+          </div>
+        </div>
+        <div class="day-col">
+          <div class="day-header"><div class="day-name">Fri</div><div class="day-num">25</div></div>
+          <div class="day-events">
+            <div class="day-event de-rose"><span class="de-time">12:30pm</span><span class="de-name">🍲 Meals — Linda</span></div>
+          </div>
+        </div>
+        <div class="day-col">
+          <div class="day-header"><div class="day-name">Sat</div><div class="day-num">26</div></div>
+          <div class="day-events"><div class="day-empty">Nothing scheduled</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header"><div class="day-name">Sun</div><div class="day-num">27</div></div>
+          <div class="day-events"><div class="day-empty">Rest day 🌿</div></div>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding:16px 20px;background:var(--forest-pale);border:1px solid #c0d4c0;border-radius:12px;font-size:14px;color:var(--stone-mid);font-weight:300;line-height:1.6;">
+        <strong style="color:var(--forest);font-weight:500;">Want to add or change a service?</strong> Simply call Sarah on <a href="tel:0273259707" style="color:var(--forest);font-weight:500;">027 325 9707</a> or <a href="mailto:independenceservicesnz@gmail.com" style="color:var(--forest);">send us an email</a> and we'll sort it for you.
+      </div>
+    </div>
+
+    <!-- ── HISTORY PAGE ── -->
+    <div class="page" id="page-history">
+      <div class="page-header">
+        <div class="page-title">Past bookings</div>
+        <div class="page-sub">All your completed services with Independence</div>
+      </div>
+      <div class="history-list">
+        <div class="history-card">
+          <div class="hc-icon">🚗</div>
+          <div class="hc-info">
+            <div class="hc-name">Transport to GP appointment</div>
+            <div class="hc-meta">Friday 18 April · David K. · Completed</div>
+          </div>
+          <div class="hc-right">
+            <div class="hc-amount">$95.00</div>
+            <span class="status-pill s-completed">Completed</span>
+            <div class="hc-actions">
+              <button class="btn btn-outline btn-sm">Book again</button>
+              <button class="btn btn-outline btn-sm" onclick="showPage('reviews',null)">Leave review</button>
+            </div>
+          </div>
+        </div>
+        <div class="history-card">
+          <div class="hc-icon">🧹</div>
+          <div class="hc-info">
+            <div class="hc-name">House cleaning</div>
+            <div class="hc-meta">Thursday 10 April · Jenny R. · Completed</div>
+          </div>
+          <div class="hc-right">
+            <div class="hc-amount">$120.00</div>
+            <span class="status-pill s-completed">Completed</span>
+            <div class="hc-actions">
+              <button class="btn btn-outline btn-sm">Book again</button>
+              <button class="btn btn-outline btn-sm" onclick="showPage('reviews',null)">Leave review</button>
+            </div>
+          </div>
+        </div>
+        <div class="history-card">
+          <div class="hc-icon">🌿</div>
+          <div class="hc-info">
+            <div class="hc-name">Gardening &amp; lawns</div>
+            <div class="hc-meta">Wednesday 9 April · Mike P. · Completed</div>
+          </div>
+          <div class="hc-right">
+            <div class="hc-amount">$85.00</div>
+            <span class="status-pill s-completed">Completed</span>
+            <div class="hc-actions">
+              <button class="btn btn-outline btn-sm">Book again</button>
+              <button class="btn btn-outline btn-sm" onclick="showPage('reviews',null)">Leave review</button>
+            </div>
+          </div>
+        </div>
+        <div class="history-card">
+          <div class="hc-icon">💪</div>
+          <div class="hc-info">
+            <div class="hc-name">Fitness &amp; personal training</div>
+            <div class="hc-meta">Tuesday 1 April · James H. · Completed</div>
+          </div>
+          <div class="hc-right">
+            <div class="hc-amount">$75.00</div>
+            <span class="status-pill s-completed">Completed</span>
+            <div class="hc-actions">
+              <button class="btn btn-outline btn-sm">Book again</button>
+              <button class="btn btn-outline btn-sm" onclick="showPage('reviews',null)">Leave review</button>
+            </div>
+          </div>
+        </div>
+        <div class="history-card">
+          <div class="hc-icon">🍲</div>
+          <div class="hc-info">
+            <div class="hc-name">Meal preparation</div>
+            <div class="hc-meta">Friday 28 March · Linda T. · Completed</div>
+          </div>
+          <div class="hc-right">
+            <div class="hc-amount">$90.00</div>
+            <span class="status-pill s-completed">Completed</span>
+            <div class="hc-actions">
+              <button class="btn btn-outline btn-sm">Book again</button>
+              <button class="btn btn-outline btn-sm" onclick="showPage('reviews',null)">Leave review</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAYMENTS PAGE ── -->
+    <div class="page" id="page-payments">
+      <div class="page-header">
+        <div class="page-title">Payments</div>
+        <div class="page-sub">All payments are made securely to Independence, who coordinate your services</div>
+      </div>
+      <div class="pay-secure-note">
+        🔒 You pay Independence directly — not individual providers. We handle all coordination and payments on your behalf, so it's always simple and safe.
+      </div>
+      <div class="payments-grid">
+        <div class="pay-card">
+          <div class="pay-card-label">Payment method on file</div>
+          <div class="card-display">
+            <div class="card-type">Visa · saved card</div>
+            <div class="card-num">•••• •••• •••• 4892</div>
+            <div class="card-bottom">
+              <div><div class="card-field-label">Name</div><div class="card-field-val">M. Thomson</div></div>
+              <div><div class="card-field-label">Expires</div><div class="card-field-val">09 / 27</div></div>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center;">Update payment method</button>
+        </div>
+        <div class="pay-card">
+          <div class="pay-card-label">Account summary</div>
+          <div style="margin-bottom:16px;">
+            <div style="font-size:13px;color:var(--stone-light);font-weight:300;margin-bottom:4px;">Current balance owing</div>
+            <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--forest);">$0.00</div>
+            <div style="font-size:13px;color:var(--stone-light);margin-top:2px;font-weight:300;">All payments up to date ✓</div>
+          </div>
+          <div class="divider"></div>
+          <div style="font-size:13px;color:var(--stone-light);font-weight:300;margin-bottom:4px;">Next scheduled payment</div>
+          <div style="font-size:16px;color:var(--stone);font-weight:500;margin-bottom:14px;">$95.00 · after Thursday's cleaning</div>
+          <button class="btn btn-green btn-sm" style="width:100%;justify-content:center;">Pay Independence now</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recent payments</div>
+        <div class="payment-history">
+          <div class="ph-row">
+            <div class="ph-left">
+              <div class="ph-service">Transport to GP</div>
+              <div class="ph-date">Friday 18 April 2026</div>
+            </div>
+            <div class="ph-amount">$95.00</div>
+          </div>
+          <div class="ph-row">
+            <div class="ph-left">
+              <div class="ph-service">House cleaning</div>
+              <div class="ph-date">Thursday 10 April 2026</div>
+            </div>
+            <div class="ph-amount">$120.00</div>
+          </div>
+          <div class="ph-row">
+            <div class="ph-left">
+              <div class="ph-service">Gardening &amp; lawns</div>
+              <div class="ph-date">Wednesday 9 April 2026</div>
+            </div>
+            <div class="ph-amount">$85.00</div>
+          </div>
+          <div class="ph-row">
+            <div class="ph-left">
+              <div class="ph-service">Fitness &amp; personal training</div>
+              <div class="ph-date">Tuesday 1 April 2026</div>
+            </div>
+            <div class="ph-amount">$75.00</div>
+          </div>
+          <div class="ph-row">
+            <div class="ph-left">
+              <div class="ph-service">Meal preparation</div>
+              <div class="ph-date">Friday 28 March 2026</div>
+            </div>
+            <div class="ph-amount">$90.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REVIEWS PAGE ── -->
+    <div class="page" id="page-reviews">
+      <div class="page-header">
+        <div class="page-title">Leave a review</div>
+        <div class="page-sub">Your feedback helps us keep our providers excellent</div>
+      </div>
+      <div class="review-form-card">
+        <div class="card-title">How was your recent service?</div>
+        <p style="font-size:14px;color:var(--stone-light);font-weight:300;margin-bottom:18px;">Select a completed service to review</p>
+        <div class="review-service-select">
+          <div class="rss-item selected" onclick="selectService(this)">
+            <div class="rss-icon">🚗</div>
+            <div class="rss-name">Transport to GP</div>
+            <div class="rss-date">18 April</div>
+          </div>
+          <div class="rss-item" onclick="selectService(this)">
+            <div class="rss-icon">🧹</div>
+            <div class="rss-name">House cleaning</div>
+            <div class="rss-date">10 April</div>
+          </div>
+          <div class="rss-item" onclick="selectService(this)">
+            <div class="rss-icon">🌿</div>
+            <div class="rss-name">Gardening</div>
+            <div class="rss-date">9 April</div>
+          </div>
+          <div class="rss-item" onclick="selectService(this)">
+            <div class="rss-icon">💪</div>
+            <div class="rss-name">Fitness</div>
+            <div class="rss-date">1 April</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <p style="font-size:15px;color:var(--stone);font-weight:500;margin-bottom:8px;">How would you rate this service?</p>
+        <div class="star-row" id="star-row">
+          <button class="star-btn active" onclick="setRating(1)">★</button>
+          <button class="star-btn active" onclick="setRating(2)">★</button>
+          <button class="star-btn active" onclick="setRating(3)">★</button>
+          <button class="star-btn active" onclick="setRating(4)">★</button>
+          <button class="star-btn active" onclick="setRating(5)">★</button>
+        </div>
+        <p style="font-size:15px;color:var(--stone);font-weight:500;margin-bottom:10px;">Would you like to add anything? (optional)</p>
+        <textarea class="review-textarea" placeholder="e.g. David was punctual, friendly, and very helpful. I'd highly recommend him."></textarea>
+        <button class="btn btn-green" onclick="submitReview()">Submit my review</button>
+        <p style="font-size:13px;color:var(--stone-light);margin-top:12px;font-weight:300;">Reviews are shared with your Independence concierge. They help us keep our providers at their best.</p>
+      </div>
+
+      <div class="card-title" style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--stone);margin-bottom:16px;">Your previous reviews</div>
+      <div class="reviews-list">
+        <div class="review-card">
+          <div class="rc-top">
+            <div>
+              <div class="rc-service">House cleaning — Jenny R.</div>
+              <div class="rc-date">10 April 2026</div>
+            </div>
+            <div class="rc-stars">★★★★★</div>
+          </div>
+          <p class="rc-text">"Jenny was absolutely wonderful — the house was spotless and she was so careful with everything. I felt completely comfortable having her here."</p>
+        </div>
+        <div class="review-card">
+          <div class="rc-top">
+            <div>
+              <div class="rc-service">Gardening — Mike P.</div>
+              <div class="rc-date">9 April 2026</div>
+            </div>
+            <div class="rc-stars">★★★★★</div>
+          </div>
+          <p class="rc-text">"Mike is reliable, thorough, and always does a great job. The garden looks lovely. Very happy."</p>
+        </div>
+        <div class="review-card">
+          <div class="rc-top">
+            <div>
+              <div class="rc-service">Fitness &amp; training — James H.</div>
+              <div class="rc-date">1 April 2026</div>
+            </div>
+            <div class="rc-stars">★★★★★</div>
+          </div>
+          <p class="rc-text">"James is patient and encouraging. He works at exactly the right pace for me and I feel so much better for it."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FAMILY PAGE ── -->
+    <div class="page" id="page-family">
+      <div class="page-header">
+        <div class="page-title" id="family-page-title">Family access</div>
+        <div class="page-sub" id="family-page-sub">Manage your loved one's Independence services</div>
+      </div>
+      <div class="family-banner">
+        <div class="family-banner-icon">💚</div>
+        <div class="family-banner-text">
+          <strong id="family-banner-title">You are viewing Margaret's account</strong>
+          <p id="family-banner-text">As a family member, you can view services, make payments, and manage bookings on Margaret's behalf — with her permission.</p>
+        </div>
+      </div>
+      <div class="loved-one-card">
+        <div class="loc-avatar" id="loc-avatar">M</div>
+        <div>
+          <div class="loc-name" id="loc-name">Margaret Thomson</div>
+          <div class="loc-meta" id="loc-meta">Independence client · 14 Rata Street, New Plymouth · Since January 2026</div>
+        </div>
+        <div class="loc-status"><span style="width:8px;height:8px;border-radius:50%;background:#3d8b3d;display:inline-block;"></span> Services active</div>
+      </div>
+
+      <div class="stats-grid" style="margin-bottom:28px;">
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-val">3</div>
+          <div class="stat-lbl">Upcoming services</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-val">18</div>
+          <div class="stat-lbl">Services completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💳</div>
+          <div class="stat-val">$0</div>
+          <div class="stat-lbl">Balance owing</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-val">4.9</div>
+          <div class="stat-lbl">Average rating</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div class="card">
+          <div class="card-title">This week's services</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+              <div style="font-size:20px;">🌿</div>
+              <div style="flex:1">
+                <div style="font-size:15px;color:var(--stone);font-weight:500;">Gardening — Mike P.</div>
+                <div style="font-size:13px;color:var(--stone-light);font-weight:300;">Wed 23 Apr · 9:00am</div>
+              </div>
+              <span class="status-pill s-confirmed" style="font-size:11px;">Confirmed</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+              <div style="font-size:20px;">🧹</div>
+              <div style="flex:1">
+                <div style="font-size:15px;color:var(--stone);font-weight:500;">Cleaning — Jenny R.</div>
+                <div style="font-size:13px;color:var(--stone-light);font-weight:300;">Thu 24 Apr · 10:00am</div>
+              </div>
+              <span class="status-pill s-confirmed" style="font-size:11px;">Confirmed</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
+              <div style="font-size:20px;">🍲</div>
+              <div style="flex:1">
+                <div style="font-size:15px;color:var(--stone);font-weight:500;">Meals — Linda T.</div>
+                <div style="font-size:13px;color:var(--stone-light);font-weight:300;">Fri 25 Apr · 12:30pm</div>
+              </div>
+              <span class="status-pill s-upcoming" style="font-size:11px;">Upcoming</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Actions</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button class="btn btn-green" style="width:100%;justify-content:center;" onclick="window.location.href='index.html#booking-form'">📋 Book a Needs Assessment</button>
+            <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="showPage('payments',null)">💳 Make a payment</button>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;" onclick="showPage('upcoming',null)">📅 View all services</button>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;">🎁 Gift a service</button>
+          </div>
+          <div class="divider"></div>
+          <div style="font-size:13px;color:var(--stone-light);font-weight:300;line-height:1.6;">
+            <strong style="color:var(--stone-mid);font-weight:500;">Need to speak to Sarah?</strong><br>
+            <a href="tel:0273259707" style="color:var(--forest);">027 325 9707</a> · Mon–Sat 8am–6pm
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────
+const users = {
+  client: {
+    name: 'Margaret Thomson',
+    avatar: 'M',
+    type: 'Independence client',
+    welcome: 'Good morning, Margaret 🌿',
+    welcomeSub: 'You have 3 upcoming services this week. Everything is on track.',
+    familyTitle: 'Family access',
+    familySub: 'Invite a family member to view your services',
+    familyBannerTitle: 'Share your account with family',
+    familyBannerText: 'You can invite a family member to view your services, make payments, and help manage your bookings — with your permission.',
+    locAvatar: 'S',
+    locName: 'Sarah Thomson',
+    locMeta: 'Family member · Invited 15 January 2026',
+  },
+  family: {
+    name: 'Sarah Thomson',
+    avatar: 'S',
+    type: 'Family member',
+    welcome: "Good morning, Sarah 💚",
+    welcomeSub: "Margaret has 3 upcoming services this week. Everything looks good.",
+    familyTitle: "Margaret's account",
+    familySub: "Managing services on behalf of Margaret Thomson",
+    familyBannerTitle: "You are viewing Margaret's account",
+    familyBannerText: "As a family member, you can view services, make payments, and manage bookings on Margaret's behalf — with her permission.",
+    locAvatar: 'M',
+    locName: 'Margaret Thomson',
+    locMeta: 'Independence client · 14 Rata Street, New Plymouth · Since January 2026',
+  }
+};
+
+let currentUser = 'client';
+let currentRating = 5;
+
+// ── AUTH ──────────────────────────────────────
+function setLoginTab(type, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('login-client-form').style.display = type === 'client' ? 'block' : 'none';
+  document.getElementById('login-family-form').style.display = type === 'family' ? 'block' : 'none';
+}
+
+function login(type) {
+  currentUser = type;
+  const u = users[type];
+  document.getElementById('user-avatar').textContent = u.avatar;
+  document.getElementById('user-name').textContent = u.name;
+  document.getElementById('user-type').textContent = u.type;
+  document.getElementById('welcome-name').textContent = u.welcome;
+  document.getElementById('welcome-sub').textContent = u.welcomeSub;
+  document.getElementById('family-page-title').textContent = u.familyTitle;
+  document.getElementById('family-page-sub').textContent = u.familySub;
+  document.getElementById('family-banner-title').textContent = u.familyBannerTitle;
+  document.getElementById('family-banner-text').textContent = u.familyBannerText;
+  document.getElementById('loc-avatar').textContent = u.locAvatar;
+  document.getElementById('loc-name').textContent = u.locName;
+  document.getElementById('loc-meta').textContent = u.locMeta;
+  document.getElementById('family-nav-text').textContent = type === 'family' ? "Margaret's account" : 'Family access';
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-dashboard').classList.add('active');
+  showPage('home', document.querySelector('.nav-item'));
+}
+
+function logout() {
+  document.getElementById('screen-dashboard').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+}
+
+// ── NAVIGATION ────────────────────────────────
+const pageTitles = {
+  home: 'Dashboard',
+  upcoming: 'Upcoming services',
+  schedule: 'Weekly schedule',
+  history: 'Past bookings',
+  payments: 'Payments',
+  reviews: 'Leave a review',
+  family: users.client.familyTitle,
+};
+
+function showPage(id, navBtn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (navBtn) navBtn.classList.add('active');
+  document.getElementById('topnav-title').textContent = pageTitles[id] || id;
+  window.scrollTo(0, 0);
+  closeNotif();
+}
+
+// ── SIDEBAR MOBILE ────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+// ── NOTIFICATIONS ─────────────────────────────
+function toggleNotif() {
+  document.getElementById('notif-panel').classList.toggle('open');
+}
+function closeNotif() {
+  document.getElementById('notif-panel').classList.remove('open');
+}
+
+// ── REVIEWS ───────────────────────────────────
+function selectService(el) {
+  document.querySelectorAll('.rss-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function setRating(n) {
+  currentRating = n;
+  document.querySelectorAll('.star-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i < n);
+  });
+}
+
+function submitReview() {
+  alert('Thank you! Your review has been submitted. We really appreciate you taking the time to share your feedback.');
+}
+
+// Close notif panel on outside click
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('notif-panel');
+  const btn = document.querySelector('.notif-btn');
+  if (panel && btn && !panel.contains(e.target) && !btn.contains(e.target)) {
+    closeNotif();
+  }
+});
+</script>
+</body>
+</html>
