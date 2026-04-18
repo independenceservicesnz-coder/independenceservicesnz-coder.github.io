@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Independence New Zealand — Trusted local support so you can stay at home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #2d4a2d;
+  --forest-mid: #3d6b3d;
+  --forest-light: #edf3ed;
+  --forest-pale: #f4f8f4;
+  --gold: #b5813c;
+  --gold-light: #fdf4e7;
+  --cream: #faf7f2;
+  --white: #ffffff;
+  --stone: #3a3228;
+  --stone-mid: #6b5f52;
+  --stone-light: #a89880;
+  --border: #e2ddd6;
+  --border-mid: #c8bfb0;
+  --r: 16px;
+  --rl: 24px;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--cream);
+  color: var(--stone);
+  font-size: 19px;
+  line-height: 1.78;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+.container { max-width: 1060px; margin: 0 auto; padding: 0 5%; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+/* TYPE */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--forest-mid); font-weight: 400;
+  font-family: 'Source Serif 4', serif;
+}
+.eyebrow::before { content: ''; width: 22px; height: 1.5px; background: var(--forest-mid); }
+
+h2.sec {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 700; line-height: 1.18;
+  color: var(--stone); letter-spacing: -.3px;
+  margin: 12px 0 18px;
+}
+.lead {
+  font-size: 19px; font-weight: 300;
+  color: var(--stone-mid); line-height: 1.72;
+  max-width: 600px;
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 18px; font-weight: 400;
+  padding: 17px 34px; border-radius: 60px;
+  text-decoration: none; cursor: pointer; border: none;
+  transition: transform .18s, background .18s, box-shadow .18s;
+  line-height: 1;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-green {
+  background: var(--forest); color: white;
+  box-shadow: 0 4px 22px rgba(45,74,45,.28);
+}
+.btn-green:hover { background: #1e3520; box-shadow: 0 8px 30px rgba(45,74,45,.32); }
+.btn-outline {
+  background: transparent; color: var(--stone);
+  border: 1.5px solid var(--border-mid);
+}
+.btn-outline:hover { border-color: var(--forest); background: var(--forest-pale); }
+.btn-gold {
+  background: var(--gold); color: white;
+  box-shadow: 0 4px 20px rgba(181,129,60,.32);
+}
+.btn-gold:hover { background: #9a6c2e; }
+.btn-lg { font-size: 20px; padding: 20px 42px; }
+.btn-phone {
+  background: var(--white); color: var(--forest);
+  border: 2px solid var(--forest);
+  font-size: 20px; font-weight: 500;
+  padding: 18px 36px;
+  box-shadow: none;
+}
+.btn-phone:hover { background: var(--forest); color: white; }
+
+/* ─── TOP BAR ─────────────────────── */
+.topbar {
+  background: var(--forest);
+  padding: 10px 0;
+  text-align: center;
+  font-size: 15px;
+  color: rgba(255,255,255,.88);
+  letter-spacing: .01em;
+}
+.topbar a { color: #a8d8a8; text-decoration: none; font-weight: 500; }
+.topbar a:hover { text-decoration: underline; }
+.topbar strong { color: white; }
+
+/* ─── NAV ─────────────────────────── */
+nav {
+  background: var(--white);
+  border-bottom: 1.5px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-inner {
+  max-width: 1060px; margin: 0 auto; padding: 0 5%;
+  display: flex; align-items: center;
+  justify-content: space-between; height: 78px;
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px; font-weight: 700;
+  color: var(--forest); text-decoration: none;
+  letter-spacing: -.2px; line-height: 1.2;
+}
+.logo small {
+  display: block; font-family: 'Source Serif 4', serif;
+  font-size: 11px; font-weight: 300; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--stone-light);
+  margin-top: -2px;
+}
+.nav-links { display: flex; align-items: center; gap: 30px; list-style: none; }
+.nav-links a {
+  text-decoration: none; color: var(--stone-mid);
+  font-size: 16px; font-weight: 300; transition: color .15s;
+}
+.nav-links a:hover { color: var(--forest); }
+.nav-call {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--forest-light);
+  border: 1.5px solid #b8d4b8;
+  color: var(--forest) !important;
+  padding: 9px 20px; border-radius: 60px;
+  font-size: 15px !important; font-weight: 400 !important;
+  transition: background .18s, border-color .18s !important;
+  text-decoration: none;
+}
+.nav-call:hover { background: var(--forest) !important; color: white !important; border-color: var(--forest) !important; }
+
+/* ─── HERO ────────────────────────── */
+.hero {
+  background: var(--white);
+  padding: 88px 0 80px;
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 70% at 90% 50%, var(--forest-pale) 0%, transparent 68%);
+  pointer-events: none;
+}
+.hero-inner {
+  display: grid; grid-template-columns: 1fr 400px;
+  gap: 64px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--forest-light); color: var(--forest-mid);
+  font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+  padding: 8px 18px; border-radius: 60px;
+  margin-bottom: 24px; font-weight: 400; border: 1px solid #c0d8c0;
+}
+.hero-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--forest-mid); }
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(38px, 5vw, 62px);
+  font-weight: 700; line-height: 1.1;
+  color: var(--stone); letter-spacing: -.5px;
+  margin-bottom: 22px;
+}
+.hero h1 em { font-style: italic; color: var(--forest-mid); }
+.hero-lead {
+  font-size: 20px; font-weight: 300;
+  color: var(--stone-mid); line-height: 1.72;
+  max-width: 500px; margin-bottom: 36px;
+}
+
+/* HERO CALL BOX */
+.hero-call-box {
+  background: var(--forest-pale);
+  border: 1.5px solid #c0d4c0;
+  border-radius: var(--rl);
+  padding: 28px 32px;
+  margin-bottom: 28px;
+}
+.hero-call-label {
+  font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--stone-light); margin-bottom: 10px;
+}
+.hero-call-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 700;
+  color: var(--forest); line-height: 1;
+  margin-bottom: 6px;
+  text-decoration: none; display: block;
+}
+.hero-call-num:hover { color: var(--gold); }
+.hero-call-hours {
+  font-size: 14px; color: var(--stone-light); font-weight: 300;
+}
+.hero-or {
+  font-size: 15px; color: var(--stone-light); margin: 16px 0 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-or::before, .hero-or::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.hero-trust {
+  display: flex; align-items: center; gap: 12px;
+  padding-top: 22px; border-top: 1px solid var(--border);
+}
+.trust-dots { display: flex; }
+.tdot {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2.5px solid white; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 500; color: white;
+  margin-left: -9px;
+}
+.tdot:first-child { margin-left: 0; }
+.td1 { background: var(--forest-mid); }
+.td2 { background: var(--gold); }
+.td3 { background: #7a5c42; }
+.hero-trust-text { font-size: 14px; color: var(--stone-light); line-height: 1.45; }
+.hero-trust-text strong { display: block; color: var(--stone-mid); font-size: 15px; font-weight: 400; }
+
+/* HERO RIGHT — SERVICES CARD */
+.hero-right { display: flex; flex-direction: column; gap: 14px; }
+.svc-preview-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--rl);
+  padding: 22px 24px;
+  box-shadow: 0 4px 28px rgba(45,74,45,.08);
+}
+.svc-preview-head {
+  font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--stone-light); margin-bottom: 14px; font-weight: 400;
+}
+.svc-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 0; border-bottom: 1px solid var(--border);
+}
+.svc-row:last-child { border-bottom: none; }
+.svc-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content:center;
+  font-size: 18px; flex-shrink: 0;
+}
+.svi-a { background: var(--forest-light); }
+.svi-b { background: var(--gold-light); }
+.svi-c { background: #e8f0f8; }
+.svi-d { background: #faeaee; }
+.svi-e { background: #f0ebe8; }
+.svi-f { background: #eef4e8; }
+.svc-row-name { font-size: 15px; color: var(--stone); font-weight: 400; }
+.svc-row-tag {
+  margin-left: auto; font-size: 11px; font-weight: 500;
+  padding: 3px 9px; border-radius: 20px;
+  background: var(--forest-light); color: var(--forest-mid);
+  white-space: nowrap;
+}
+.trust-mini-card {
+  background: var(--forest);
+  border-radius: var(--rl); padding: 18px 22px;
+  display: flex; align-items: center; gap: 14px;
+}
+.tmc-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.tmc-text strong { display: block; color: white; font-size: 14px; font-weight: 500; }
+.tmc-text span { color: rgba(255,255,255,.6); font-size: 13px; font-weight: 300; }
+
+/* ─── TRUST STRIP ─────────────────── */
+.trust-strip {
+  background: var(--forest-light);
+  border-top: 1.5px solid #ccdccc;
+  border-bottom: 1.5px solid #ccdccc;
+  padding: 26px 0;
+}
+.ts-inner {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 36px;
+  max-width: 1060px; margin: 0 auto; padding: 0 5%;
+}
+.ts-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15px; color: var(--forest);
+}
+.ts-icon {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: white; border: 1.5px solid #b8d0b8;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+.ts-div { width: 1px; height: 28px; background: #b8d0b8; }
+
+/* ─── HOW IT WORKS ────────────────── */
+.how { background: var(--cream); padding: 96px 0; }
+.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 52px; }
+.step {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--rl); padding: 36px 30px 30px;
+  position: relative; transition: border-color .2s, transform .2s;
+}
+.step:hover { border-color: var(--forest-mid); transform: translateY(-4px); }
+.step-n {
+  font-family: 'Playfair Display', serif; font-size: 52px;
+  font-weight: 700; color: var(--forest-light); line-height: 1;
+  position: absolute; top: 22px; right: 26px;
+}
+.step-ico {
+  width: 54px; height: 54px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; margin-bottom: 18px;
+}
+.step h3 {
+  font-family: 'Playfair Display', serif; font-size: 20px;
+  font-weight: 700; color: var(--stone); margin-bottom: 10px;
+}
+.step p { font-size: 16px; color: var(--stone-mid); font-weight: 300; line-height: 1.7; }
+.step-note {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 14px; font-size: 14px; color: var(--forest-mid);
+  background: var(--forest-light); padding: 5px 12px;
+  border-radius: 20px; font-weight: 400;
+}
+
+/* ─── SERVICES ────────────────────── */
+.services { background: var(--white); padding: 96px 0; }
+.services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 52px; }
+.svc-card {
+  border: 1.5px solid var(--border); border-radius: var(--rl);
+  padding: 30px 26px; transition: border-color .2s, transform .2s;
+}
+.svc-card:hover { border-color: var(--forest-mid); transform: translateY(-3px); }
+.svc-card-ico {
+  width: 54px; height: 54px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; margin-bottom: 16px;
+}
+.svc-card h3 {
+  font-family: 'Playfair Display', serif; font-size: 18px;
+  font-weight: 700; color: var(--stone); margin-bottom: 9px;
+}
+.svc-card p { font-size: 15px; color: var(--stone-mid); font-weight: 300; line-height: 1.65; }
+.svc-examples {
+  margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px;
+}
+.ex-tag {
+  font-size: 12px; color: var(--stone-light);
+  background: var(--cream); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 20px;
+}
+.services-note {
+  margin-top: 36px; padding: 24px 28px;
+  background: var(--forest-pale); border: 1.5px solid #c0d8c0;
+  border-radius: var(--r); font-size: 16px; color: var(--stone-mid);
+  font-weight: 300; line-height: 1.65;
+}
+.services-note strong { color: var(--forest); font-weight: 500; }
+
+/* ─── WHO WE HELP ─────────────────── */
+.who { background: var(--cream); padding: 96px 0; }
+.who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 52px; }
+.who-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--rl); padding: 36px 32px;
+  transition: border-color .2s;
+}
+.who-card:hover { border-color: var(--forest-mid); }
+.who-label {
+  display: inline-block; font-size: 12px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 18px; font-weight: 400;
+}
+.wl-green { background: var(--forest-light); color: var(--forest-mid); }
+.wl-gold  { background: var(--gold-light);   color: #8a5e20; }
+.who-card h3 {
+  font-family: 'Playfair Display', serif; font-size: 22px;
+  font-weight: 700; color: var(--stone); margin-bottom: 12px;
+}
+.who-card .desc { font-size: 17px; color: var(--stone-mid); font-weight: 300; line-height: 1.7; margin-bottom: 22px; }
+.who-needs { display: flex; flex-direction: column; gap: 10px; }
+.wn {
+  display: flex; align-items: flex-start; gap: 11px;
+  font-size: 16px; color: var(--stone-mid); font-weight: 300;
+}
+.wn-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 11px;
+  margin-top: 3px;
+}
+.wnd-g { background: var(--forest-light); color: var(--forest-mid); border: 1px solid #b0ceb0; }
+.wnd-a { background: var(--gold-light);   color: #8a5e20;           border: 1px solid #d8c090; }
+
+/* ─── TRUST SECTION ───────────────── */
+.trust-sec {
+  background: var(--forest); padding: 92px 0;
+  position: relative; overflow: hidden;
+}
+.trust-sec::before {
+  content: ''; position: absolute;
+  top: -100px; right: -100px;
+  width: 420px; height: 420px; border-radius: 50%;
+  background: rgba(255,255,255,.04); pointer-events: none;
+}
+.trust-sec .eyebrow { color: rgba(255,255,255,.5); }
+.trust-sec .eyebrow::before { background: rgba(255,255,255,.35); }
+.trust-sec h2.sec { color: white; }
+.trust-sec .lead { color: rgba(255,255,255,.68); margin-bottom: 48px; }
+.tc-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.tc {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: var(--rl); padding: 30px 26px;
+}
+.tc-ico {
+  width: 50px; height: 50px; border-radius: 14px;
+  background: rgba(255,255,255,.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 18px;
+}
+.tc h3 {
+  font-family: 'Playfair Display', serif; font-size: 17px;
+  font-weight: 700; color: white; margin-bottom: 9px;
+}
+.tc p { font-size: 14px; color: rgba(255,255,255,.65); font-weight: 300; line-height: 1.65; }
+.trust-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 42px; }
+.tpill {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,.09);
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 60px; padding: 9px 16px;
+  font-size: 14px; color: rgba(255,255,255,.82);
+}
+.tpill-dot { width: 7px; height: 7px; border-radius: 50%; background: #7bc47b; flex-shrink: 0; }
+
+/* ─── TESTIMONIALS ────────────────── */
+.testi-sec { background: var(--cream); padding: 96px 0; }
+.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 52px; }
+.testi {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--rl); padding: 34px 28px;
+}
+.testi-stars { color: var(--gold); font-size: 17px; letter-spacing: 3px; margin-bottom: 16px; }
+.testi blockquote {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 17px; color: var(--stone); line-height: 1.65;
+  margin-bottom: 26px;
+}
+.testi-author { display: flex; align-items: center; gap: 13px; }
+.ta {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 500; color: white; flex-shrink: 0;
+  font-family: 'Playfair Display', serif;
+}
+.ta-name { font-size: 15px; font-weight: 400; color: var(--stone); }
+.ta-role { font-size: 13px; color: var(--stone-light); font-weight: 300; }
+
+/* ─── CONTACT / CTA ───────────────── */
+.cta-sec { background: var(--white); padding: 96px 0; }
+.cta-box {
+  background: var(--forest-pale);
+  border: 1.5px solid #c0d4c0;
+  border-radius: 28px; padding: 64px;
+  display: grid; grid-template-columns: 1fr 320px;
+  gap: 64px; align-items: start;
+  margin-top: 48px;
+}
+.checklist { display: flex; flex-direction: column; gap: 13px; margin-top: 26px; }
+.ci {
+  display: flex; align-items: flex-start; gap: 13px;
+  font-size: 17px; color: var(--stone-mid); font-weight: 300;
+}
+.ci-chk {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--forest-light); border: 1.5px solid #a0c8a0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--forest-mid);
+  flex-shrink: 0; margin-top: 3px;
+}
+.contact-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--rl); padding: 34px 28px; text-align: center;
+  position: sticky; top: 96px;
+}
+.cc-label { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--stone-light); margin-bottom: 6px; }
+.cc-free { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--forest-mid); margin-bottom: 2px; }
+.cc-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 700; color: var(--forest);
+  line-height: 1.1; margin-bottom: 4px;
+  display: block; text-decoration: none;
+}
+.cc-num:hover { color: var(--gold); }
+.cc-hours { font-size: 13px; color: var(--stone-light); font-weight: 300; margin-bottom: 24px; line-height: 1.5; }
+.cc-div {
+  font-size: 13px; color: var(--stone-light); margin: 16px 0 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.cc-div::before, .cc-div::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.contact-card .btn { width: 100%; justify-content: center; margin-bottom: 10px; font-size: 16px; }
+.cc-note { font-size: 13px; color: var(--stone-light); font-weight: 300; line-height: 1.5; margin-top: 14px; }
+
+/* ─── FAQ ─────────────────────────── */
+.faq-sec { background: var(--cream); padding: 96px 0; }
+.faq-inner { display: grid; grid-template-columns: 280px 1fr; gap: 72px; align-items: start; }
+.faq-side { position: sticky; top: 96px; }
+.faq-side h2.sec { font-size: 28px; }
+.faq-side p { font-size: 16px; color: var(--stone-light); font-weight: 300; line-height: 1.65; margin-bottom: 22px; }
+.faq-phone-block {
+  background: var(--forest); border-radius: var(--rl);
+  padding: 26px 22px;
+}
+.fpb-label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 6px; }
+.fpb-num {
+  font-family: 'Playfair Display', serif; font-size: 26px;
+  font-weight: 700; color: white; text-decoration: none;
+  display: block; margin-bottom: 4px;
+}
+.fpb-num:hover { color: #a8d8a8; }
+.fpb-hours { font-size: 13px; color: rgba(255,255,255,.5); font-weight: 300; line-height: 1.5; }
+
+.faq-list { display: flex; flex-direction: column; }
+.faq-item { border-bottom: 1.5px solid var(--border); }
+.faq-q {
+  width: 100%; background: none; border: none;
+  padding: 22px 0; display: flex;
+  align-items: center; justify-content: space-between;
+  cursor: pointer; gap: 18px; text-align: left;
+  font-family: 'Source Serif 4', serif;
+  font-size: 18px; font-weight: 400; color: var(--stone);
+  transition: color .15s;
+}
+.faq-q:hover { color: var(--forest); }
+.faq-arr {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--forest-light); border: 1px solid #b8d0b8;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--forest-mid); font-size: 19px; flex-shrink: 0;
+  transition: transform .3s, background .2s;
+}
+.faq-item.open .faq-arr { transform: rotate(45deg); background: var(--forest); color: white; border-color: var(--forest); }
+.faq-a {
+  max-height: 0; overflow: hidden;
+  transition: max-height .38s ease, padding .38s ease;
+  font-size: 17px; color: var(--stone-mid); font-weight: 300; line-height: 1.78;
+}
+.faq-item.open .faq-a { max-height: 500px; padding-bottom: 22px; }
+
+/* ─── FOOTER ──────────────────────── */
+footer { background: var(--stone); padding: 68px 0 38px; }
+.foot-inner { max-width: 1060px; margin: 0 auto; padding: 0 5%; }
+.foot-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 44px; padding-bottom: 44px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 28px;
+}
+.foot-logo {
+  font-family: 'Playfair Display', serif; font-size: 24px;
+  font-weight: 700; color: white; margin-bottom: 6px;
+}
+.foot-logo span { color: var(--gold); }
+.foot-region { font-size: 13px; color: rgba(255,255,255,.4); margin-bottom: 14px; letter-spacing: .04em; }
+.foot-tagline { font-size: 15px; color: rgba(255,255,255,.45); font-weight: 300; line-height: 1.65; margin-bottom: 22px; max-width: 250px; }
+.foot-tel {
+  display: flex; align-items: center; gap: 7px;
+  color: white; text-decoration: none;
+  font-family: 'Playfair Display', serif; font-size: 20px;
+  font-weight: 700;
+}
+.foot-tel:hover { color: var(--gold); }
+.foot-col h4 { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.32); margin-bottom: 18px; font-weight: 400; }
+.foot-col a { display: block; color: rgba(255,255,255,.52); text-decoration: none; font-size: 15px; margin-bottom: 11px; font-weight: 300; transition: color .15s; }
+.foot-col a:hover { color: white; }
+.foot-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: rgba(255,255,255,.26); font-weight: 300; }
+
+/* ─── ANIMATIONS ──────────────────── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+.hero-text { animation: fadeUp .65s ease both; }
+.hero-right { animation: fadeUp .65s .12s ease both; }
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .58s ease, transform .58s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ─── RESPONSIVE ──────────────────── */
+@media (max-width: 940px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-right { order: -1; }
+  .steps, .services-grid, .testi-grid, .tc-grid { grid-template-columns: 1fr; }
+  .who-grid, .cta-box, .faq-inner { grid-template-columns: 1fr; gap: 36px; }
+  .cta-box { padding: 36px 24px; }
+  .foot-top { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar" role="banner">
+  Serving <strong>Aotearoa New Zealand</strong> &nbsp;·&nbsp;
+  Free phone: <a href="tel:0273259707">027 325 9707</a> &nbsp;·&nbsp;
+  Mon–Sat 8am–6pm
+</div>
+
+<!-- NAV -->
+<nav role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#" class="logo" aria-label="Independence New Zealand home">
+      Independence
+      <small>New Zealand</small>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#who-we-help">Who we help</a></li>
+      <li><a href="#trust">Why trust us</a></li>
+      <li><a href="#faq">Questions</a></li>
+    </ul>
+    <a href="tel:0273259707" class="nav-call" aria-label="Call Independence free on 027 325 9707">
+      📞 Call free: 027 325 9707
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-h1">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-tag">
+          <span class="hero-tag-dot" aria-hidden="true"></span>
+          Aotearoa New Zealand
+        </div>
+        <h1 id="hero-h1">Stay in your home.<br><em>Live life fully.</em></h1>
+        <p class="hero-lead">We connect older New Zealanders with trusted, vetted local helpers — for everyday tasks that make staying home easier and safer. One call. One trusted contact. We handle the rest.</p>
+
+        <div class="hero-call-box">
+          <div class="hero-call-label">The simplest way to get started</div>
+          <a href="tel:0273259707" class="hero-call-num">027 325 9707</a>
+          <div class="hero-call-hours">Free call &nbsp;·&nbsp; Mon–Sat, 8am–6pm &nbsp;·&nbsp; We'll handle everything</div>
+        </div>
+
+        <div class="hero-or">or</div>
+        <a href="#contact" class="btn btn-green">Request a free home visit</a>
+
+        <div class="hero-trust">
+          <div class="trust-dots" aria-hidden="true">
+            <div class="tdot td1">M</div>
+            <div class="tdot td2">J</div>
+            <div class="tdot td3">B</div>
+          </div>
+          <div class="hero-trust-text">
+            <strong>Trusted by families across New Zealand</strong>
+            All providers vetted, police-checked, and locally known
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right" aria-hidden="true">
+        <div class="svc-preview-card">
+          <div class="svc-preview-head">Services we coordinate nationwide</div>
+          <div class="svc-row">
+            <div class="svc-icon svi-a">🧹</div>
+            <span class="svc-row-name">House cleaning</span>
+            <span class="svc-row-tag">Available</span>
+          </div>
+          <div class="svc-row">
+            <div class="svc-icon svi-b">🌿</div>
+            <span class="svc-row-name">Gardening &amp; lawns</span>
+            <span class="svc-row-tag">Available</span>
+          </div>
+          <div class="svc-row">
+            <div class="svc-icon svi-c">🚗</div>
+            <span class="svc-row-name">Transport &amp; driving</span>
+            <span class="svc-row-tag">Available</span>
+          </div>
+          <div class="svc-row">
+            <div class="svc-icon svi-d">🍲</div>
+            <span class="svc-row-name">Meal support</span>
+            <span class="svc-row-tag">Available</span>
+          </div>
+          <div class="svc-row">
+            <div class="svc-icon svi-e">🔧</div>
+            <span class="svc-row-name">Handyman &amp; repairs</span>
+            <span class="svc-row-tag">Available</span>
+          </div>
+          <div class="svc-row">
+            <div class="svc-icon svi-f">✂️</div>
+            <span class="svc-row-name">In-home hairdressing</span>
+            <span class="svc-row-tag">Available</span>
+          </div>
+        </div>
+        <div class="trust-mini-card">
+          <div class="tmc-icon">✓</div>
+          <div class="tmc-text">
+            <strong>All providers are vetted &amp; police-checked</strong>
+            <span>We only work with people we'd trust in our own home</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip" role="complementary" aria-label="At a glance trust indicators">
+  <div class="ts-inner">
+    <div class="ts-item"><div class="ts-icon" aria-hidden="true">🏥</div>GP-referred clients welcome</div>
+    <div class="ts-div" aria-hidden="true"></div>
+    <div class="ts-item"><div class="ts-icon" aria-hidden="true">✓</div>Police-checked providers</div>
+    <div class="ts-div" aria-hidden="true"></div>
+    <div class="ts-item"><div class="ts-icon" aria-hidden="true">📍</div>Serving all of New Zealand</div>
+    <div class="ts-div" aria-hidden="true"></div>
+    <div class="ts-item"><div class="ts-icon" aria-hidden="true">🔒</div>No lock-in contracts</div>
+    <div class="ts-div" aria-hidden="true"></div>
+    <div class="ts-item"><div class="ts-icon" aria-hidden="true">📞</div>One trusted contact — always</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how-it-works" aria-labelledby="how-h">
+  <div class="container">
+    <div class="eyebrow">How it works</div>
+    <h2 class="sec" id="how-h">Simple from the very first call</h2>
+    <p class="lead">No complicated forms. No apps to learn first. Just phone us, and we take it from there.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-n" aria-hidden="true">1</div>
+        <div class="step-ico svi-a">📞</div>
+        <h3>You call or request a visit</h3>
+        <p>Call us free on 027 325 9707, or fill in a short form and we'll call you back. Tell us what you need — or just tell us what's becoming difficult at home. We'll take it from there.</p>
+        <div class="step-note">📍 No app needed. No computer needed.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n" aria-hidden="true">2</div>
+        <div class="step-ico svi-b">🤝</div>
+        <h3>We find the right local helper</h3>
+        <p>We search our vetted network of local providers across New Zealand and find the right match for your needs. We check them out so you don't have to — reliability, reputation, and police checks included.</p>
+        <div class="step-note">✓ All providers vetted before joining our network</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-n" aria-hidden="true">3</div>
+        <div class="step-ico svi-c">🏠</div>
+        <h3>We confirm and follow up</h3>
+        <p>We confirm the booking, stay in touch, and follow up after the job to make sure everything went well. If anything needs adjusting, you have one trusted person to call — not a call centre.</p>
+        <div class="step-note">💬 One contact. One relationship. Always.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services" aria-labelledby="svc-h">
+  <div class="container">
+    <div class="eyebrow">Our services</div>
+    <h2 class="sec" id="svc-h">Practical help for everyday life at home</h2>
+    <p class="lead">We focus on the everyday tasks that make a real difference — the ones that help you stay independent, comfortable, and safe in your own home.</p>
+    <div class="services-grid">
+      <div class="svc-card reveal">
+        <div class="svc-card-ico svi-a">🧹</div>
+        <h3>House cleaning</h3>
+        <p>Regular or one-off home cleaning by trustworthy local people who know what matters to older clients — reliability, care, and respect for your home.</p>
+        <div class="svc-examples">
+          <span class="ex-tag">Weekly clean</span>
+          <span class="ex-tag">Fortnightly</span>
+          <span class="ex-tag">Spring clean</span>
+        </div>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-card-ico svi-b">🌿</div>
+        <h3>Gardening &amp; lawns</h3>
+        <p>Lawn mowing, weeding, pruning, and general garden upkeep — so your outdoor space stays tidy and manageable without it becoming a burden.</p>
+        <div class="svc-examples">
+          <span class="ex-tag">Lawn mowing</span>
+          <span class="ex-tag">Weeding</span>
+          <span class="ex-tag">Pruning</span>
+        </div>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-card-ico svi-e">🔧</div>
+        <h3>Handyman &amp; repairs</h3>
+        <p>Minor repairs, odd jobs, light maintenance, and safety modifications — things like loose handrails, dripping taps, or replacing lightbulbs that are hard to reach.</p>
+        <div class="svc-examples">
+          <span class="ex-tag">Minor repairs</span>
+          <span class="ex-tag">Safety rails</span>
+          <span class="ex-tag">Odd jobs</span>
+        </div>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-card-ico svi-c">🚗</div>
+        <h3>Transport &amp; companion driving</h3>
+        <p>Safe, friendly transport to medical appointments, the supermarket, social outings, or wherever you need to go — with a driver who will walk you in if needed.</p>
+        <div class="svc-examples">
+          <span class="ex-tag">Medical appointments</span>
+          <span class="ex-tag">Shopping</span>
+          <span class="ex-tag">Social outings</span>
+        </div>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-card-ico svi-d">🍲</div>
+        <h3>Meal support</h3>
+        <p>Help with preparing meals at home, or coordinating meal delivery — so that eating well stays easy and enjoyable even when cooking becomes more difficult.</p>
+        <div class="svc-examples">
+          <span class="ex-tag">Meal prep</span>
+          <span class="ex-tag">Delivery</span>
+          <span class="ex-tag">Grocery support</span>
+        </div>
+      </div>
+      <div class="svc-card reveal">
+        <div class="svc-card-ico svi-f">✂️</div>
+        <h3>In-home hairdressing</h3>
+        <p>A qualified local hairdresser who comes to your home — no travel, no busy salons, just a comfortable and familiar service in your own space.</p>
+        <div class="svc-examples">
+          <span class="ex-tag">Haircuts</span>
+          <span class="ex-tag">Wash &amp; set</span>
+          <span class="ex-tag">At-home visit</span>
+        </div>
+      </div>
+    </div>
+    <div class="services-note reveal">
+      <strong>Not sure if we cover what you need?</strong> Just call us on 027 325 9707 and we'll tell you honestly whether we can help — or point you in the right direction if we can't. We're here to make things easier, not to give you the runaround.
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE HELP -->
+<section class="who" id="who-we-help" aria-labelledby="who-h">
+  <div class="container">
+    <div class="eyebrow">Who we help</div>
+    <h2 class="sec" id="who-h">Built for two people: the older person, and the family who cares</h2>
+    <p class="lead">We understand both sides of the equation — and we work to make life easier for everyone involved.</p>
+    <div class="who-grid">
+      <div class="who-card reveal">
+        <div class="who-label wl-green">For older people, 65+</div>
+        <h3>You want to stay at home. We help make that possible.</h3>
+        <p class="desc">Whether you're fully independent and just want occasional help, or finding some tasks harder than they used to be, Independence connects you with trusted local people who treat you with respect.</p>
+        <div class="who-needs">
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>Trusted local providers, vetted before they enter your home</div>
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>Simple booking — just phone us, no apps or computers needed</div>
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>One familiar person to call if anything needs sorting</div>
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>No lock-in, no pressure — book what you need, when you need it</div>
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>We follow up to make sure everything went well</div>
+        </div>
+      </div>
+      <div class="who-card reveal">
+        <div class="who-label wl-gold">For adult children &amp; families</div>
+        <h3>You want Mum or Dad looked after. We take the load off you.</h3>
+        <p class="desc">Organising care from a distance — or while juggling your own job and family — is exhausting. Independence gives you one trusted place to go, so you can stop worrying and start knowing.</p>
+        <div class="who-needs">
+          <div class="wn"><div class="wn-dot wnd-a">✓</div>One point of contact — not a dozen different providers to chase</div>
+          <div class="wn"><div class="wn-dot wnd-a">✓</div>Peace of mind that providers are vetted and reliable</div>
+          <div class="wn"><div class="wn-dot wnd-a">✓</div>You can book, request, or check in from anywhere in New Zealand</div>
+          <div class="wn"><div class="wn-dot wnd-a">✓</div>We follow up after each service and let you know how it went</div>
+          <div class="wn"><div class="wn-dot wnd-a">✓</div>Gift a service to your parent — we'll sort all the details</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST SECTION -->
+<section class="trust-sec" id="trust" aria-labelledby="trust-h">
+  <div class="container" style="position:relative;z-index:1">
+    <div class="eyebrow">Why trust Independence</div>
+    <h2 class="sec" id="trust-h">We earn trust before anyone comes through your door</h2>
+    <p class="lead">Inviting someone into your home — or your parent's home — takes courage. We take that responsibility seriously.</p>
+    <div class="tc-grid">
+      <div class="tc reveal">
+        <div class="tc-ico">🔍</div>
+        <h3>Every provider is vetted</h3>
+        <p>Before joining our network, all providers undergo a police check, reference check, and review of their reputation and experience working with older clients. We only work with people we would trust with our own family.</p>
+      </div>
+      <div class="tc reveal">
+        <div class="tc-ico">🏥</div>
+        <h3>Trusted by local health professionals</h3>
+        <p>GPs, physiotherapists, and community health workers across New Zealand refer their patients to us. That professional confidence is something we take seriously and work hard to maintain every day.</p>
+      </div>
+      <div class="tc reveal">
+        <div class="tc-ico">🤝</div>
+        <h3>You are always in control</h3>
+        <p>You choose which services you want and when. There are no lock-in contracts and no pressure. You can change, pause, or stop anything at any time — with no penalty and no complicated process.</p>
+      </div>
+    </div>
+    <div class="trust-pills" role="list">
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>Police-checked providers</div>
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>Reference-checked</div>
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>Locally known nationwide</div>
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>No lock-in contracts</div>
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>GP-referred clients welcome</div>
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>One trusted contact always</div>
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>Follow-up after every job</div>
+      <div class="tpill" role="listitem"><span class="tpill-dot"></span>Cancel anytime, no penalty</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-sec" aria-labelledby="testi-h">
+  <div class="container">
+    <div class="eyebrow">What people say</div>
+    <h2 class="sec" id="testi-h">Real people. Real help. Real difference.</h2>
+    <p class="lead">From older New Zealanders and the families who love them.</p>
+    <div class="testi-grid">
+      <div class="testi reveal">
+        <div class="testi-stars" aria-label="Five stars">★★★★★</div>
+        <blockquote>"I was nervous about someone new coming into my home. But the cleaner they found was wonderful — so reliable and respectful. I've had her fortnightly ever since. I couldn't manage without it."</blockquote>
+        <div class="testi-author">
+          <div class="ta" style="background:var(--forest-mid)" aria-hidden="true">M</div>
+          <div><div class="ta-name">Margaret, 78</div><div class="ta-role">New Zealand — using cleaning &amp; transport</div></div>
+        </div>
+      </div>
+      <div class="testi reveal">
+        <div class="testi-stars" aria-label="Five stars">★★★★★</div>
+        <blockquote>"Mum lives in New Plymouth and I'm in Wellington. Before Independence, I was constantly worried about how she was managing. Now I know someone trustworthy is looking after things. It's changed everything."</blockquote>
+        <div class="testi-author">
+          <div class="ta" style="background:var(--gold)" aria-hidden="true">S</div>
+          <div><div class="ta-name">Sarah T.</div><div class="ta-role">Daughter — coordinating care from Wellington</div></div>
+        </div>
+      </div>
+      <div class="testi reveal">
+        <div class="testi-stars" aria-label="Five stars">★★★★★</div>
+        <blockquote>"The garden was getting away on me after my knee operation. One call and they had someone sorted within the week. Good bloke, does a proper job. I'll use them again without question."</blockquote>
+        <div class="testi-author">
+          <div class="ta" style="background:#5a7a9a" aria-hidden="true">B</div>
+          <div><div class="ta-name">Brian K., 74</div><div class="ta-role">New Zealand — gardening &amp; handyman</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / CTA -->
+<section class="cta-sec" id="contact" aria-labelledby="cta-h">
+  <div class="container">
+    <div class="eyebrow">Get started</div>
+    <h2 class="sec" id="cta-h">Getting help is easier than you think</h2>
+    <div class="cta-box">
+      <div>
+        <p style="font-size:20px;color:var(--stone-mid);font-weight:300;line-height:1.72;margin-bottom:10px">
+          Just call us or fill in the form below. We'll have a friendly conversation about what you need, find the right local provider, and take care of the rest. There's no commitment and no complicated process.
+        </p>
+        <p style="font-size:16px;color:var(--stone-light);font-weight:300;margin-bottom:26px">
+          If you'd prefer, a member of our team can visit you at home — free of charge — to understand your situation and put together a simple support plan together with you.
+        </p>
+        <div class="checklist">
+          <div class="ci"><div class="ci-chk" aria-hidden="true">✓</div>Free initial conversation — by phone or in person</div>
+          <div class="ci"><div class="ci-chk" aria-hidden="true">✓</div>No lock-in contract and no commitment required</div>
+          <div class="ci"><div class="ci-chk" aria-hidden="true">✓</div>All providers vetted before they set foot in your home</div>
+          <div class="ci"><div class="ci-chk" aria-hidden="true">✓</div>One trusted local contact — not a call centre</div>
+          <div class="ci"><div class="ci-chk" aria-hidden="true">✓</div>We follow up after every job to make sure it went well</div>
+          <div class="ci"><div class="ci-chk" aria-hidden="true">✓</div>Family members are welcome to be involved from the start</div>
+        </div>
+
+        <!-- Simple contact form -->
+        <form action="https://formspree.io/f/independenceservicesnz" method="POST" style="margin-top:36px" aria-label="Request a callback">
+          <input type="hidden" name="_replyto" value="independenceservicesnz@gmail.com">
+          <input type="hidden" name="_subject" value="New enquiry — Independence New Zealand">
+          <input type="text" name="_gotcha" style="display:none">
+          <p style="font-size:16px;font-weight:500;color:var(--stone);margin-bottom:18px">Fill in your details and we'll call you back:</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div>
+              <label for="f-name" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Your name</label>
+              <input id="f-name" name="name" type="text" placeholder="e.g. Margaret Thomson" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none" required>
+            </div>
+            <div>
+              <label for="f-phone" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Phone number</label>
+              <input id="f-phone" name="phone" type="tel" placeholder="e.g. 027 123 4567" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none" required>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label for="f-need" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">What do you need help with? (optional)</label>
+            <textarea id="f-need" name="message" rows="3" placeholder="e.g. House cleaning every fortnight, and help with the garden" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;resize:vertical"></textarea>
+          </div>
+          <div style="margin-bottom:20px">
+            <label for="f-who" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">Are you enquiring for yourself or a family member?</label>
+            <select id="f-who" name="enquiry_type" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;appearance:none">
+              <option value="">Please select…</option>
+              <option>For myself</option>
+              <option>For a family member</option>
+              <option>For someone else I help look after</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-green" style="font-size:18px">Send my request — we'll call you back</button>
+          <p style="margin-top:14px;font-size:14px;color:var(--stone-light);font-weight:300">We aim to call back within a few hours. For urgent help, please call us directly on <a href="tel:0273259707" style="color:var(--forest)">027 325 9707</a>.</p>
+        </form>
+      </div>
+
+      <div class="contact-card">
+        <div class="cc-label">Prefer to call?</div>
+        <div class="cc-free">Call or email us</div>
+        <a href="tel:0273259707" class="cc-num">027 325 9707</a>
+        <div class="cc-hours">Monday – Saturday<br>8am – 6pm<br>Evening appointments available on request</div>
+        <div class="cc-div">or</div>
+        <a href="#contact" class="btn btn-outline" style="font-size:16px">Fill in the form</a>
+        <p class="cc-note">Not sure what you need? That's fine — just call us and we'll have a friendly chat. No pressure, no sales pitch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec" id="faq" aria-labelledby="faq-h">
+  <div class="container">
+    <div class="faq-inner">
+      <div class="faq-side">
+        <div class="eyebrow">Questions</div>
+        <h2 class="sec" id="faq-h" style="font-size:28px">We're here to answer every question</h2>
+        <p>Can't find what you need? Just call — we genuinely enjoy talking to people.</p>
+        <div class="faq-phone-block">
+          <div class="fpb-label">Free call</div>
+          <a href="tel:0273259707" class="fpb-num">027 325 9707</a>
+          <div class="fpb-hours">Mon–Sat · 8am–6pm<br>Evening appointments available</div>
+        </div>
+      </div>
+      <div class="faq-list" role="list">
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            Do I need a smartphone or computer to use this service?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">No — not at all. The most common way people get started is a simple phone call to 027 325 9707. We'll ask you a few questions, understand what you need, and arrange everything from there. You don't need any technology to use Independence. If you do have family members who'd like to be involved online, they can manage things through our website — but that's completely optional.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            How do I know the people coming into my home are trustworthy?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">This is the question we take most seriously. Every provider in our network goes through a police check, reference checks from previous clients, and a review of their reputation and experience working with older people — before we allow them to work with any of our clients. We also monitor quality after every job through follow-up feedback. If a provider doesn't meet our standards, they leave our network. We only work with people we would trust in our own family's home.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            What areas do you cover?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">We are currently growing our network of local providers across the country. If you're not sure whether we cover your area yet, just call us on 027 325 9707 and we'll be honest with you about what we can arrange.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            How much does it cost?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">The initial conversation and any home visit from our team is completely free. After that, you pay for the services you use — there are no lock-in contracts and no monthly fees required. A small coordination fee applies to each booking (we'll always tell you exactly what you'll pay before anything is confirmed). For clients who use services regularly, we also offer an optional subscription that can reduce overall costs — but this is never required.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            Can I involve my son or daughter in organising this?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">Absolutely — and many of our clients do. Family members can be as involved as you'd like them to be. They can call us directly, be copied into communications, or manage bookings on your behalf through our website. Everything happens with your knowledge and permission. You stay in control of what your family can see and do.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            What if something goes wrong or I'm not happy with a provider?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">Just call us. That's what we're here for. We follow up after every job — so if something isn't right, we often find out before you even need to raise it. If you are ever unhappy with a provider, we'll sort it out: find a replacement, issue a refund if appropriate, and make sure it doesn't happen again. There are no complicated complaints processes — just one phone call to the same person who booked it in the first place.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            Can I send a service as a gift to my parent?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">Yes, and it's a very popular option — especially around birthdays, Christmas, and Mother's Day. Simply call us on 027 325 9707 and tell us what you'd like to gift. We'll arrange it all and let your loved one know a gift is on the way. You don't need to be an existing client to do this.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div>
+        <div class="foot-logo">Indepen<span>dence</span></div>
+        <div class="foot-region">Aotearoa New Zealand, Aotearoa New Zealand</div>
+        <p class="foot-tagline">Helping older New Zealanders stay happily and safely in the home they love.</p>
+        <a href="tel:0273259707" class="foot-tel">📞 027 325 9707</a>
+        <a href="mailto:independenceservicesnz@gmail.com" style="display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.55);text-decoration:none;font-size:14px;margin-top:10px;font-weight:300;font-family:Source Serif 4,serif;">✉ independenceservicesnz@gmail.com</a>
+      </div>
+      <div class="foot-col">
+        <h4>Services</h4>
+        <a href="#">House cleaning</a>
+        <a href="#">Gardening &amp; lawns</a>
+        <a href="#">Handyman &amp; repairs</a>
+        <a href="#">Transport</a>
+        <a href="#">Meal support</a>
+        <a href="#">In-home hairdressing</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#">How it works</a>
+        <a href="#">Who we help</a>
+        <a href="#">Why trust us</a>
+        <a href="#">Become a provider</a>
+        <a href="#">About us</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="#">Get in touch</a>
+        <a href="#">Questions &amp; answers</a>
+        <a href="#">Gift a service</a>
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms of service</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Independence Ltd. Aotearoa New Zealand.</span>
+      <span>Made with care for older New Zealanders 🌿</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function faq(btn) {
+  const item = btn.parentElement;
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-q').setAttribute('aria-expanded','false');
+  });
+  if (!open) { item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+}
+
+
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach((en, i) => {
+    if (en.isIntersecting) {
+      setTimeout(() => en.target.classList.add('visible'), i * 80);
+      obs.unobserve(en.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+document.querySelectorAll('input, textarea, select').forEach(el => {
+  el.addEventListener('focus', () => el.style.borderColor = 'var(--forest)');
+  el.addEventListener('blur',  () => el.style.borderColor = 'var(--border-mid)');
+});
+</script>
+</body>
+</html>
