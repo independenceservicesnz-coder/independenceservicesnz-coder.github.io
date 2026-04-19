@@ -1784,12 +1784,13 @@ async function resetPassword() {
 
 // ── CHECK SESSION ON LOAD ────────────────────────────────────
 (async function() {
-  const { data: { session } } = await sb.auth.getSession();
-  const navBtn    = document.getElementById('nav-login-btn');
-  const mobileLink = document.getElementById('mobile-auth-link');
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const navBtn     = document.getElementById('nav-login-btn');
+    const mobileLink = document.getElementById('mobile-auth-link');
 
-  if (session) {
-    window._loggedIn = true;
+    if (session) {
+      window._loggedIn = true;
 
     // Get first name from profile
     const { data: profile } = await sb.from('profiles')
@@ -1801,19 +1802,22 @@ async function resetPassword() {
       ? profile.full_name.split(' ')[0]
       : 'My account';
 
-    if (navBtn) {
-      navBtn.textContent = first + ''s dashboard';
-      navBtn.style.background = 'var(--forest-light)';
-      navBtn.style.borderColor = '#b8d0b8';
-      navBtn.style.color = 'var(--forest)';
+      if (navBtn) {
+        navBtn.textContent = 'My dashboard';
+        navBtn.style.background = 'var(--forest)';
+        navBtn.style.borderColor = 'var(--forest)';
+        navBtn.style.color = 'white';
+      }
+      if (mobileLink) {
+        mobileLink.textContent = 'Go to my dashboard';
+      }
+    } else {
+      window._loggedIn = false;
+      if (navBtn) navBtn.textContent = 'My account';
+      if (mobileLink) mobileLink.textContent = 'Customer login';
     }
-    if (mobileLink) {
-      mobileLink.textContent = 'Go to my dashboard';
-    }
-  } else {
+  } catch(err) {
     window._loggedIn = false;
-    if (navBtn) navBtn.textContent = 'My account';
-    if (mobileLink) mobileLink.textContent = 'Customer login';
   }
 })();
 </script>
