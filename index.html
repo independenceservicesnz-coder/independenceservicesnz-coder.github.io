@@ -1636,6 +1636,13 @@ function setSubmitLoading(btn, loading, label) {
   btn.textContent = loading ? 'Please wait…' : label;
 }
 
+// Single reliable redirect function for GitHub Pages
+function goToDashboard() {
+  const here = window.location.href;
+  const base = here.substring(0, here.lastIndexOf('/') + 1);
+  window.location.href = base + 'dashboard.html';
+}
+
 // ── SIGN UP ──────────────────────────────────────────────────
 document.getElementById('signup-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -1665,7 +1672,7 @@ document.getElementById('signup-form').addEventListener('submit', async function
   const submitBtn = e.currentTarget.querySelector('button[type=submit]');
   setSubmitLoading(submitBtn, true, 'Create account');
 
-  const { data, error } = await sb.auth.signUp({
+  const { data: signUpData, error: signUpError } = await sb.auth.signUp({
     email,
     password,
     options: {
@@ -1682,19 +1689,33 @@ document.getElementById('signup-form').addEventListener('submit', async function
     }
   });
 
-  setSubmitLoading(submitBtn, false, 'Create account');
-
-  if (error) {
-    if (error.message.includes('already registered')) {
-      showAuthMessage('An account with that email already exists. Please log in instead.', 'error');
+  if (signUpError) {
+    setSubmitLoading(submitBtn, false, 'Create my account');
+    if (signUpError.message.includes('already registered')) {
+      showAuthMessage('An account with that email already exists. Please sign in instead.', 'error');
     } else {
-      showAuthMessage(error.message, 'error');
+      showAuthMessage(signUpError.message, 'error');
     }
     return;
   }
 
-  showAuthMessage('Account created! Taking you to your dashboard now.', 'success');
-  setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+  // If email confirmation is on, session will be null — sign them in immediately
+  if (!signUpData.session) {
+    const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email, password });
+    setSubmitLoading(submitBtn, false, 'Create my account');
+    if (signInError) {
+      // Account created but couldn't auto-sign-in — ask them to sign in manually
+      showAuthMessage('Account created! Please sign in with your email and password to continue.', 'success');
+      setAuthPane('login');
+      document.getElementById('login-email').value = email;
+      return;
+    }
+  } else {
+    setSubmitLoading(submitBtn, false, 'Create my account');
+  }
+
+  showAuthMessage('Account created! Taking you to your dashboard now…', 'success');
+  setTimeout(goToDashboard, 800);
 });
 
 // ── SIGN IN ──────────────────────────────────────────────────
@@ -1723,14 +1744,14 @@ document.getElementById('login-form').addEventListener('submit', async function(
     return;
   }
 
-  showAuthMessage('Welcome back! Taking you to your dashboard.', 'success');
-  setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
+  showAuthMessage('Welcome back! Taking you to your dashboard…', 'success');
+  setTimeout(goToDashboard, 700);
 });
 
 // ── NAV LOGIN CLICK ─────────────────────────────────────────
 function navLoginClick() {
   if (window._loggedIn) {
-    window.location.href = 'dashboard.html';
+    goToDashboard();
   } else {
     openAuth('login');
   }
@@ -1738,7 +1759,7 @@ function navLoginClick() {
 function mobileAuthClick() {
   closeMenu();
   if (window._loggedIn) {
-    window.location.href = 'dashboard.html';
+    goToDashboard();
   } else {
     openAuth('login');
   }
@@ -1752,7 +1773,7 @@ async function resetPassword() {
     return;
   }
   const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/dashboard.html'
+    redirectTo: window.location.origin + window.location.pathname.replace('index.html','') + 'dashboard.html'
   });
   if (error) {
     showAuthMessage('Could not send reset email. Please check your email address.', 'error');

@@ -464,10 +464,10 @@ button, input, select, textarea { font: inherit; }
 <div id="not-signed-in">
   <div class="guard-card">
     <div class="guard-logo">Independence</div>
-    <h1>Welcome back</h1>
-    <p>Please sign in from the Independence website to access your personal dashboard.</p>
+    <h1>Please sign in</h1>
+    <p>You need to be signed in to view your dashboard. Taking you to the sign in page now…</p>
     <div class="guard-btns">
-      <a class="btn btn-primary" href="index.html">Go to Independence</a>
+      <a class="btn btn-primary" href="index.html">Sign in now</a>
     </div>
   </div>
 </div>
@@ -523,7 +523,7 @@ button, input, select, textarea { font: inherit; }
     </div>
 
     <div class="sidebar-footer">
-      <a class="btn btn-outline btn-sm" href="index.html" style="justify-content:center;">Independence website</a>
+      <a class="btn btn-outline btn-sm" id="site-link" style="justify-content:center;">Independence website</a>
       <button class="btn btn-secondary btn-sm" id="logout-btn" style="justify-content:center;">Sign out</button>
     </div>
   </aside>
@@ -838,6 +838,13 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
+// Reliable navigation helpers for GitHub Pages
+function goToIndex() {
+  const here = window.location.href;
+  const base = here.substring(0, here.lastIndexOf('/') + 1);
+  window.location.href = base + 'index.html';
+}
+
 // ── STATE ────────────────────────────────────────────────────
 let S = { user: null, profile: null, starRating: 5 };
 
@@ -906,8 +913,13 @@ async function boot() {
   const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
+    // No session — redirect straight to homepage login
     setLoading(false);
     $('not-signed-in').classList.add('visible');
+    // Auto-redirect after 3 seconds
+    setTimeout(() => {
+      goToIndex();
+    }, 3000);
     return;
   }
 
@@ -1277,10 +1289,16 @@ $('mobile-overlay').addEventListener('click', closeSidebar);
 
 $('logout-btn').addEventListener('click', async () => {
   await sb.auth.signOut();
-  window.location.href = 'index.html';
+  goToIndex();
 });
 
 // ── START ────────────────────────────────────────────────────
+// Set site link href dynamically
+const siteLink = document.getElementById('site-link');
+if (siteLink) {
+  siteLink.href = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + 'index.html';
+}
+
 boot();
 </script>
 </body>
