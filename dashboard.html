@@ -952,639 +952,488 @@
     </div>
   </div>
 
+  <!-- ── SUPABASE CDN ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    (function () {
-      const STORAGE_KEYS = {
-        users: "independenceUsers",
-        session: "independenceSession"
-      };
+  // ================================================================
+  // INDEPENDENCE NZ — SUPABASE CONFIG
+  // Replace these two values with your own from:
+  // Supabase Dashboard > Settings > API
+  // ================================================================
+  const SUPABASE_URL  = 'https://bguflxzgzyderinbyupc.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJndWZseHpnenlkZXJpbmJ5dXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NjYzMzAsImV4cCI6MjA5MjE0MjMzMH0.Lak_7ox-5E0wLrxtzpXOUZn-csL9JoYOMpq8j-H8Mhc';
 
-      const state = {
-        activePage: "overview",
-        reviewRating: 5,
-        userRecord: null
-      };
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-      const authGuard = document.getElementById("auth-guard");
-      const app = document.getElementById("dashboard-app");
-      const sidebar = document.getElementById("sidebar");
-      const mobileOverlay = document.getElementById("mobile-overlay");
-      const notice = document.getElementById("notice");
-      const pageTitle = document.getElementById("page-title");
+  // ================================================================
+  // STATE
+  // ================================================================
+  const state = { user: null, profile: null, reviewRating: 5 };
 
-      const pageTitleMap = {
-        overview: "Overview",
-        services: "Upcoming services",
-        requests: "Request support",
-        payments: "Payments",
-        reviews: "Reviews",
-        profile: "Profile",
-        family: "Family contact"
-      };
+  // ── Page titles ──────────────────────────────────────────────
+  const PAGE_TITLES = {
+    overview: 'Overview', services: 'My services', requests: 'Request support',
+    payments: 'Payments', reviews: 'Leave a review', profile: 'My profile', family: 'Family contact'
+  };
 
-      function readUsers() {
-        try {
-          return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || "[]");
-        } catch (error) {
-          return [];
-        }
-      }
+  // ── Helpers ──────────────────────────────────────────────────
+  function qs(id) { return document.getElementById(id); }
+  function fmt(date) {
+    if (!date) return '—';
+    return new Date(date).toLocaleDateString('en-NZ', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function fmtMoney(n) {
+    return '$' + (parseFloat(n) || 0).toFixed(2);
+  }
+  function fmtTime(t) {
+    if (!t) return '';
+    const [h, m] = t.split(':');
+    const hr = parseInt(h, 10);
+    const suffix = hr >= 12 ? 'pm' : 'am';
+    return (hr % 12 || 12) + ':' + m + suffix;
+  }
 
-      function writeUsers(users) {
-        localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
-      }
+  function showNotice(msg, type) {
+    const el = qs('notice');
+    el.textContent = msg;
+    el.className = 'notice visible ' + (type || 'success');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => { el.className = 'notice'; }, 4000);
+  }
 
-      function readSession() {
-        try {
-          return JSON.parse(localStorage.getItem(STORAGE_KEYS.session) || "null");
-        } catch (error) {
-          return null;
-        }
-      }
+  function switchPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const page = qs('page-' + id);
+    if (page) page.classList.add('active');
+    const btn = document.querySelector('[data-page="' + id + '"]');
+    if (btn) btn.classList.add('active');
+    const titleEl = qs('page-title');
+    if (titleEl) titleEl.textContent = PAGE_TITLES[id] || id;
+    window.scrollTo(0, 0);
+  }
 
-      function saveState() {
-        const users = readUsers();
-        const index = users.findIndex(function (user) {
-          return user.email === state.userRecord.email;
-        });
+  // ================================================================
+  // RENDER HELPERS
+  // ================================================================
+  function renderOverview(profile, stats) {
+    const name = profile.full_name || 'there';
+    const first = name.split(' ')[0];
+    qs('welcome-heading').textContent = 'Good day, ' + first + ' 🌿';
+    qs('welcome-copy').textContent = 'Here is a summary of your Independence services and account.';
+    qs('concierge-name').textContent = profile.concierge || 'Your concierge';
+    const av = qs('avatar');
+    if (av) av.textContent = first.charAt(0).toUpperCase();
+    qs('sidebar-name').textContent = name;
+    qs('sidebar-plan').textContent = profile.plan || 'Independence client';
 
-        if (index >= 0) {
-          users[index] = state.userRecord;
-          writeUsers(users);
-        }
-      }
+    qs('stat-upcoming').textContent  = stats.upcoming;
+    qs('stat-history').textContent   = stats.completed;
+    qs('stat-payments').textContent  = fmtMoney(stats.billed);
+    qs('stat-requests').textContent  = stats.requests;
+    qs('service-count').textContent  = stats.upcoming;
+  }
 
-      function showNotice(text, type) {
-        notice.textContent = text;
-        notice.className = "notice visible " + type;
-        window.clearTimeout(showNotice.timeoutId);
-        showNotice.timeoutId = window.setTimeout(function () {
-          notice.className = "notice";
-          notice.textContent = "";
-        }, 2600);
-      }
+  function renderNextService(services) {
+    const el = qs('next-service');
+    const next = services.find(s => s.status === 'Confirmed' || s.status === 'Pending');
+    if (!next) {
+      el.innerHTML = '<div class="empty-state">No upcoming services yet. Request one below.</div>';
+      return;
+    }
+    el.innerHTML =
+      '<div class="item">' +
+        '<div class="item-head">' +
+          '<div><h3 class="item-title">' + next.service_type + '</h3>' +
+          '<div class="item-subtitle">' + next.provider + ' &nbsp;·&nbsp; ' + next.location + '</div></div>' +
+          '<span class="status ' + next.status.toLowerCase() + '">' + next.status + '</span>' +
+        '</div>' +
+        '<div class="meta-row">' +
+          '<span>📅 ' + fmt(next.service_date) + '</span>' +
+          '<span>🕐 ' + fmtTime(next.service_time) + '</span>' +
+        '</div>' +
+        (next.notes ? '<p style="margin:12px 0 0;color:var(--stone-mid);font-size:.95rem;">' + next.notes + '</p>' : '') +
+      '</div>';
+  }
 
-      function formatDate(dateString) {
-        if (!dateString) {
-          return "Flexible";
-        }
-        const parsed = new Date(dateString);
-        if (Number.isNaN(parsed.getTime())) {
-          return dateString;
-        }
-        return parsed.toLocaleDateString("en-NZ", {
-          weekday: "long",
-          day: "numeric",
-          month: "long"
-        });
-      }
+  function renderNotifications(notifs) {
+    const el = qs('notification-list');
+    if (!notifs.length) {
+      el.innerHTML = '<div class="empty-state">No notifications yet.</div>';
+      return;
+    }
+    el.innerHTML = notifs.slice(0, 5).map(n =>
+      '<div class="mini-item"><strong>' + n.icon + ' ' + n.title + '</strong>' +
+      '<span>' + n.detail + '</span></div>'
+    ).join('');
+  }
 
-      function formatTime(timeString) {
-        if (!timeString) {
-          return "Time to confirm";
-        }
-        const parts = timeString.split(":");
-        if (parts.length < 2) {
-          return timeString;
-        }
-        const date = new Date();
-        date.setHours(Number(parts[0]), Number(parts[1]), 0, 0);
-        return date.toLocaleTimeString("en-NZ", {
-          hour: "numeric",
-          minute: "2-digit"
-        }).toLowerCase();
-      }
+  function renderServices(services) {
+    qs('service-count').textContent = services.filter(s => s.status !== 'Completed').length;
+    const el = qs('services-list');
+    const upcoming = services.filter(s => s.status !== 'Completed' && s.status !== 'Cancelled');
+    if (!upcoming.length) {
+      el.innerHTML = '<div class="empty-state">No upcoming services scheduled yet.</div>';
+      return;
+    }
+    el.innerHTML = upcoming.map(s =>
+      '<div class="item">' +
+        '<div class="item-head">' +
+          '<div><h3 class="item-title">' + s.service_type + '</h3>' +
+          '<div class="item-subtitle">' + (s.provider || '') + ' &nbsp;·&nbsp; ' + (s.location || '') + '</div></div>' +
+          '<span class="status ' + s.status.toLowerCase() + '">' + s.status + '</span>' +
+        '</div>' +
+        '<div class="meta-row">' +
+          '<span>📅 ' + fmt(s.service_date) + '</span>' +
+          '<span>🕐 ' + fmtTime(s.service_time) + '</span>' +
+        '</div>' +
+        (s.notes ? '<p style="margin:10px 0 0;color:var(--stone-mid);font-size:.95rem;">' + s.notes + '</p>' : '') +
+      '</div>'
+    ).join('');
+  }
 
-      function initials(name) {
-        return (name || "I")
-          .trim()
-          .split(/\s+/)
-          .slice(0, 2)
-          .map(function (part) { return part.charAt(0).toUpperCase(); })
-          .join("");
-      }
+  function renderHistory(services) {
+    const el = qs('history-list');
+    const done = services.filter(s => s.status === 'Completed');
+    if (!done.length) {
+      el.innerHTML = '<div class="empty-state">No completed services yet.</div>';
+      return;
+    }
+    el.innerHTML = done.map(s =>
+      '<div class="item">' +
+        '<div class="item-head">' +
+          '<div><h3 class="item-title">' + s.service_type + '</h3>' +
+          '<div class="item-subtitle">' + fmt(s.service_date) + ' · ' + (s.provider || '') + '</div></div>' +
+          '<span class="status completed">Completed</span>' +
+        '</div>' +
+        (s.amount ? '<div style="font-size:1.1rem;font-weight:600;color:var(--stone);margin-top:6px;">' + fmtMoney(s.amount) + '</div>' : '') +
+      '</div>'
+    ).join('');
+  }
 
-      function currencyTotal(items) {
-        const total = items.reduce(function (sum, item) {
-          const value = Number(String(item.amount || "0").replace(/[^0-9.]/g, ""));
-          return sum + value;
-        }, 0);
-        return "$" + total.toFixed(2);
-      }
+  function renderPayments(payments) {
+    const el = qs('payments-list');
+    if (!el) return;
+    if (!payments.length) {
+      el.innerHTML = '<div class="empty-state">No payment history yet.</div>';
+      return;
+    }
+    el.innerHTML = payments.map(p =>
+      '<div class="item">' +
+        '<div class="item-head">' +
+          '<div><h3 class="item-title">' + p.description + '</h3>' +
+          '<div class="item-subtitle">' + fmt(p.payment_date) + '</div></div>' +
+          '<div>' +
+            '<div style="font-size:1.15rem;font-weight:700;color:var(--stone);">' + fmtMoney(p.amount) + '</div>' +
+            '<span class="status ' + (p.status === 'Paid' ? 'confirmed' : 'pending') + '" style="font-size:.78rem;">' + p.status + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    ).join('');
 
-      function renderOverview(customer) {
-        document.getElementById("welcome-heading").textContent = "Welcome back, " + customer.name.split(/\s+/)[0];
-        document.getElementById("welcome-copy").textContent =
-          "You have " + customer.upcomingServices.length + " upcoming service" +
-          (customer.upcomingServices.length === 1 ? "" : "s") +
-          ", " + customer.requests.length + " open request" +
-          (customer.requests.length === 1 ? "" : "s") + ", and your profile is saved for future bookings.";
-        document.getElementById("concierge-name").textContent = customer.concierge;
-        document.getElementById("stat-upcoming").textContent = String(customer.upcomingServices.length);
-        document.getElementById("stat-history").textContent = String(customer.serviceHistory.length);
-        document.getElementById("stat-payments").textContent = currencyTotal(customer.payments);
-        document.getElementById("stat-requests").textContent = String(customer.requests.length);
+    const total = payments.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+    const outstanding = payments.filter(p => p.status === 'Outstanding').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+    if (qs('payment-total')) qs('payment-total').textContent = fmtMoney(total) + ' billed';
+    if (qs('payment-outstanding')) qs('payment-outstanding').textContent = fmtMoney(outstanding) + ' outstanding';
+    if (qs('payment-plan') && state.profile) qs('payment-plan').textContent = state.profile.plan || '—';
+  }
 
-        const nextService = document.getElementById("next-service");
-        const upcoming = customer.upcomingServices[0];
-        if (!upcoming) {
-          nextService.innerHTML = '<div class="empty-state">No confirmed services yet. Use "Request support" to add your next visit.</div>';
-        } else {
-          nextService.innerHTML =
-            '<div class="item">' +
-              '<div class="item-head">' +
-                '<div>' +
-                  '<h3 class="item-title">' + upcoming.service + "</h3>" +
-                  '<div class="item-subtitle">' + upcoming.provider + " • " + upcoming.location + "</div>" +
-                "</div>" +
-                '<span class="status confirmed">Confirmed</span>' +
-              "</div>" +
-              '<div class="meta-row">' +
-                "<span>" + upcoming.date + "</span>" +
-                "<span>" + upcoming.time + "</span>" +
-              "</div>" +
-              '<p style="margin:12px 0 0;color:var(--stone-mid);">' + upcoming.notes + "</p>" +
-            "</div>";
-        }
+  function renderReviews(reviews) {
+    const el = qs('reviews-list');
+    if (!el) return;
+    if (!reviews.length) {
+      el.innerHTML = '<div class="empty-state">You haven't left any reviews yet. We'd love to hear how things are going.</div>';
+      return;
+    }
+    el.innerHTML = reviews.map(r =>
+      '<div class="item">' +
+        '<div class="item-head">' +
+          '<div><h3 class="item-title">' + (r.service_type || 'Service') + '</h3>' +
+          '<div class="item-subtitle">' + fmt(r.created_at) + '</div></div>' +
+          '<div style="color:var(--gold);font-size:1.1rem;">' + '★'.repeat(r.rating) + '</div>' +
+        '</div>' +
+        '<p style="margin:6px 0 0;color:var(--stone-mid);font-style:italic;">"' + r.review_text + '"</p>' +
+      '</div>'
+    ).join('');
+  }
 
-        const notificationList = document.getElementById("notification-list");
-        notificationList.innerHTML = "";
-        if (!customer.notifications.length) {
-          notificationList.innerHTML = '<div class="empty-state">No notifications yet.</div>';
-        } else {
-          customer.notifications.slice(0, 4).forEach(function (item) {
-            const block = document.createElement("div");
-            block.className = "mini-item";
-            block.innerHTML =
-              "<strong>" + item.icon + " " + item.title + "</strong>" +
-              "<span>" + item.detail + " • " + item.time + "</span>";
-            notificationList.appendChild(block);
-          });
-        }
-      }
+  function renderRequests(requests) {
+    const el = qs('request-list');
+    if (!el) return;
+    if (!requests.length) {
+      el.innerHTML = '<div class="empty-state">No open requests. Submit one using the form.</div>';
+      return;
+    }
+    el.innerHTML = requests.filter(r => r.status === 'Pending').map(r =>
+      '<div class="item">' +
+        '<div class="item-head">' +
+          '<div><h3 class="item-title">' + r.service_type + '</h3>' +
+          '<div class="item-subtitle">' + fmt(r.preferred_date) + (r.preferred_time ? ' · ' + fmtTime(r.preferred_time) : '') + '</div></div>' +
+          '<span class="status pending">Pending</span>' +
+        '</div>' +
+        (r.notes ? '<p style="margin:8px 0 0;color:var(--stone-mid);font-size:.95rem;">' + r.notes + '</p>' : '') +
+      '</div>'
+    ).join('');
+  }
 
-      function renderServices(customer) {
-        const serviceCount = document.getElementById("service-count");
-        serviceCount.textContent = String(customer.upcomingServices.length);
+  function renderProfile(profile, userEmail) {
+    const pf = qs('profile-form');
+    if (!pf) return;
+    pf.querySelector('[name="name"]').value    = profile.full_name || '';
+    pf.querySelector('[name="phone"]').value   = profile.phone    || '';
+    pf.querySelector('[name="email"]').value   = userEmail        || '';
+    pf.querySelector('[name="plan"]').value    = profile.plan     || '';
+    pf.querySelector('[name="address"]').value = profile.address  || '';
+  }
 
-        const list = document.getElementById("services-list");
-        list.innerHTML = "";
-        if (!customer.upcomingServices.length) {
-          list.innerHTML = '<div class="empty-state">There are no upcoming services yet.</div>';
-          return;
-        }
+  function renderFamilyContact(contact) {
+    const ff = qs('family-form');
+    if (!ff || !contact) return;
+    ff.querySelector('[name="name"]').value     = contact.full_name || '';
+    ff.querySelector('[name="relation"]').value = contact.relation  || '';
+    ff.querySelector('[name="phone"]').value    = contact.phone     || '';
+  }
 
-        customer.upcomingServices.forEach(function (service) {
-          const card = document.createElement("article");
-          card.className = "item";
-          card.innerHTML =
-            '<div class="item-head">' +
-              '<div>' +
-                '<h3 class="item-title">' + service.service + "</h3>" +
-                '<div class="item-subtitle">' + service.provider + " • " + service.location + "</div>" +
-              "</div>" +
-              '<span class="status confirmed">Confirmed</span>' +
-            "</div>" +
-            '<div class="meta-row">' +
-              "<span>" + service.date + "</span>" +
-              "<span>" + service.time + "</span>" +
-            "</div>" +
-            '<p style="margin:12px 0 0;color:var(--stone-mid);">' + service.notes + "</p>";
-          list.appendChild(card);
-        });
-      }
+  // Star picker
+  function renderStarPicker() {
+    const el = qs('star-picker');
+    if (!el) return;
+    el.innerHTML = [1,2,3,4,5].map(n =>
+      '<button type="button" class="star' + (n <= state.reviewRating ? ' active' : '') + '" ' +
+      'onclick="setStar(' + n + ')">' + '★' + '</button>'
+    ).join('');
+  }
+  function setStar(n) {
+    state.reviewRating = n;
+    renderStarPicker();
+  }
 
-      function renderRequests(customer) {
-        const requestList = document.getElementById("request-list");
-        requestList.innerHTML = "";
-        if (!customer.requests.length) {
-          requestList.innerHTML = '<div class="empty-state">No open requests yet. Submit one from the form to the left.</div>';
-          return;
-        }
+  // Populate review service select from completed services
+  function populateReviewSelect(services) {
+    const sel = qs('review-service');
+    if (!sel) return;
+    const done = services.filter(s => s.status === 'Completed');
+    sel.innerHTML = '<option value="">Select a service…</option>' +
+      done.map(s => '<option value="' + s.service_type + '">' + s.service_type + ' — ' + fmt(s.service_date) + '</option>').join('');
+    if (!done.length) {
+      sel.innerHTML = '<option value="General feedback">General feedback</option>';
+    }
+  }
 
-        customer.requests.slice().reverse().forEach(function (request) {
-          const card = document.createElement("article");
-          card.className = "item";
-          card.innerHTML =
-            '<div class="item-head">' +
-              '<div>' +
-                '<h3 class="item-title">' + request.service + "</h3>" +
-                '<div class="item-subtitle">' + request.dateLabel + " • " + request.timeLabel + "</div>" +
-              "</div>" +
-              '<span class="status pending">Pending</span>' +
-            "</div>" +
-            '<p style="margin:0;color:var(--stone-mid);">' + (request.notes || "No extra notes provided.") + "</p>";
-          requestList.appendChild(card);
-        });
-      }
+  // ================================================================
+  // BOOT — load all data from Supabase
+  // ================================================================
+  async function boot() {
+    const { data: { session } } = await sb.auth.getSession();
 
-      function renderPayments(customer) {
-        document.getElementById("payment-plan").textContent = customer.plan;
-        document.getElementById("payment-total").textContent = currencyTotal(customer.payments) + " billed";
+    if (!session) {
+      qs('auth-guard').classList.remove('hidden');
+      qs('dashboard-app').classList.remove('active');
+      return;
+    }
 
-        const list = document.getElementById("payments-list");
-        list.innerHTML = "";
-        if (!customer.payments.length) {
-          list.innerHTML = '<div class="empty-state">No payment history has been saved yet.</div>';
-          return;
-        }
+    state.user = session.user;
 
-        customer.payments.slice().reverse().forEach(function (payment) {
-          const card = document.createElement("article");
-          card.className = "item";
-          card.innerHTML =
-            '<div class="item-head">' +
-              '<div>' +
-                '<h3 class="item-title">' + payment.service + "</h3>" +
-                '<div class="item-subtitle">' + payment.date + "</div>" +
-              "</div>" +
-              '<strong style="font-family:Playfair Display, Georgia, serif;font-size:1.3rem;">' + payment.amount + "</strong>" +
-            "</div>";
-          list.appendChild(card);
-        });
-      }
+    // Load profile
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', state.user.id).single();
+    state.profile = profile || {};
 
-      function renderReviews(customer) {
-        const select = document.getElementById("review-service");
-        const services = customer.serviceHistory.map(function (item) { return item.service; });
-        const uniqueServices = Array.from(new Set(services.concat(customer.upcomingServices.map(function (item) { return item.service; }))));
+    // Load all data in parallel
+    const [servicesRes, requestsRes, paymentsRes, reviewsRes, notifsRes, familyRes] = await Promise.all([
+      sb.from('services').select('*').eq('client_id', state.user.id).order('service_date', { ascending: true }),
+      sb.from('service_requests').select('*').eq('client_id', state.user.id).order('created_at', { ascending: false }),
+      sb.from('payments').select('*').eq('client_id', state.user.id).order('payment_date', { ascending: false }),
+      sb.from('reviews').select('*').eq('client_id', state.user.id).order('created_at', { ascending: false }),
+      sb.from('notifications').select('*').eq('client_id', state.user.id).order('created_at', { ascending: false }),
+      sb.from('family_contacts').select('*').eq('client_id', state.user.id).limit(1)
+    ]);
 
-        select.innerHTML = "";
-        uniqueServices.forEach(function (service) {
-          const option = document.createElement("option");
-          option.value = service;
-          option.textContent = service;
-          select.appendChild(option);
-        });
+    const services  = servicesRes.data  || [];
+    const requests  = requestsRes.data  || [];
+    const payments  = paymentsRes.data  || [];
+    const reviews   = reviewsRes.data   || [];
+    const notifs    = notifsRes.data    || [];
+    const family    = familyRes.data    || [];
 
-        if (!uniqueServices.length) {
-          const option = document.createElement("option");
-          option.value = "General feedback";
-          option.textContent = "General feedback";
-          select.appendChild(option);
-        }
+    const stats = {
+      upcoming:  services.filter(s => s.status === 'Confirmed' || s.status === 'Pending').length,
+      completed: services.filter(s => s.status === 'Completed').length,
+      billed:    payments.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0),
+      requests:  requests.filter(r => r.status === 'Pending').length
+    };
 
-        const list = document.getElementById("reviews-list");
-        list.innerHTML = "";
-        if (!customer.reviews.length) {
-          list.innerHTML = '<div class="empty-state">No reviews saved yet.</div>';
-          return;
-        }
+    // Show app
+    qs('auth-guard').classList.add('hidden');
+    qs('dashboard-app').classList.add('active');
 
-        customer.reviews.slice().reverse().forEach(function (review) {
-          const card = document.createElement("article");
-          card.className = "item";
-          card.innerHTML =
-            '<div class="item-head">' +
-              '<div>' +
-                '<h3 class="item-title">' + review.service + "</h3>" +
-                '<div class="item-subtitle">' + review.date + "</div>" +
-              "</div>" +
-              '<div style="color:var(--gold);font-size:1rem;">' + "★".repeat(review.rating) + "☆".repeat(5 - review.rating) + "</div>" +
-            "</div>" +
-            '<p style="margin:0;color:var(--stone-mid);font-style:italic;">"' + review.text + '"</p>';
-          list.appendChild(card);
-        });
-      }
+    // Render everything
+    renderOverview(state.profile, stats);
+    renderNextService(services);
+    renderNotifications(notifs);
+    renderServices(services);
+    renderHistory(services);
+    renderPayments(payments);
+    renderReviews(reviews);
+    renderRequests(requests);
+    renderProfile(state.profile, state.user.email);
+    renderFamilyContact(family[0]);
+    renderStarPicker();
+    populateReviewSelect(services);
+  }
 
-      function renderProfile(customer) {
-        document.getElementById("profile-name").value = customer.name;
-        document.getElementById("profile-phone").value = customer.phone;
-        document.getElementById("profile-email").value = customer.email;
-        document.getElementById("profile-plan").value = customer.plan;
-        document.getElementById("profile-address").value = customer.address;
-      }
+  // ================================================================
+  // FORM SUBMISSIONS → SUPABASE
+  // ================================================================
 
-      function renderFamily(customer) {
-        document.getElementById("family-name").value = customer.familyContact.name;
-        document.getElementById("family-relation").value = customer.familyContact.relation;
-        document.getElementById("family-phone").value = customer.familyContact.phone;
+  // Request support
+  qs('request-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!state.user) return;
+    const fd = new FormData(e.currentTarget);
+    const service = (fd.get('service') || '').trim();
+    const date    = fd.get('date')    || '';
+    const time    = fd.get('time')    || '';
+    const notes   = (fd.get('notes')  || '').trim();
 
-        const summary = document.getElementById("family-summary");
-        summary.innerHTML = "";
-        const item = document.createElement("div");
-        item.className = "mini-item";
-        item.innerHTML =
-          "<strong>" + customer.familyContact.name + "</strong>" +
-          "<span>" + customer.familyContact.relation + " • " + customer.familyContact.phone + "</span>";
-        summary.appendChild(item);
-      }
+    if (!service || !date || !time) {
+      showNotice('Please choose a service, date, and time.', 'error');
+      return;
+    }
 
-      function renderHeader(customer) {
-        document.getElementById("avatar").textContent = initials(customer.name);
-        document.getElementById("sidebar-name").textContent = customer.name;
-        document.getElementById("sidebar-plan").textContent = customer.plan;
-      }
+    const { error } = await sb.from('service_requests').insert({
+      client_id:      state.user.id,
+      service_type:   service,
+      preferred_date: date,
+      preferred_time: time,
+      notes:          notes
+    });
 
-      function renderStarPicker() {
-        const container = document.getElementById("star-picker");
-        container.innerHTML = "";
-        for (let i = 1; i <= 5; i += 1) {
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "star" + (i <= state.reviewRating ? " active" : "");
-          button.textContent = "★";
-          button.setAttribute("aria-label", "Rate " + i + " stars");
-          button.addEventListener("click", function () {
-            state.reviewRating = i;
-            renderStarPicker();
-          });
-          container.appendChild(button);
-        }
-      }
+    if (error) { showNotice('Could not save your request. Please try again.', 'error'); return; }
 
-      function renderAll() {
-        const customer = state.userRecord.customer;
-        renderHeader(customer);
-        renderOverview(customer);
-        renderServices(customer);
-        renderRequests(customer);
-        renderPayments(customer);
-        renderReviews(customer);
-        renderProfile(customer);
-        renderFamily(customer);
-        renderStarPicker();
-      }
+    // Add notification
+    await sb.from('notifications').insert({
+      client_id: state.user.id,
+      icon:  '✦',
+      title: 'New request submitted',
+      detail: service + ' requested for ' + fmt(date) + '.'
+    });
 
-      function switchPage(page) {
-        state.activePage = page;
-        document.querySelectorAll(".page").forEach(function (section) {
-          section.classList.toggle("active", section.id === "page-" + page);
-        });
-        document.querySelectorAll(".nav-btn").forEach(function (button) {
-          button.classList.toggle("active", button.dataset.page === page);
-        });
-        pageTitle.textContent = pageTitleMap[page] || "Overview";
-        sidebar.classList.remove("open");
-        mobileOverlay.classList.remove("active");
-      }
+    showNotice('Your request has been sent to your Independence team.', 'success');
+    e.currentTarget.reset();
+    await boot();
+  });
 
-      function createDemoCustomer() {
-        const demoUser = {
-          email: "demo@independence.co.nz",
-          password: "welcome123",
-          customer: {
-            name: "Olive Harrison",
-            email: "demo@independence.co.nz",
-            phone: "021 555 4471",
-            address: "24 Beach Road, Devonport, Auckland",
-            plan: "Daily Living Support",
-            createdAt: new Date().toISOString(),
-            concierge: "Mia Thompson",
-            familyContact: {
-              name: "James Harrison",
-              relation: "Son",
-              phone: "021 900 1142"
-            },
-            notifications: [
-              { icon: "✓", title: "Visit confirmed", detail: "Your Monday support visit has been confirmed.", time: "Today" },
-              { icon: "☎", title: "Family contact saved", detail: "James Harrison will receive updates when needed.", time: "Today" }
-            ],
-            upcomingServices: [
-              {
-                id: crypto.randomUUID(),
-                service: "Daily Living Support",
-                date: "Monday, 22 April",
-                time: "10:00am",
-                location: "24 Beach Road, Devonport, Auckland",
-                provider: "Anna R.",
-                status: "Confirmed",
-                notes: "Light household help, medication reminder, and shared lunch prep."
-              },
-              {
-                id: crypto.randomUUID(),
-                service: "Transport and errands",
-                date: "Thursday, 25 April",
-                time: "1:30pm",
-                location: "Auckland",
-                provider: "Sophie T.",
-                status: "Confirmed",
-                notes: "Pharmacy pickup and supermarket stop."
-              }
-            ],
-            serviceHistory: [
-              {
-                id: crypto.randomUUID(),
-                service: "Initial home consultation",
-                date: "15 April 2026",
-                amount: "$0.00",
-                status: "Completed"
-              },
-              {
-                id: crypto.randomUUID(),
-                service: "Companion visit",
-                date: "17 April 2026",
-                amount: "$72.00",
-                status: "Completed"
-              }
-            ],
-            payments: [
-              { id: crypto.randomUUID(), service: "Companion visit", date: "17 April 2026", amount: "$72.00" },
-              { id: crypto.randomUUID(), service: "Daily Living Support", date: "18 April 2026", amount: "$96.00" }
-            ],
-            reviews: [
-              {
-                id: crypto.randomUUID(),
-                service: "Companion visit",
-                date: "17 April 2026",
-                rating: 5,
-                text: "Warm, punctual, and made the whole afternoon easier."
-              }
-            ],
-            requests: []
-          }
-        };
+  // Update profile
+  qs('profile-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!state.user) return;
+    const fd = new FormData(e.currentTarget);
 
-        const users = readUsers().filter(function (user) {
-          return user.email !== demoUser.email;
-        });
-        users.push(demoUser);
-        writeUsers(users);
-        localStorage.setItem(STORAGE_KEYS.session, JSON.stringify({
-          email: demoUser.email,
-          signedInAt: new Date().toISOString()
-        }));
-      }
+    const { error } = await sb.from('profiles').update({
+      full_name: (fd.get('name')    || '').trim(),
+      phone:     (fd.get('phone')   || '').trim(),
+      plan:      (fd.get('plan')    || '').trim(),
+      address:   (fd.get('address') || '').trim()
+    }).eq('id', state.user.id);
 
-      function boot() {
-        const session = readSession();
-        const users = readUsers();
-        const record = session ? users.find(function (user) { return user.email === session.email; }) : null;
+    if (error) { showNotice('Could not update profile. Please try again.', 'error'); return; }
+    showNotice('Profile updated successfully.', 'success');
+    await boot();
+  });
 
-        if (!record) {
-          authGuard.classList.remove("hidden");
-          app.classList.remove("active");
-          return;
-        }
+  // Family contact
+  qs('family-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!state.user) return;
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      client_id: state.user.id,
+      full_name: (fd.get('name')     || '').trim(),
+      relation:  (fd.get('relation') || '').trim(),
+      phone:     (fd.get('phone')    || '').trim()
+    };
 
-        state.userRecord = record;
-        authGuard.classList.add("hidden");
-        app.classList.add("active");
-        renderAll();
-      }
+    // Upsert — delete existing, insert new
+    await sb.from('family_contacts').delete().eq('client_id', state.user.id);
+    const { error } = await sb.from('family_contacts').insert(payload);
 
-      document.querySelectorAll("[data-page]").forEach(function (button) {
-        button.addEventListener("click", function () {
-          switchPage(button.dataset.page);
-        });
-      });
+    if (error) { showNotice('Could not save family contact. Please try again.', 'error'); return; }
 
-      document.querySelectorAll("[data-page-jump]").forEach(function (button) {
-        button.addEventListener("click", function () {
-          switchPage(button.dataset.pageJump);
-        });
-      });
+    await sb.from('notifications').insert({
+      client_id: state.user.id,
+      icon:  '☎',
+      title: 'Family contact updated',
+      detail: payload.full_name + ' saved as your family contact.'
+    });
 
-      document.getElementById("mobile-menu-button").addEventListener("click", function () {
-        sidebar.classList.toggle("open");
-        mobileOverlay.classList.toggle("active");
-      });
+    showNotice('Family contact saved.', 'success');
+    await boot();
+  });
 
-      mobileOverlay.addEventListener("click", function () {
-        sidebar.classList.remove("open");
-        mobileOverlay.classList.remove("active");
-      });
+  // Review
+  qs('review-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!state.user) return;
+    const fd = new FormData(e.currentTarget);
+    const serviceType = (fd.get('service') || '').trim();
+    const text        = (fd.get('text')    || '').trim();
 
-      document.getElementById("logout-button").addEventListener("click", function () {
-        localStorage.removeItem(STORAGE_KEYS.session);
-        window.location.href = "index.html";
-      });
+    if (!text) { showNotice('Please add a short review before submitting.', 'error'); return; }
 
-      document.getElementById("demo-fill").addEventListener("click", function () {
-        createDemoCustomer();
-        boot();
-        showNotice("Demo customer created. You can now test the full dashboard.", "success");
-      });
+    const { error } = await sb.from('reviews').insert({
+      client_id:   state.user.id,
+      service_type: serviceType || 'General feedback',
+      rating:      state.reviewRating,
+      review_text: text
+    });
 
-      document.getElementById("request-form").addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!state.userRecord) {
-          return;
-        }
+    if (error) { showNotice('Could not save your review. Please try again.', 'error'); return; }
 
-        const formData = new FormData(event.currentTarget);
-        const service = String(formData.get("service") || "").trim();
-        const date = String(formData.get("date") || "");
-        const time = String(formData.get("time") || "");
-        const notes = String(formData.get("notes") || "").trim();
+    await sb.from('notifications').insert({
+      client_id: state.user.id,
+      icon:  '★',
+      title: 'Review saved',
+      detail: 'Thank you for your feedback on ' + (serviceType || 'your recent service') + '.'
+    });
 
-        if (!service || !date || !time) {
-          showNotice("Please choose a service, date, and time before submitting.", "error");
-          return;
-        }
+    showNotice('Thank you — your review has been saved.', 'success');
+    e.currentTarget.reset();
+    state.reviewRating = 5;
+    await boot();
+  });
 
-        const request = {
-          id: crypto.randomUUID(),
-          service: service,
-          date: date,
-          time: time,
-          dateLabel: formatDate(date),
-          timeLabel: formatTime(time),
-          notes: notes
-        };
+  // ================================================================
+  // NAV & MOBILE
+  // ================================================================
+  document.querySelectorAll('[data-page]').forEach(btn => {
+    btn.addEventListener('click', () => switchPage(btn.dataset.page));
+  });
+  document.querySelectorAll('[data-page-jump]').forEach(btn => {
+    btn.addEventListener('click', () => switchPage(btn.dataset.pageJump));
+  });
 
-        state.userRecord.customer.requests.push(request);
-        state.userRecord.customer.notifications.unshift({
-          icon: "✦",
-          title: "New request submitted",
-          detail: service + " requested for " + request.dateLabel + " at " + request.timeLabel + ".",
-          time: "Just now"
-        });
-        saveState();
-        renderAll();
-        event.currentTarget.reset();
-        showNotice("Your service request has been saved.", "success");
-      });
+  qs('mobile-menu-button').addEventListener('click', function() {
+    const sb_el = qs('sidebar');
+    const ov = qs('mobile-overlay');
+    sb_el.classList.toggle('open');
+    ov.classList.toggle('active');
+  });
+  qs('mobile-overlay').addEventListener('click', function() {
+    qs('sidebar').classList.remove('open');
+    qs('mobile-overlay').classList.remove('active');
+  });
 
-      document.getElementById("profile-form").addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!state.userRecord) {
-          return;
-        }
+  // Log out
+  qs('logout-button').addEventListener('click', async function() {
+    await sb.auth.signOut();
+    window.location.href = 'index.html';
+  });
 
-        const formData = new FormData(event.currentTarget);
-        const nextEmail = String(formData.get("email") || "").trim().toLowerCase();
-
-        state.userRecord.email = nextEmail;
-        state.userRecord.customer.name = String(formData.get("name") || "").trim();
-        state.userRecord.customer.phone = String(formData.get("phone") || "").trim();
-        state.userRecord.customer.email = nextEmail;
-        state.userRecord.customer.plan = String(formData.get("plan") || "").trim();
-        state.userRecord.customer.address = String(formData.get("address") || "").trim();
-        localStorage.setItem(STORAGE_KEYS.session, JSON.stringify({
-          email: nextEmail,
-          signedInAt: new Date().toISOString()
-        }));
-        saveState();
-        renderAll();
-        showNotice("Profile updated successfully.", "success");
-      });
-
-      document.getElementById("family-form").addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!state.userRecord) {
-          return;
-        }
-
-        const formData = new FormData(event.currentTarget);
-        state.userRecord.customer.familyContact = {
-          name: String(formData.get("name") || "").trim(),
-          relation: String(formData.get("relation") || "").trim(),
-          phone: String(formData.get("phone") || "").trim()
-        };
-        state.userRecord.customer.notifications.unshift({
-          icon: "☎",
-          title: "Family contact updated",
-          detail: "Your nominated family or emergency contact details were saved.",
-          time: "Just now"
-        });
-        saveState();
-        renderAll();
-        showNotice("Family contact saved.", "success");
-      });
-
-      document.getElementById("review-form").addEventListener("submit", function (event) {
-        event.preventDefault();
-        if (!state.userRecord) {
-          return;
-        }
-
-        const formData = new FormData(event.currentTarget);
-        const service = String(formData.get("service") || "").trim();
-        const text = String(formData.get("text") || "").trim();
-
-        if (!text) {
-          showNotice("Please add a short review before saving.", "error");
-          return;
-        }
-
-        state.userRecord.customer.reviews.push({
-          id: crypto.randomUUID(),
-          service: service || "General feedback",
-          date: new Date().toLocaleDateString("en-NZ", {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-          }),
-          rating: state.reviewRating,
-          text: text
-        });
-        state.userRecord.customer.notifications.unshift({
-          icon: "★",
-          title: "Review saved",
-          detail: "Thank you for sharing feedback on your recent support.",
-          time: "Just now"
-        });
-        saveState();
-        renderAll();
-        event.currentTarget.reset();
-        state.reviewRating = 5;
-        renderStarPicker();
-        showNotice("Review saved to your account.", "success");
-      });
-
-      boot();
-    })();
+  // ================================================================
+  // START
+  // ================================================================
+  boot();
   </script>
 </body>
 </html>

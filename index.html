@@ -1508,7 +1508,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
             <input id="signup-password" name="password" type="password" minlength="6" required>
           </div>
           <button type="submit" class="btn btn-green" style="width:100%;justify-content:center;">Create account</button>
-          <p class="auth-note">Your customer account will open in this browser and take you straight to <strong>dashboard-latest.html</strong>.</p>
+          <p class="auth-note">Your customer account will open in this browser and take you straight to <strong>dashboard.html</strong>.</p>
         </form>
       </div>
 
@@ -1523,19 +1523,28 @@ footer { background: var(--stone); padding: 68px 0 38px; }
             <input id="login-password" name="password" type="password" required>
           </div>
           <button type="submit" class="btn btn-green" style="width:100%;justify-content:center;">Log in to dashboard</button>
-          <p class="auth-note">Returning customers will be sent directly to <strong>dashboard-latest.html</strong>.</p>
+          <p class="auth-note">Returning customers will be sent directly to <strong>dashboard.html</strong>.</p>
         </form>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ── SUPABASE CDN ── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const STORAGE_KEYS = {
-  users: "independenceUsers",
-  session: "independenceSession"
-};
+// ================================================================
+// INDEPENDENCE NZ — SUPABASE CONFIG
+// Replace these two values with your own from:
+// Supabase Dashboard > Settings > API
+// ================================================================
+const SUPABASE_URL  = 'https://bguflxzgzyderinbyupc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJndWZseHpnenlkZXJpbmJ5dXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NjYzMzAsImV4cCI6MjA5MjE0MjMzMH0.Lak_7ox-5E0wLrxtzpXOUZn-csL9JoYOMpq8j-H8Mhc';
 
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── FAQ ──────────────────────────────────────────────────────
 function faq(btn) {
   const item = btn.parentElement;
   const open = item.classList.contains('open');
@@ -1546,7 +1555,7 @@ function faq(btn) {
   if (!open) { item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
 }
 
-
+// ── SCROLL REVEAL ────────────────────────────────────────────
 const obs = new IntersectionObserver((entries) => {
   entries.forEach((en, i) => {
     if (en.isIntersecting) {
@@ -1557,13 +1566,15 @@ const obs = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
 
+// ── FIELD FOCUS ─────────────────────────────────────────────
 document.querySelectorAll('input, textarea, select').forEach(el => {
   el.addEventListener('focus', () => el.style.borderColor = 'var(--forest)');
   el.addEventListener('blur',  () => el.style.borderColor = 'var(--border-mid)');
 });
 
+// ── MOBILE NAV ──────────────────────────────────────────────
 function toggleMenu() {
-  const btn = document.getElementById('hamburger');
+  const btn  = document.getElementById('hamburger');
   const menu = document.getElementById('nav-mobile');
   const open = menu.classList.toggle('open');
   btn.classList.toggle('open', open);
@@ -1579,99 +1590,19 @@ document.addEventListener('click', function(e) {
   if (!nav.contains(e.target)) closeMenu();
 });
 
-function readUsers() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]');
-  } catch (error) {
-    return [];
-  }
-}
-
-function writeUsers(users) {
-  localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
-}
-
-function setSession(email) {
-  localStorage.setItem(STORAGE_KEYS.session, JSON.stringify({
-    email: email.toLowerCase(),
-    signedInAt: new Date().toISOString()
-  }));
-}
-
-function sampleCustomerData(name, email, phone, address, plan, town, assessmentType, bestTime, notes) {
-  return {
-    name,
-    email: email.toLowerCase(),
-    phone,
-    address,
-    town,
-    plan,
-    assessmentType,
-    bestTime,
-    intakeNotes: notes,
-    createdAt: new Date().toISOString(),
-    concierge: 'Mia Thompson',
-    familyContact: {
-      name: 'Add a family contact',
-      relation: 'Not yet provided',
-      phone: 'Update in dashboard'
-    },
-    notifications: [
-      {
-        icon: '✓',
-        title: 'Welcome to Independence',
-        detail: 'Your customer account is ready and your dashboard has been created.',
-        time: 'Just now'
-      }
-    ],
-    upcomingServices: [
-      {
-        id: crypto.randomUUID(),
-        service: plan,
-        date: 'Monday, 22 April',
-        time: '10:00am',
-        location: address,
-        provider: 'Anna R.',
-        status: 'Confirmed',
-        notes: 'Initial welcome visit and support review.'
-      }
-    ],
-    serviceHistory: [
-      {
-        id: crypto.randomUUID(),
-        service: 'Consultation call',
-        date: 'Today',
-        amount: '$0.00',
-        status: 'Completed'
-      }
-    ],
-    payments: [
-      {
-        id: crypto.randomUUID(),
-        service: plan + ' setup',
-        date: 'Today',
-        amount: '$85.00'
-      }
-    ],
-    reviews: [],
-    requests: []
-  };
-}
-
+// ── AUTH OVERLAY HELPERS ─────────────────────────────────────
 function openAuth(pane) {
   const overlay = document.getElementById('auth-overlay');
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   setAuthPane(pane || 'signup');
 }
-
 function closeAuth() {
   const overlay = document.getElementById('auth-overlay');
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
   clearAuthMessage();
 }
-
 function setAuthPane(pane) {
   document.querySelectorAll('.auth-tab').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.pane === pane + '-pane');
@@ -1681,86 +1612,131 @@ function setAuthPane(pane) {
   });
   clearAuthMessage();
 }
-
 function showAuthMessage(text, type) {
   const box = document.getElementById('auth-message');
   box.textContent = text;
   box.className = 'af-message show ' + (type === 'error' ? 'af-error' : 'af-success');
 }
-
 function clearAuthMessage() {
   const box = document.getElementById('auth-message');
   box.textContent = '';
   box.className = 'af-message';
 }
-
-document.getElementById('auth-overlay').addEventListener('click', function(event) {
-  if (event.target === event.currentTarget) closeAuth();
+document.getElementById('auth-overlay').addEventListener('click', function(e) {
+  if (e.target === e.currentTarget) closeAuth();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAuth();
 });
 
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') closeAuth();
-});
+// ── AUTH NOTE HELPER ─────────────────────────────────────────
+function setSubmitLoading(btn, loading, label) {
+  btn.disabled = loading;
+  btn.textContent = loading ? 'Please wait…' : label;
+}
 
-document.getElementById('signup-form').addEventListener('submit', function(event) {
-  event.preventDefault();
+// ── SIGN UP ──────────────────────────────────────────────────
+document.getElementById('signup-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
   clearAuthMessage();
-  const formData = new FormData(event.currentTarget);
-  const name = String(formData.get('name') || '').trim();
-  const email = String(formData.get('email') || '').trim().toLowerCase();
-  const phone = String(formData.get('phone') || '').trim();
-  const town = String(formData.get('town') || '').trim();
-  const plan = String(formData.get('plan') || '').trim();
-  const address = String(formData.get('address') || '').trim();
-  const assessmentType = String(formData.get('assessmentType') || '').trim();
-  const bestTime = String(formData.get('bestTime') || '').trim();
-  const notes = String(formData.get('notes') || '').trim();
-  const password = String(formData.get('password') || '');
 
-  if (!name || !email || !phone || !town || !plan || !address || !assessmentType || !bestTime || password.length < 6) {
-    showAuthMessage('Please complete every field and use a password with at least 6 characters.', 'error');
+  const fd           = new FormData(e.currentTarget);
+  const name         = (fd.get('name')         || '').trim();
+  const email        = (fd.get('email')         || '').trim().toLowerCase();
+  const phone        = (fd.get('phone')         || '').trim();
+  const town         = (fd.get('town')          || '').trim();
+  const plan         = (fd.get('plan')          || '').trim();
+  const address      = (fd.get('address')       || '').trim();
+  const assessmentType = (fd.get('assessmentType') || '').trim();
+  const bestTime     = (fd.get('bestTime')      || '').trim();
+  const notes        = (fd.get('notes')         || '').trim();
+  const password     = (fd.get('password')      || '');
+
+  if (!name || !email || !phone || !town || !plan || !address || !assessmentType || !bestTime) {
+    showAuthMessage('Please complete every required field.', 'error');
+    return;
+  }
+  if (password.length < 6) {
+    showAuthMessage('Please choose a password with at least 6 characters.', 'error');
     return;
   }
 
-  const users = readUsers();
-  if (users.find(user => user.email === email)) {
-    showAuthMessage('An account with that email already exists. Please log in instead.', 'error');
-    return;
-  }
+  const submitBtn = e.currentTarget.querySelector('button[type=submit]');
+  setSubmitLoading(submitBtn, true, 'Create account');
 
-  users.push({
+  const { data, error } = await sb.auth.signUp({
     email,
     password,
-    customer: sampleCustomerData(name, email, phone, address, plan, town, assessmentType, bestTime, notes)
+    options: {
+      data: {
+        full_name:       name,
+        phone,
+        address,
+        town,
+        plan,
+        assessment_type: assessmentType,
+        best_time:       bestTime,
+        intake_notes:    notes
+      }
+    }
   });
-  writeUsers(users);
-  setSession(email);
-  showAuthMessage('Account created. Redirecting to your dashboard now.', 'success');
-  window.setTimeout(function() {
-    window.location.href = 'dashboard-latest.html';
-  }, 700);
+
+  setSubmitLoading(submitBtn, false, 'Create account');
+
+  if (error) {
+    if (error.message.includes('already registered')) {
+      showAuthMessage('An account with that email already exists. Please log in instead.', 'error');
+    } else {
+      showAuthMessage(error.message, 'error');
+    }
+    return;
+  }
+
+  showAuthMessage('Account created! Taking you to your dashboard now.', 'success');
+  setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
 });
 
-document.getElementById('login-form').addEventListener('submit', function(event) {
-  event.preventDefault();
+// ── SIGN IN ──────────────────────────────────────────────────
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
   clearAuthMessage();
-  const formData = new FormData(event.currentTarget);
-  const email = String(formData.get('email') || '').trim().toLowerCase();
-  const password = String(formData.get('password') || '');
-  const users = readUsers();
-  const user = users.find(entry => entry.email === email && entry.password === password);
 
-  if (!user) {
+  const fd       = new FormData(e.currentTarget);
+  const email    = (fd.get('email')    || '').trim().toLowerCase();
+  const password = (fd.get('password') || '');
+
+  if (!email || !password) {
+    showAuthMessage('Please enter your email and password.', 'error');
+    return;
+  }
+
+  const submitBtn = e.currentTarget.querySelector('button[type=submit]');
+  setSubmitLoading(submitBtn, true, 'Log in to dashboard');
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+  setSubmitLoading(submitBtn, false, 'Log in to dashboard');
+
+  if (error) {
     showAuthMessage("We couldn't match that email and password. Please try again.", 'error');
     return;
   }
 
-  setSession(email);
-  showAuthMessage('Welcome back. Redirecting to your dashboard.', 'success');
-  window.setTimeout(function() {
-    window.location.href = 'dashboard-latest.html';
-  }, 600);
+  showAuthMessage('Welcome back! Taking you to your dashboard.', 'success');
+  setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
 });
+
+// ── CHECK SESSION — update nav if already logged in ──────────
+(async function() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    const loginBtn = document.querySelector('.nav-login');
+    if (loginBtn) {
+      loginBtn.textContent = 'My dashboard';
+      loginBtn.onclick = () => { window.location.href = 'dashboard.html'; };
+    }
+  }
+})();
 </script>
 </body>
 </html>
