@@ -1,1439 +1,1287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Independence | Customer Dashboard</title>
-  <meta
-    name="description"
-    content="Manage your Independence customer account, bookings, profile, service requests, reviews, and payment history."
-  >
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Serif+4:wght@300;400;500;600&display=swap"
-    rel="stylesheet"
-  >
-  <style>
-    :root {
-      --forest: #2d4a2d;
-      --forest-mid: #3d6b3d;
-      --forest-light: #edf3ed;
-      --forest-pale: #f4f8f4;
-      --gold: #b5813c;
-      --gold-light: #fdf4e7;
-      --cream: #faf7f2;
-      --white: #ffffff;
-      --stone: #3a3228;
-      --stone-mid: #6b5f52;
-      --stone-light: #a89880;
-      --border: #e2ddd6;
-      --border-mid: #c8bfb0;
-      --danger: #8f3535;
-      --success: #2f6b39;
-      --info: #1a4a7a;
-      --sidebar-w: 280px;
-      --nav-h: 74px;
-      --r: 16px;
-      --rl: 24px;
-      --shadow: 0 12px 36px rgba(45, 74, 45, 0.08);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Independence — Customer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:      #2d4a2d;
+  --forest-mid:  #3d6b3d;
+  --forest-light:#edf3ed;
+  --forest-pale: #f4f8f4;
+  --gold:        #b5813c;
+  --gold-light:  #fdf4e7;
+  --cream:       #faf7f2;
+  --white:       #ffffff;
+  --stone:       #3a3228;
+  --stone-mid:   #6b5f52;
+  --stone-light: #a89880;
+  --border:      #e2ddd6;
+  --border-mid:  #c8bfb0;
+  --danger:      #8f3535;
+  --success-col: #2f6b39;
+  --sidebar-w:   272px;
+  --nav-h:       70px;
+  --r:  16px;
+  --rl: 22px;
+  --shadow: 0 2px 16px rgba(45,74,45,.07);
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; scroll-behavior: smooth; }
+body {
+  font-family: "Source Serif 4", Georgia, serif;
+  background: var(--cream); color: var(--stone);
+  line-height: 1.72; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; }
 
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: "Source Serif 4", Georgia, serif;
-      background: var(--cream);
-      color: var(--stone);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    a { color: inherit; text-decoration: none; }
-    button, input, select, textarea { font: inherit; }
+/* ── LOADING SCREEN ── */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--white);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px;
+}
+#loading-screen .logo {
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem; font-weight: 700; color: var(--forest);
+}
+.spinner {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid var(--forest-light);
+  border-top-color: var(--forest);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    .hidden { display: none !important; }
+/* ── NOT SIGNED IN SCREEN ── */
+#not-signed-in {
+  display: none; min-height: 100vh;
+  place-items: center; padding: 32px;
+  background: linear-gradient(170deg, var(--white) 0%, var(--cream) 100%);
+}
+#not-signed-in.visible { display: grid; }
+.guard-card {
+  width: min(520px, 100%); background: var(--white);
+  border-radius: 28px; border: 1.5px solid var(--border);
+  box-shadow: 0 8px 40px rgba(45,74,45,.1);
+  padding: 48px 44px; text-align: center;
+}
+.guard-logo {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem; font-weight: 700; color: var(--forest);
+  margin-bottom: 24px;
+}
+.guard-card h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem; color: var(--stone);
+  margin-bottom: 12px; line-height: 1.2;
+}
+.guard-card p {
+  color: var(--stone-mid); font-size: 1rem;
+  line-height: 1.7; margin-bottom: 28px;
+}
+.guard-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-    .auth-guard {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-      background:
-        radial-gradient(circle at top right, rgba(237, 243, 237, 0.95), transparent 30%),
-        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,247,242,1));
-    }
-    .guard-card {
-      width: min(560px, 100%);
-      background: var(--white);
-      border-radius: 32px;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      padding: 34px;
-      text-align: center;
-    }
-    .guard-card h1 {
-      margin: 0 0 12px;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(2rem, 5vw, 3rem);
-    }
-    .guard-card p {
-      margin: 0 0 22px;
-      color: var(--stone-mid);
-      font-size: 1.02rem;
-    }
-    .guard-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; border: none; border-radius: 999px;
+  padding: 14px 26px; cursor: pointer; font-size: 1rem;
+  font-weight: 500; transition: all .2s; text-decoration: none;
+  min-height: 50px; white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary   { background: var(--forest); color: var(--white); box-shadow: 0 4px 16px rgba(45,74,45,.22); }
+.btn-primary:hover { background: #1f341f; }
+.btn-secondary { background: var(--gold-light); color: #7a5010; border: 1.5px solid #d8c090; }
+.btn-secondary:hover { background: var(--gold); color: var(--white); }
+.btn-outline   { background: transparent; color: var(--stone-mid); border: 1.5px solid var(--border-mid); }
+.btn-outline:hover { border-color: var(--forest); color: var(--forest); background: var(--forest-pale); }
+.btn-block { width: 100%; }
+.btn-sm { padding: 10px 18px; font-size: .9rem; min-height: 40px; }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: none;
-      border-radius: 999px;
-      padding: 13px 22px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-    }
-    .btn:hover { transform: translateY(-1px); }
-    .btn-primary {
-      background: var(--forest);
-      color: var(--white);
-    }
-    .btn-primary:hover { background: #1f341f; }
-    .btn-secondary {
-      background: var(--gold-light);
-      color: #7a5010;
-      border: 1px solid #d8c090;
-    }
-    .btn-secondary:hover { background: var(--gold); color: var(--white); }
-    .btn-outline {
-      background: transparent;
-      color: var(--stone-mid);
-      border: 1px solid var(--border-mid);
-    }
-    .btn-outline:hover {
-      border-color: var(--forest);
-      color: var(--forest);
-      background: var(--forest-pale);
-    }
-    .btn-block { width: 100%; }
+/* ── APP SHELL ── */
+#app { display: none; min-height: 100vh; }
+#app.visible { display: flex; }
 
-    .app {
-      display: none;
-      min-height: 100vh;
-    }
-    .app.active { display: flex; }
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w); background: var(--forest); color: var(--white);
+  position: fixed; inset: 0 auto 0 0;
+  display: flex; flex-direction: column; z-index: 30;
+  transition: transform .25s ease;
+  box-shadow: 2px 0 20px rgba(45,74,45,.15);
+}
+.sidebar.hidden-mobile { transform: translateX(-100%); }
+.sidebar-brand {
+  padding: 28px 24px 22px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  font-family: "Playfair Display", serif;
+  font-size: 1.35rem; font-weight: 700;
+}
+.sidebar-brand small {
+  display: block; margin-top: 3px;
+  font-family: "Source Serif 4", serif;
+  font-size: .58rem; letter-spacing: .16em;
+  text-transform: uppercase; color: rgba(255,255,255,.45);
+  font-weight: 400;
+}
+.sidebar-user {
+  display: flex; align-items: center; gap: 13px;
+  padding: 18px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.avatar {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: rgba(255,255,255,.16);
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+}
+.sidebar-user-name { font-size: 1rem; font-weight: 500; display: block; }
+.sidebar-user-sub  { font-size: .82rem; color: rgba(255,255,255,.55); }
+.nav-group { padding: 16px 14px; flex: 1; }
+.nav-section-label {
+  font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.38); padding: 0 12px; margin: 12px 0 6px;
+  display: block;
+}
+.nav-btn {
+  width: 100%; border: none; background: transparent;
+  color: rgba(255,255,255,.72); display: flex; align-items: center;
+  gap: 11px; padding: 13px 14px; border-radius: 11px;
+  cursor: pointer; text-align: left; font-size: 1rem;
+  transition: background .18s, color .18s; margin-bottom: 2px;
+}
+.nav-btn:hover, .nav-btn.active {
+  background: rgba(255,255,255,.13); color: var(--white);
+}
+.nav-icon { font-size: 1.05rem; width: 22px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; padding: 2px 8px; border-radius: 999px;
+  background: var(--gold); color: var(--white);
+  font-size: .72rem; font-weight: 600;
+}
+.sidebar-footer {
+  padding: 18px 22px 24px;
+  border-top: 1px solid rgba(255,255,255,.1);
+  display: flex; flex-direction: column; gap: 10px;
+}
 
-    .sidebar {
-      width: var(--sidebar-w);
-      background: var(--forest);
-      color: var(--white);
-      position: fixed;
-      inset: 0 auto 0 0;
-      display: flex;
-      flex-direction: column;
-      z-index: 30;
-      transform: translateX(0);
-      transition: transform 0.25s ease;
-    }
-    .sidebar.mobile-hidden {
-      transform: translateX(-100%);
-    }
-    .sidebar-head {
-      padding: 28px 24px 22px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    }
-    .brand {
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.35rem;
-      font-weight: 700;
-      line-height: 1.1;
-    }
-    .brand small {
-      display: block;
-      margin-top: 4px;
-      font-size: 0.62rem;
-      font-family: "Source Serif 4", Georgia, serif;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.5);
-    }
-    .sidebar-user {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 18px 24px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.14);
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.15rem;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-    .sidebar-user strong {
-      display: block;
-      font-size: 0.98rem;
-      font-weight: 600;
-    }
-    .sidebar-user span {
-      color: rgba(255, 255, 255, 0.58);
-      font-size: 0.82rem;
-    }
-    .nav-group {
-      padding: 18px 14px;
-      display: grid;
-      gap: 6px;
-    }
-    .nav-label {
-      padding: 0 12px;
-      margin: 4px 0 8px;
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.38);
-    }
-    .nav-btn {
-      width: 100%;
-      border: none;
-      background: transparent;
-      color: rgba(255, 255, 255, 0.72);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      cursor: pointer;
-      text-align: left;
-      transition: background 0.18s ease, color 0.18s ease;
-    }
-    .nav-btn:hover,
-    .nav-btn.active {
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--white);
-    }
-    .nav-badge {
-      margin-left: auto;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--gold);
-      color: var(--white);
-      font-size: 0.72rem;
-    }
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 20px 24px 26px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      display: grid;
-      gap: 10px;
-    }
-    .sidebar-footer button,
-    .sidebar-footer a {
-      justify-content: center;
-    }
+/* ── MAIN SHELL ── */
+.main-shell {
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+  min-height: 100vh; display: flex; flex-direction: column;
+}
 
-    .main-shell {
-      margin-left: var(--sidebar-w);
-      width: calc(100% - var(--sidebar-w));
-      min-height: 100vh;
-    }
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 25;
-      height: var(--nav-h);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 0 28px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .mobile-menu {
-      display: none;
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--white);
-      cursor: pointer;
-    }
-    .topbar h1 {
-      margin: 0;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.4rem;
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      padding: 9px 14px;
-      background: var(--forest-pale);
-      color: var(--forest);
-      border: 1px solid #c0d4c0;
-      font-size: 0.92rem;
-    }
-    .pill::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #65a965;
-    }
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 25;
+  height: var(--nav-h);
+  background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid var(--border);
+  box-shadow: 0 1px 8px rgba(45,74,45,.05);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; gap: 16px;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.hamburger {
+  display: none; width: 40px; height: 40px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  background: var(--white); cursor: pointer;
+  font-size: 1.1rem; align-items: center; justify-content: center;
+}
+.topbar-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem; font-weight: 700; color: var(--stone);
+}
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-user-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--forest-pale); border: 1.5px solid #c0d4c0;
+  border-radius: 999px; padding: 7px 14px;
+  font-size: .88rem; color: var(--forest);
+}
+.topbar-user-pill::before {
+  content: ""; width: 8px; height: 8px;
+  border-radius: 50%; background: #5fbb5f; flex-shrink: 0;
+}
 
-    .content {
-      padding: 28px;
-    }
-    .page {
-      display: none;
-    }
-    .page.active {
-      display: block;
-    }
+/* ── CONTENT ── */
+.content { padding: 32px; flex: 1; }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn .25s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
 
-    .welcome-banner {
-      background:
-        radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 36%),
-        linear-gradient(135deg, #2d4a2d, #456f45);
-      border-radius: 28px;
-      padding: 30px 30px 28px;
-      color: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      box-shadow: 0 18px 38px rgba(45, 74, 45, 0.18);
-    }
-    .welcome-banner h2 {
-      margin: 0 0 8px;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(1.8rem, 4vw, 2.4rem);
-    }
-    .welcome-banner p {
-      margin: 0;
-      max-width: 700px;
-      color: rgba(255, 255, 255, 0.74);
-    }
-    .concierge {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 18px;
-      padding: 14px 18px;
-      min-width: 180px;
-      text-align: center;
-    }
-    .concierge span {
-      display: block;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-    .concierge strong {
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.15rem;
-    }
+/* ── NOTICE ── */
+.notice {
+  margin-bottom: 20px; padding: 14px 18px;
+  border-radius: 14px; font-size: .97rem;
+  display: none; line-height: 1.6;
+}
+.notice.show { display: block; }
+.notice.success { background: #eef8ef; border: 1.5px solid #b7dbbd; color: var(--success-col); }
+.notice.error   { background: #fdf0ee; border: 1.5px solid #e9b8b0; color: var(--danger); }
 
-    .grid-4,
-    .grid-2,
-    .dashboard-grid {
-      display: grid;
-      gap: 20px;
-    }
-    .grid-4 {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      margin: 24px 0;
-    }
-    .grid-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .dashboard-grid {
-      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.8fr);
-    }
+/* ── WELCOME BANNER ── */
+.welcome-banner {
+  background: linear-gradient(135deg, #2d4a2d 0%, #3a6040 100%);
+  border-radius: 24px; padding: 32px 36px; color: var(--white);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; box-shadow: 0 10px 36px rgba(45,74,45,.18);
+  position: relative; overflow: hidden; margin-bottom: 28px;
+}
+.welcome-banner::before {
+  content: ""; position: absolute; top: -60px; right: -60px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: rgba(255,255,255,.05); pointer-events: none;
+}
+.welcome-banner h2 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 6px; line-height: 1.2;
+}
+.welcome-banner p { color: rgba(255,255,255,.72); font-size: .97rem; }
+.concierge-card {
+  background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 16px; padding: 16px 20px; text-align: center; flex-shrink: 0;
+}
+.concierge-card .label {
+  font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); display: block; margin-bottom: 5px;
+}
+.concierge-card .name {
+  font-family: "Playfair Display", serif; font-size: 1.1rem; display: block;
+}
+.concierge-card .avail {
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-size: .78rem; color: rgba(255,255,255,.6); margin-top: 4px;
+}
+.concierge-card .avail::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; background: #7bc47b;
+}
 
-    .card {
-      background: var(--white);
-      border-radius: var(--rl);
-      border: 1px solid var(--border);
-      padding: 24px;
-      box-shadow: var(--shadow);
-    }
-    .card-title {
-      margin: 0 0 16px;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.35rem;
-    }
-    .card-copy {
-      margin: 0 0 18px;
-      color: var(--stone-mid);
-    }
-    .stat strong {
-      display: block;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 2rem;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .stat span {
-      color: var(--stone-light);
-      font-size: 0.92rem;
-    }
+/* ── STAT CARDS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 18px; margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--rl); padding: 22px 24px; box-shadow: var(--shadow);
+}
+.stat-card .stat-icon { font-size: 1.4rem; margin-bottom: 10px; }
+.stat-card .stat-val {
+  font-family: "Playfair Display", serif;
+  font-size: 2.1rem; font-weight: 700; line-height: 1;
+  margin-bottom: 6px; color: var(--stone);
+}
+.stat-card .stat-label { font-size: .9rem; color: var(--stone-light); }
 
-    .list {
-      display: grid;
-      gap: 14px;
-    }
-    .item {
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,1), rgba(250,247,242,0.6));
-    }
-    .item-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .item-title {
-      margin: 0;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.2rem;
-    }
-    .item-subtitle {
-      color: var(--stone-mid);
-      font-size: 0.95rem;
-    }
-    .meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 18px;
-      color: var(--stone-mid);
-      font-size: 0.93rem;
-    }
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 11px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-    .status::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-    .status.confirmed {
-      background: var(--forest-light);
-      color: var(--forest);
-    }
-    .status.confirmed::before { background: #4b8f4b; }
-    .status.pending {
-      background: var(--gold-light);
-      color: #7a5010;
-    }
-    .status.pending::before { background: var(--gold); }
-    .status.completed {
-      background: #ece8e3;
-      color: var(--stone-mid);
-    }
-    .status.completed::before { background: var(--stone-light); }
+/* ── DASHBOARD GRID ── */
+.dash-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 22px; }
 
-    .notice {
-      margin-bottom: 18px;
-      padding: 13px 15px;
-      border-radius: 14px;
-      font-size: 0.95rem;
-      display: none;
-    }
-    .notice.visible { display: block; }
-    .notice.success {
-      background: #eef8ef;
-      border: 1px solid #b7dbbd;
-      color: var(--success);
-    }
-    .notice.error {
-      background: #fdf0ee;
-      border: 1px solid #e9b8b0;
-      color: var(--danger);
-    }
+/* ── CARDS ── */
+.card {
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--rl); padding: 26px; box-shadow: var(--shadow);
+}
+.card-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.3rem; font-weight: 700; color: var(--stone);
+  margin-bottom: 16px;
+}
+.card-sub { font-size: .95rem; color: var(--stone-light); margin-bottom: 18px; line-height: 1.6; }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-    .field {
-      margin-bottom: 16px;
-    }
-    .field label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 0.88rem;
-      color: var(--stone-light);
-    }
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      padding: 14px 15px;
-      border-radius: 12px;
-      border: 1px solid var(--border-mid);
-      outline: none;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      background: var(--white);
-    }
-    .field textarea {
-      resize: vertical;
-      min-height: 110px;
-    }
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--forest);
-      box-shadow: 0 0 0 3px rgba(61, 107, 61, 0.12);
-    }
+/* ── SERVICE ITEMS ── */
+.service-item {
+  border: 1.5px solid var(--border); border-radius: 16px;
+  padding: 18px 20px; margin-bottom: 14px;
+  background: var(--white); transition: border-color .2s;
+}
+.service-item:last-child { margin-bottom: 0; }
+.service-item:hover { border-color: var(--forest-mid); }
+.service-item-head {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px; margin-bottom: 10px;
+}
+.service-item-name {
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--stone); margin-bottom: 2px;
+}
+.service-item-sub { font-size: .9rem; color: var(--stone-mid); }
+.service-item-meta {
+  display: flex; flex-wrap: wrap; gap: 10px 18px;
+  font-size: .9rem; color: var(--stone-mid);
+}
+.service-item-notes {
+  margin-top: 10px; font-size: .88rem;
+  color: var(--stone-light); font-style: italic; line-height: 1.6;
+}
 
-    .empty-state {
-      padding: 18px;
-      border: 1px dashed var(--border-mid);
-      border-radius: 18px;
-      color: var(--stone-light);
-      text-align: center;
-      background: rgba(255,255,255,0.72);
-    }
-    .mini-list {
-      display: grid;
-      gap: 12px;
-    }
-    .mini-item {
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: var(--cream);
-      border: 1px solid var(--border);
-    }
-    .mini-item strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-    .mini-item span {
-      color: var(--stone-mid);
-      font-size: 0.92rem;
-    }
+/* ── STATUS PILLS ── */
+.status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 999px;
+  font-size: .8rem; font-weight: 600; flex-shrink: 0;
+}
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+.status-confirmed { background: var(--forest-light); color: var(--forest); }
+.status-confirmed::before { background: #4b8f4b; }
+.status-pending   { background: var(--gold-light); color: #7a5010; }
+.status-pending::before { background: var(--gold); }
+.status-completed { background: #ece8e3; color: var(--stone-mid); }
+.status-completed::before { background: var(--stone-light); }
 
-    .stars {
-      display: flex;
-      gap: 8px;
-      margin: 12px 0 16px;
-    }
-    .star {
-      border: none;
-      background: transparent;
-      font-size: 1.8rem;
-      color: var(--border-mid);
-      cursor: pointer;
-      padding: 0;
-      line-height: 1;
-    }
-    .star.active { color: var(--gold); }
+/* ── QUICK ACTIONS ── */
+.quick-actions { display: flex; flex-direction: column; gap: 10px; }
 
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(28, 23, 18, 0.38);
-      display: none;
-      z-index: 20;
-    }
-    .overlay.active { display: block; }
+/* ── MINI LIST (notifications) ── */
+.mini-list { display: flex; flex-direction: column; gap: 10px; }
+.mini-item {
+  padding: 13px 16px; border-radius: 14px;
+  background: var(--cream); border: 1.5px solid var(--border);
+}
+.mini-item strong { display: block; font-size: .97rem; margin-bottom: 3px; }
+.mini-item span   { font-size: .88rem; color: var(--stone-mid); line-height: 1.5; }
 
-    @media (max-width: 1150px) {
-      .grid-4,
-      .grid-2,
-      .dashboard-grid,
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+/* ── EMPTY STATE ── */
+.empty-state {
+  padding: 32px 20px; text-align: center;
+  border: 1.5px dashed var(--border-mid); border-radius: 16px;
+  color: var(--stone-mid); font-size: .97rem; line-height: 1.65;
+}
 
-      .welcome-banner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
+/* ── FORMS ── */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block; margin-bottom: 8px;
+  font-size: .95rem; color: var(--stone-mid); font-weight: 400;
+}
+.field input, .field select, .field textarea {
+  width: 100%; padding: 13px 16px; border-radius: 13px;
+  border: 1.5px solid var(--border-mid); background: var(--white);
+  color: var(--stone); outline: none; font-size: 1rem; min-height: 50px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field textarea { min-height: 110px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--forest);
+  box-shadow: 0 0 0 4px rgba(61,107,61,.1);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-    @media (max-width: 920px) {
-      .mobile-menu {
-        display: inline-grid;
-        place-items: center;
-      }
+/* ── PAYMENT ITEMS ── */
+.payment-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid var(--border); gap: 12px;
+}
+.payment-item:last-child { border-bottom: none; }
+.payment-desc { font-size: .97rem; color: var(--stone); }
+.payment-date { font-size: .85rem; color: var(--stone-light); margin-top: 2px; }
+.payment-right { text-align: right; flex-shrink: 0; }
+.payment-amount {
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--stone);
+}
 
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .sidebar.open {
-        transform: translateX(0);
-      }
+/* ── STARS ── */
+.stars { display: flex; gap: 8px; margin: 10px 0 18px; }
+.star {
+  border: none; background: transparent;
+  font-size: 2.2rem; color: var(--border-mid);
+  cursor: pointer; padding: 2px; line-height: 1;
+  transition: color .15s; -webkit-tap-highlight-color: transparent;
+}
+.star.active { color: var(--gold); }
 
-      .main-shell {
-        margin-left: 0;
-        width: 100%;
-      }
-    }
+/* ── PAYMENT SUMMARY BOX ── */
+.pay-summary {
+  background: var(--forest); border-radius: 18px;
+  padding: 24px 26px; color: white; margin-bottom: 22px;
+}
+.pay-summary .label {
+  font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 6px;
+}
+.pay-summary .amount {
+  font-family: "Playfair Display", serif;
+  font-size: 2.2rem; font-weight: 700; line-height: 1;
+}
+.pay-summary .sub { font-size: .88rem; color: rgba(255,255,255,.6); margin-top: 4px; }
 
-    @media (max-width: 700px) {
-      .topbar,
-      .content {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
+/* ── MOBILE OVERLAY ── */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(28,23,18,.4); z-index: 20;
+}
+.overlay.active { display: block; }
 
-      .guard-card,
-      .card {
-        padding: 20px;
-      }
+/* ── HISTORY SECTION ── */
+.section-title-row {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 20px;
+}
 
-      .topbar-right {
-        display: none;
-      }
-
-      .guard-actions,
-      .item-head {
-        flex-direction: column;
-        align-items: stretch;
-      }
-    }
-  </style>
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .stats-grid   { grid-template-columns: repeat(2, 1fr); }
+  .dash-grid    { grid-template-columns: 1fr; }
+  .form-row     { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-shell   { margin-left: 0; width: 100%; }
+  .hamburger    { display: flex; }
+}
+@media (max-width: 600px) {
+  .topbar    { padding: 0 18px; }
+  .content   { padding: 20px 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .welcome-banner { flex-direction: column; padding: 24px 22px; }
+  .concierge-card { width: 100%; }
+  .topbar-right { display: none; }
+}
+</style>
 </head>
 <body>
-  <div id="auth-guard" class="auth-guard">
-    <div class="guard-card">
-      <h1>Customer login required</h1>
-      <p>
-        This dashboard opens once a customer has signed up or logged in from the homepage.
-        If you are testing the flow, create an account first and you will be brought straight back here.
-      </p>
-      <div class="guard-actions">
-        <a class="btn btn-primary" href="index.html">Go to homepage</a>
-        <button id="demo-fill" class="btn btn-secondary" type="button">Create demo customer</button>
-      </div>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="logo">Independence</div>
+  <div class="spinner"></div>
+</div>
+
+<!-- NOT SIGNED IN -->
+<div id="not-signed-in">
+  <div class="guard-card">
+    <div class="guard-logo">Independence</div>
+    <h1>Welcome back</h1>
+    <p>Please sign in from the Independence website to access your personal dashboard.</p>
+    <div class="guard-btns">
+      <a class="btn btn-primary" href="index.html">Go to Independence</a>
     </div>
   </div>
+</div>
 
-  <div id="mobile-overlay" class="overlay"></div>
+<!-- MOBILE OVERLAY -->
+<div id="mobile-overlay" class="overlay"></div>
 
-  <div id="dashboard-app" class="app" aria-live="polite">
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar-head">
-        <div class="brand">
-          Independence
-          <small>Customer Account</small>
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      Independence
+      <small>My Account</small>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar" id="user-avatar">—</div>
+      <div>
+        <span class="sidebar-user-name" id="user-name">Loading…</span>
+        <span class="sidebar-user-sub"  id="user-plan">Independence client</span>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-btn active" data-page="overview">
+        <span class="nav-icon">🏠</span> Overview
+      </button>
+      <button class="nav-btn" data-page="services">
+        <span class="nav-icon">📅</span> My services
+        <span class="nav-badge" id="badge-services">0</span>
+      </button>
+      <button class="nav-btn" data-page="history">
+        <span class="nav-icon">📋</span> Service history
+      </button>
+      <button class="nav-btn" data-page="request">
+        <span class="nav-icon">✉</span> Request support
+      </button>
+      <button class="nav-btn" data-page="payments">
+        <span class="nav-icon">💳</span> Payments
+      </button>
+      <button class="nav-btn" data-page="reviews">
+        <span class="nav-icon">⭐</span> Leave a review
+      </button>
+      <span class="nav-section-label">My account</span>
+      <button class="nav-btn" data-page="profile">
+        <span class="nav-icon">👤</span> My profile
+      </button>
+      <button class="nav-btn" data-page="family">
+        <span class="nav-icon">👨‍👩‍👧</span> Family contact
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <a class="btn btn-outline btn-sm" href="index.html" style="justify-content:center;">Independence website</a>
+      <button class="btn btn-secondary btn-sm" id="logout-btn" style="justify-content:center;">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-shell">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
+        <div class="topbar-title" id="page-title">Overview</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-user-pill" id="topbar-name">My account</div>
+        <button class="btn btn-primary btn-sm" data-page="request">📋 Request a service</button>
+      </div>
+    </header>
+
+    <!-- PAGES -->
+    <main class="content">
+      <div class="notice" id="notice"></div>
+
+      <!-- ══ OVERVIEW ══ -->
+      <section class="page active" id="page-overview">
+        <div class="welcome-banner">
+          <div>
+            <h2 id="welcome-name">Good day 🌿</h2>
+            <p id="welcome-sub">Here is everything about your Independence services in one place.</p>
+          </div>
+          <div class="concierge-card">
+            <span class="label">Your concierge</span>
+            <span class="name" id="concierge-name">Mia Thompson</span>
+            <div class="avail">Available Mon–Sat</div>
+          </div>
         </div>
-      </div>
 
-      <div class="sidebar-user">
-        <div id="avatar" class="avatar">I</div>
-        <div>
-          <strong id="sidebar-name">Customer</strong>
-          <span id="sidebar-plan">Support plan</span>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-val" id="stat-upcoming">0</div>
+            <div class="stat-label">Upcoming services</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-val" id="stat-completed">0</div>
+            <div class="stat-label">Completed visits</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💳</div>
+            <div class="stat-val" id="stat-billed">$0.00</div>
+            <div class="stat-label">Total paid</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✉</div>
+            <div class="stat-val" id="stat-requests">0</div>
+            <div class="stat-label">Open requests</div>
+          </div>
         </div>
-      </div>
 
-      <div class="nav-group">
-        <div class="nav-label">Workspace</div>
-        <button class="nav-btn active" type="button" data-page="overview">
-          <span>Overview</span>
-        </button>
-        <button class="nav-btn" type="button" data-page="services">
-          <span>Upcoming services</span>
-          <span id="service-count" class="nav-badge">0</span>
-        </button>
-        <button class="nav-btn" type="button" data-page="requests">
-          <span>Request support</span>
-        </button>
-        <button class="nav-btn" type="button" data-page="payments">
-          <span>Payments</span>
-        </button>
-        <button class="nav-btn" type="button" data-page="reviews">
-          <span>Reviews</span>
-        </button>
-      </div>
-
-      <div class="nav-group">
-        <div class="nav-label">Account</div>
-        <button class="nav-btn" type="button" data-page="profile">
-          <span>Profile</span>
-        </button>
-        <button class="nav-btn" type="button" data-page="family">
-          <span>Family contact</span>
-        </button>
-      </div>
-
-      <div class="sidebar-footer">
-        <a class="btn btn-outline" href="index.html">Public site</a>
-        <button id="logout-button" class="btn btn-secondary" type="button">Log out</button>
-      </div>
-    </aside>
-
-    <div class="main-shell">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button id="mobile-menu-button" class="mobile-menu" type="button" aria-label="Toggle menu">☰</button>
-          <h1 id="page-title">Overview</h1>
-        </div>
-        <div class="topbar-right">
-          <div class="pill">Dashboard saved in your browser</div>
-          <button class="btn btn-primary" type="button" data-page-jump="requests">Book support</button>
-        </div>
-      </header>
-
-      <main class="content">
-        <div id="notice" class="notice" aria-live="polite"></div>
-
-        <section id="page-overview" class="page active">
-          <div class="welcome-banner">
-            <div>
-              <h2 id="welcome-heading">Welcome back</h2>
-              <p id="welcome-copy">Your customer dashboard keeps upcoming visits, account details, and family information in one place.</p>
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-title">Next service</div>
+            <div id="next-service-content"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div class="card">
+              <div class="card-title">Notifications</div>
+              <div id="notifications-content"></div>
             </div>
-            <div class="concierge">
-              <span>Dedicated concierge</span>
-              <strong id="concierge-name">Mia Thompson</strong>
-            </div>
-          </div>
-
-          <div class="grid-4">
-            <article class="card stat">
-              <strong id="stat-upcoming">0</strong>
-              <span>Upcoming services</span>
-            </article>
-            <article class="card stat">
-              <strong id="stat-history">0</strong>
-              <span>Completed visits</span>
-            </article>
-            <article class="card stat">
-              <strong id="stat-payments">$0.00</strong>
-              <span>Total billed</span>
-            </article>
-            <article class="card stat">
-              <strong id="stat-requests">0</strong>
-              <span>Open requests</span>
-            </article>
-          </div>
-
-          <div class="dashboard-grid">
-            <article class="card">
-              <h2 class="card-title">Next service</h2>
-              <div id="next-service"></div>
-            </article>
-
-            <div class="grid-2">
-              <article class="card">
-                <h2 class="card-title">Recent notifications</h2>
-                <div id="notification-list" class="mini-list"></div>
-              </article>
-              <article class="card">
-                <h2 class="card-title">Quick actions</h2>
-                <div class="mini-list">
-                  <button class="btn btn-primary btn-block" type="button" data-page-jump="requests">Request another service</button>
-                  <button class="btn btn-outline btn-block" type="button" data-page-jump="profile">Update profile</button>
-                  <button class="btn btn-outline btn-block" type="button" data-page-jump="reviews">Leave a review</button>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section id="page-services" class="page">
-          <article class="card">
-            <h2 class="card-title">Upcoming services</h2>
-            <p class="card-copy">Review confirmed visits, provider notes, and where support has been arranged.</p>
-            <div id="services-list" class="list"></div>
-          </article>
-        </section>
-
-        <section id="page-requests" class="page">
-          <div class="grid-2">
-            <article class="card">
-              <h2 class="card-title">Request support</h2>
-              <p class="card-copy">Customers can submit a new service request directly from this page.</p>
-              <form id="request-form">
-                <div class="field">
-                  <label for="request-service">Service type</label>
-                  <select id="request-service" name="service" required>
-                    <option value="Companion visit">Companion visit</option>
-                    <option value="Transport and errands">Transport and errands</option>
-                    <option value="Meal preparation">Meal preparation</option>
-                    <option value="Household help">Household help</option>
-                    <option value="Wellbeing check-in">Wellbeing check-in</option>
-                  </select>
-                </div>
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="request-date">Preferred date</label>
-                    <input id="request-date" name="date" type="date" required>
-                  </div>
-                  <div class="field">
-                    <label for="request-time">Preferred time</label>
-                    <input id="request-time" name="time" type="time" required>
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="request-notes">Notes</label>
-                  <textarea id="request-notes" name="notes" placeholder="Add any preferences, home access notes, or support details."></textarea>
-                </div>
-                <button class="btn btn-primary btn-block" type="submit">Submit request</button>
-              </form>
-            </article>
-
-            <article class="card">
-              <h2 class="card-title">Open requests</h2>
-              <p class="card-copy">New requests appear here immediately and are also shown in your overview stats.</p>
-              <div id="request-list" class="list"></div>
-            </article>
-          </div>
-        </section>
-
-        <section id="page-payments" class="page">
-          <div class="grid-2">
-            <article class="card">
-              <h2 class="card-title">Payment summary</h2>
-              <div class="mini-list">
-                <div class="mini-item">
-                  <strong id="payment-plan">Support plan</strong>
-                  <span>Saved from customer signup</span>
-                </div>
-                <div class="mini-item">
-                  <strong id="payment-total">$0.00 billed</strong>
-                  <span>Total across current saved payment history</span>
-                </div>
-                <div class="mini-item">
-                  <strong>Stored payment view</strong>
-                  <span>Static sites cannot process real payments, but this keeps invoices visible for the customer.</span>
-                </div>
+            <div class="card">
+              <div class="card-title">Quick actions</div>
+              <div class="quick-actions">
+                <button class="btn btn-primary btn-block" data-page="request">📋 Request a service</button>
+                <button class="btn btn-outline btn-block" data-page="services">📅 View my services</button>
+                <button class="btn btn-outline btn-block" data-page="reviews">⭐ Leave a review</button>
               </div>
-            </article>
-
-            <article class="card">
-              <h2 class="card-title">Payment history</h2>
-              <div id="payments-list" class="list"></div>
-            </article>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="page-reviews" class="page">
-          <div class="grid-2">
-            <article class="card">
-              <h2 class="card-title">Leave a review</h2>
-              <form id="review-form">
-                <div class="field">
-                  <label for="review-service">Service</label>
-                  <select id="review-service" name="service" required></select>
-                </div>
-                <div>
-                  <label style="display:block;margin-bottom:8px;color:var(--stone-light);font-size:0.88rem;">Rating</label>
-                  <div id="star-picker" class="stars" aria-label="Review rating"></div>
-                </div>
-                <div class="field">
-                  <label for="review-text">Feedback</label>
-                  <textarea id="review-text" name="text" placeholder="Share what worked well and any suggestions for the team." required></textarea>
-                </div>
-                <button class="btn btn-primary btn-block" type="submit">Save review</button>
-              </form>
-            </article>
-
-            <article class="card">
-              <h2 class="card-title">Saved reviews</h2>
-              <div id="reviews-list" class="list"></div>
-            </article>
+      <!-- ══ MY SERVICES (upcoming) ══ -->
+      <section class="page" id="page-services">
+        <div class="card">
+          <div class="section-title-row">
+            <div class="card-title" style="margin:0;">My upcoming services</div>
           </div>
-        </section>
+          <p class="card-sub">Your confirmed and scheduled visits are shown below. Contact us if anything needs changing.</p>
+          <div id="services-content"></div>
+        </div>
+      </section>
 
-        <section id="page-profile" class="page">
-          <article class="card">
-            <h2 class="card-title">Profile details</h2>
-            <p class="card-copy">These values come from signup and can be updated by the customer here.</p>
-            <form id="profile-form">
-              <div class="form-grid">
-                <div class="field">
-                  <label for="profile-name">Full name</label>
-                  <input id="profile-name" name="name" required>
-                </div>
-                <div class="field">
-                  <label for="profile-phone">Phone number</label>
-                  <input id="profile-phone" name="phone" type="tel" required>
-                </div>
+      <!-- ══ SERVICE HISTORY ══ -->
+      <section class="page" id="page-history">
+        <div class="card">
+          <div class="card-title">Service history</div>
+          <p class="card-sub">A record of all completed visits and support sessions.</p>
+          <div id="history-content"></div>
+        </div>
+      </section>
+
+      <!-- ══ REQUEST SUPPORT ══ -->
+      <section class="page" id="page-request">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+          <div class="card">
+            <div class="card-title">Request a service</div>
+            <p class="card-sub">Tell us what you need and when. Your Independence team will be in touch to confirm.</p>
+            <form id="request-form">
+              <div class="field">
+                <label for="req-service">What type of support do you need?</label>
+                <select id="req-service" name="service" required>
+                  <option value="">Please select…</option>
+                  <option>House cleaning</option>
+                  <option>Gardening &amp; lawns</option>
+                  <option>Home maintenance</option>
+                  <option>Transport to appointment</option>
+                  <option>Meal preparation</option>
+                  <option>Fitness &amp; personal training</option>
+                  <option>Pet assistance</option>
+                  <option>Companion visit</option>
+                  <option>Other — please describe in notes</option>
+                </select>
               </div>
-              <div class="form-grid">
+              <div class="form-row">
                 <div class="field">
-                  <label for="profile-email">Email address</label>
-                  <input id="profile-email" name="email" type="email" required>
+                  <label for="req-date">Preferred date</label>
+                  <input id="req-date" name="date" type="date" required>
                 </div>
                 <div class="field">
-                  <label for="profile-plan">Support plan</label>
-                  <select id="profile-plan" name="plan" required>
-                    <option value="Companion Care">Companion Care</option>
-                    <option value="Daily Living Support">Daily Living Support</option>
-                    <option value="Family Oversight">Family Oversight</option>
+                  <label for="req-time">Preferred time</label>
+                  <select id="req-time" name="time" required>
+                    <option value="">Please select…</option>
+                    <option value="08:00">Morning — 8:00am</option>
+                    <option value="09:00">Morning — 9:00am</option>
+                    <option value="10:00">Morning — 10:00am</option>
+                    <option value="11:00">Morning — 11:00am</option>
+                    <option value="12:00">Midday — 12:00pm</option>
+                    <option value="13:00">Afternoon — 1:00pm</option>
+                    <option value="14:00">Afternoon — 2:00pm</option>
+                    <option value="15:00">Afternoon — 3:00pm</option>
+                    <option value="16:00">Late afternoon — 4:00pm</option>
                   </select>
                 </div>
               </div>
               <div class="field">
-                <label for="profile-address">Home address</label>
-                <input id="profile-address" name="address" required>
+                <label for="req-notes">Anything else we should know? (optional)</label>
+                <textarea id="req-notes" name="notes" placeholder="Any preferences, access details, or special requirements."></textarea>
               </div>
-              <button class="btn btn-primary" type="submit">Save profile changes</button>
+              <button class="btn btn-primary btn-block" type="submit">Send my request</button>
             </form>
-          </article>
-        </section>
-
-        <section id="page-family" class="page">
-          <div class="grid-2">
-            <article class="card">
-              <h2 class="card-title">Family contact</h2>
-              <p class="card-copy">Store the person who should receive updates or be contacted in an emergency.</p>
-              <form id="family-form">
-                <div class="field">
-                  <label for="family-name">Contact name</label>
-                  <input id="family-name" name="name" required>
-                </div>
-                <div class="form-grid">
-                  <div class="field">
-                    <label for="family-relation">Relationship</label>
-                    <input id="family-relation" name="relation" required>
-                  </div>
-                  <div class="field">
-                    <label for="family-phone">Phone</label>
-                    <input id="family-phone" name="phone" type="tel" required>
-                  </div>
-                </div>
-                <button class="btn btn-primary" type="submit">Save family contact</button>
-              </form>
-            </article>
-
-            <article class="card">
-              <h2 class="card-title">Saved contact</h2>
-              <div id="family-summary" class="mini-list"></div>
-            </article>
           </div>
-        </section>
-      </main>
-    </div>
+          <div class="card">
+            <div class="card-title">Your open requests</div>
+            <p class="card-sub">We will contact you to confirm each request within a few hours.</p>
+            <div id="requests-content"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PAYMENTS ══ -->
+      <section class="page" id="page-payments">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+          <div>
+            <div class="pay-summary">
+              <div class="label">Total paid to Independence</div>
+              <div class="amount" id="pay-total">$0.00</div>
+              <div class="sub">All payments are made securely to Independence</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Account details</div>
+              <div class="field" style="margin-bottom:8px;">
+                <label>Support plan</label>
+                <div id="pay-plan" style="padding:12px 0;font-size:1rem;color:var(--stone);font-weight:500;">—</div>
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Outstanding balance</label>
+                <div id="pay-outstanding" style="padding:12px 0;font-size:1.2rem;color:var(--forest);font-weight:700;">$0.00</div>
+              </div>
+              <div style="margin-top:16px;padding:14px 16px;background:var(--forest-pale);border:1.5px solid #c0d4c0;border-radius:12px;font-size:.88rem;color:var(--forest-mid);line-height:1.6;">
+                🔒 All payments are made securely to Independence. We coordinate and pay your service providers on your behalf.
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Payment history</div>
+            <div id="payments-content"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ REVIEWS ══ -->
+      <section class="page" id="page-reviews">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+          <div class="card">
+            <div class="card-title">Leave a review</div>
+            <p class="card-sub">Your feedback helps us keep our providers excellent and improve our service for everyone.</p>
+            <form id="review-form">
+              <div class="field">
+                <label for="rev-service">Which service would you like to review?</label>
+                <select id="rev-service" name="service">
+                  <option value="General feedback">General feedback</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>How would you rate this service?</label>
+                <div class="stars" id="star-row" aria-label="Star rating"></div>
+              </div>
+              <div class="field">
+                <label for="rev-text">Tell us about your experience</label>
+                <textarea id="rev-text" name="text" placeholder="What went well? Was your provider helpful and reliable? We'd love to hear from you." required></textarea>
+              </div>
+              <button class="btn btn-primary btn-block" type="submit">Submit my review</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-title">Your previous reviews</div>
+            <div id="reviews-content"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ PROFILE ══ -->
+      <section class="page" id="page-profile">
+        <div class="card" style="max-width:640px;">
+          <div class="card-title">My profile</div>
+          <p class="card-sub">Keep your details up to date so we can reach you and arrange services correctly.</p>
+          <form id="profile-form">
+            <div class="form-row">
+              <div class="field">
+                <label for="prof-name">Full name</label>
+                <input id="prof-name" name="name" type="text" required>
+              </div>
+              <div class="field">
+                <label for="prof-phone">Phone number</label>
+                <input id="prof-phone" name="phone" type="tel">
+              </div>
+            </div>
+            <div class="field">
+              <label for="prof-email">Email address</label>
+              <input id="prof-email" name="email" type="email" readonly style="background:var(--cream);color:var(--stone-light);">
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="prof-town">Town or city</label>
+                <input id="prof-town" name="town" type="text">
+              </div>
+              <div class="field">
+                <label for="prof-plan">Service focus</label>
+                <select id="prof-plan" name="plan">
+                  <option>House cleaning</option>
+                  <option>Gardening</option>
+                  <option>Home maintenance</option>
+                  <option>Fitness and health</option>
+                  <option>Meals</option>
+                  <option>Transport</option>
+                  <option>Pet assistance</option>
+                  <option>Companion Care</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="prof-address">Home address</label>
+              <input id="prof-address" name="address" type="text">
+            </div>
+            <button class="btn btn-primary" type="submit">Save my details</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ══ FAMILY CONTACT ══ -->
+      <section class="page" id="page-family">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+          <div class="card">
+            <div class="card-title">Family contact</div>
+            <p class="card-sub">Add a trusted family member or friend who we can contact if needed.</p>
+            <form id="family-form">
+              <div class="field">
+                <label for="fam-name">Their full name</label>
+                <input id="fam-name" name="name" type="text" required placeholder="e.g. Sarah Thomson">
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label for="fam-relation">Relationship to you</label>
+                  <input id="fam-relation" name="relation" type="text" placeholder="e.g. Daughter">
+                </div>
+                <div class="field">
+                  <label for="fam-phone">Their phone number</label>
+                  <input id="fam-phone" name="phone" type="tel" placeholder="e.g. 027 123 4567">
+                </div>
+              </div>
+              <button class="btn btn-primary" type="submit">Save family contact</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-title">Saved contact</div>
+            <div id="family-content"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
+</div>
 
-  <!-- ── SUPABASE CDN ── -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-  // ================================================================
-  // INDEPENDENCE NZ — SUPABASE CONFIG
-  // Replace these two values with your own from:
-  // Supabase Dashboard > Settings > API
-  // ================================================================
-  const SUPABASE_URL  = 'https://bguflxzgzyderinbyupc.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJndWZseHpnenlkZXJpbmJ5dXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NjYzMzAsImV4cCI6MjA5MjE0MjMzMH0.Lak_7ox-5E0wLrxtzpXOUZn-csL9JoYOMpq8j-H8Mhc';
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL  = 'https://bguflxzgzyderinbyupc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJndWZseHpnenlkZXJpbmJ5dXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NjYzMzAsImV4cCI6MjA5MjE0MjMzMH0.Lak_7ox-5E0wLrxtzpXOUZn-csL9JoYOMpq8j-H8Mhc';
 
-  const { createClient } = supabase;
-  const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-  // ================================================================
-  // STATE
-  // ================================================================
-  const state = { user: null, profile: null, reviewRating: 5 };
+// ── STATE ────────────────────────────────────────────────────
+let S = { user: null, profile: null, starRating: 5 };
 
-  // ── Page titles ──────────────────────────────────────────────
-  const PAGE_TITLES = {
-    overview: 'Overview', services: 'My services', requests: 'Request support',
-    payments: 'Payments', reviews: 'Leave a review', profile: 'My profile', family: 'Family contact'
-  };
+const PAGE_TITLES = {
+  overview: 'Overview', services: 'My services', history: 'Service history',
+  request: 'Request support', payments: 'Payments',
+  reviews: 'Leave a review', profile: 'My profile', family: 'Family contact'
+};
 
-  // ── Helpers ──────────────────────────────────────────────────
-  function qs(id) { return document.getElementById(id); }
-  function fmt(date) {
-    if (!date) return '—';
-    return new Date(date).toLocaleDateString('en-NZ', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-  function fmtMoney(n) {
-    return '$' + (parseFloat(n) || 0).toFixed(2);
-  }
-  function fmtTime(t) {
-    if (!t) return '';
-    const [h, m] = t.split(':');
-    const hr = parseInt(h, 10);
-    const suffix = hr >= 12 ? 'pm' : 'am';
-    return (hr % 12 || 12) + ':' + m + suffix;
-  }
+// ── HELPERS ──────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
 
-  function showNotice(msg, type) {
-    const el = qs('notice');
-    el.textContent = msg;
-    el.className = 'notice visible ' + (type || 'success');
-    clearTimeout(el._timer);
-    el._timer = setTimeout(() => { el.className = 'notice'; }, 4000);
-  }
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-NZ', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+function fmtTime(t) {
+  if (!t) return '';
+  const [h, m] = t.split(':');
+  const hr = parseInt(h, 10);
+  return (hr % 12 || 12) + ':' + m + (hr >= 12 ? 'pm' : 'am');
+}
+function fmtMoney(n) { return '$' + (parseFloat(n) || 0).toFixed(2); }
 
-  function switchPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    const page = qs('page-' + id);
-    if (page) page.classList.add('active');
-    const btn = document.querySelector('[data-page="' + id + '"]');
-    if (btn) btn.classList.add('active');
-    const titleEl = qs('page-title');
-    if (titleEl) titleEl.textContent = PAGE_TITLES[id] || id;
-    window.scrollTo(0, 0);
-  }
+function notice(msg, type) {
+  const el = $('notice');
+  el.textContent = msg;
+  el.className = 'notice show ' + (type || 'success');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = 'notice', 5000);
+}
 
-  // ================================================================
-  // RENDER HELPERS
-  // ================================================================
-  function renderOverview(profile, stats) {
-    const name = profile.full_name || 'there';
-    const first = name.split(' ')[0];
-    qs('welcome-heading').textContent = 'Good day, ' + first + ' 🌿';
-    qs('welcome-copy').textContent = 'Here is a summary of your Independence services and account.';
-    qs('concierge-name').textContent = profile.concierge || 'Your concierge';
-    const av = qs('avatar');
-    if (av) av.textContent = first.charAt(0).toUpperCase();
-    qs('sidebar-name').textContent = name;
-    qs('sidebar-plan').textContent = profile.plan || 'Independence client';
+function setLoading(show) {
+  $('loading-screen').style.display = show ? 'flex' : 'none';
+}
 
-    qs('stat-upcoming').textContent  = stats.upcoming;
-    qs('stat-history').textContent   = stats.completed;
-    qs('stat-payments').textContent  = fmtMoney(stats.billed);
-    qs('stat-requests').textContent  = stats.requests;
-    qs('service-count').textContent  = stats.upcoming;
-  }
+function statusPill(status) {
+  const map = { Confirmed: 'confirmed', Pending: 'pending', Completed: 'completed' };
+  const cls = map[status] || 'pending';
+  return `<span class="status status-${cls}">${status}</span>`;
+}
 
-  function renderNextService(services) {
-    const el = qs('next-service');
-    const next = services.find(s => s.status === 'Confirmed' || s.status === 'Pending');
-    if (!next) {
-      el.innerHTML = '<div class="empty-state">No upcoming services yet. Request one below.</div>';
-      return;
-    }
-    el.innerHTML =
-      '<div class="item">' +
-        '<div class="item-head">' +
-          '<div><h3 class="item-title">' + next.service_type + '</h3>' +
-          '<div class="item-subtitle">' + next.provider + ' &nbsp;·&nbsp; ' + next.location + '</div></div>' +
-          '<span class="status ' + next.status.toLowerCase() + '">' + next.status + '</span>' +
-        '</div>' +
-        '<div class="meta-row">' +
-          '<span>📅 ' + fmt(next.service_date) + '</span>' +
-          '<span>🕐 ' + fmtTime(next.service_time) + '</span>' +
-        '</div>' +
-        (next.notes ? '<p style="margin:12px 0 0;color:var(--stone-mid);font-size:.95rem;">' + next.notes + '</p>' : '') +
-      '</div>';
+// ── NAVIGATION ───────────────────────────────────────────────
+function goTo(pageId) {
+  $$('.page').forEach(p => p.classList.remove('active'));
+  $$('.nav-btn').forEach(b => b.classList.remove('active'));
+  const page = $('page-' + pageId);
+  if (page) page.classList.add('active');
+  const btn = document.querySelector(`[data-page="${pageId}"]`);
+  if (btn) btn.classList.add('active');
+  $('page-title').textContent = PAGE_TITLES[pageId] || '';
+  closeSidebar();
+  window.scrollTo(0, 0);
+}
+
+function closeSidebar() {
+  $('sidebar').classList.remove('open');
+  $('mobile-overlay').classList.remove('active');
+}
+
+// ── BOOT ─────────────────────────────────────────────────────
+async function boot() {
+  setLoading(true);
+
+  const { data: { session } } = await sb.auth.getSession();
+
+  if (!session) {
+    setLoading(false);
+    $('not-signed-in').classList.add('visible');
+    return;
   }
 
-  function renderNotifications(notifs) {
-    const el = qs('notification-list');
-    if (!notifs.length) {
-      el.innerHTML = '<div class="empty-state">No notifications yet.</div>';
-      return;
-    }
-    el.innerHTML = notifs.slice(0, 5).map(n =>
-      '<div class="mini-item"><strong>' + n.icon + ' ' + n.title + '</strong>' +
-      '<span>' + n.detail + '</span></div>'
-    ).join('');
+  S.user = session.user;
+
+  // Load all data in parallel
+  const [profRes, svcRes, reqRes, payRes, revRes, notifRes, famRes] = await Promise.all([
+    sb.from('profiles').select('*').eq('id', S.user.id).single(),
+    sb.from('services').select('*').eq('client_id', S.user.id).order('service_date'),
+    sb.from('service_requests').select('*').eq('client_id', S.user.id).order('created_at', { ascending: false }),
+    sb.from('payments').select('*').eq('client_id', S.user.id).order('payment_date', { ascending: false }),
+    sb.from('reviews').select('*').eq('client_id', S.user.id).order('created_at', { ascending: false }),
+    sb.from('notifications').select('*').eq('client_id', S.user.id).order('created_at', { ascending: false }),
+    sb.from('family_contacts').select('*').eq('client_id', S.user.id).limit(1)
+  ]);
+
+  S.profile  = profRes.data || {};
+  const svcs = svcRes.data  || [];
+  const reqs = reqRes.data  || [];
+  const pays = payRes.data  || [];
+  const revs = revRes.data  || [];
+  const notifs = notifRes.data || [];
+  const family = famRes.data   || [];
+
+  // Show app
+  setLoading(false);
+  $('app').classList.add('visible');
+
+  renderSidebar();
+  renderOverview(svcs, reqs, pays, notifs);
+  renderServices(svcs);
+  renderHistory(svcs);
+  renderRequests(reqs);
+  renderPayments(pays);
+  renderReviews(revs, svcs);
+  renderProfile();
+  renderFamily(family[0]);
+  renderStars();
+}
+
+// ── SIDEBAR & TOPBAR ─────────────────────────────────────────
+function renderSidebar() {
+  const name  = S.profile.full_name || S.user.email;
+  const first = name.split(' ')[0];
+  $('user-avatar').textContent = first.charAt(0).toUpperCase();
+  $('user-name').textContent   = name;
+  $('user-plan').textContent   = S.profile.plan || 'Independence client';
+  $('topbar-name').textContent = first;
+}
+
+// ── OVERVIEW ─────────────────────────────────────────────────
+function renderOverview(svcs, reqs, pays, notifs) {
+  const first = (S.profile.full_name || 'there').split(' ')[0];
+  $('welcome-name').textContent = 'Good day, ' + first + ' 🌿';
+  $('concierge-name').textContent = S.profile.concierge || 'Mia Thompson';
+
+  const upcoming  = svcs.filter(s => s.status === 'Confirmed' || s.status === 'Pending');
+  const completed = svcs.filter(s => s.status === 'Completed');
+  const openReqs  = reqs.filter(r => r.status === 'Pending');
+  const totalPaid = pays.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+
+  $('stat-upcoming').textContent  = upcoming.length;
+  $('stat-completed').textContent = completed.length;
+  $('stat-billed').textContent    = fmtMoney(totalPaid);
+  $('stat-requests').textContent  = openReqs.length;
+  $('badge-services').textContent = upcoming.length;
+
+  // Next service
+  const next = upcoming[0];
+  $('next-service-content').innerHTML = next
+    ? `<div class="service-item">
+        <div class="service-item-head">
+          <div>
+            <div class="service-item-name">${next.service_type}</div>
+            <div class="service-item-sub">${next.provider || 'Provider to be confirmed'}</div>
+          </div>
+          ${statusPill(next.status)}
+        </div>
+        <div class="service-item-meta">
+          <span>📅 ${fmtDate(next.service_date)}</span>
+          ${next.service_time ? `<span>🕐 ${fmtTime(next.service_time)}</span>` : ''}
+          ${next.location ? `<span>📍 ${next.location}</span>` : ''}
+        </div>
+        ${next.notes ? `<div class="service-item-notes">"${next.notes}"</div>` : ''}
+      </div>`
+    : `<div class="empty-state">No upcoming services scheduled yet.<br>Use the <strong>Request a service</strong> button above to get started.</div>`;
+
+  // Notifications
+  $('notifications-content').innerHTML = notifs.length
+    ? notifs.slice(0, 4).map(n =>
+        `<div class="mini-item"><strong>${n.title}</strong><span>${n.detail || ''}</span></div>`
+      ).join('')
+    : `<div class="empty-state">No notifications yet.</div>`;
+}
+
+// ── MY SERVICES ───────────────────────────────────────────────
+function renderServices(svcs) {
+  const upcoming = svcs.filter(s => s.status !== 'Completed' && s.status !== 'Cancelled');
+  $('services-content').innerHTML = upcoming.length
+    ? upcoming.map(s => `
+        <div class="service-item">
+          <div class="service-item-head">
+            <div>
+              <div class="service-item-name">${s.service_type}</div>
+              <div class="service-item-sub">${s.provider || 'Provider to be confirmed'}</div>
+            </div>
+            ${statusPill(s.status)}
+          </div>
+          <div class="service-item-meta">
+            <span>📅 ${fmtDate(s.service_date)}</span>
+            ${s.service_time ? `<span>🕐 ${fmtTime(s.service_time)}</span>` : ''}
+            ${s.location ? `<span>📍 ${s.location}</span>` : ''}
+          </div>
+          ${s.notes ? `<div class="service-item-notes">"${s.notes}"</div>` : ''}
+        </div>`).join('')
+    : `<div class="empty-state">You have no upcoming services at the moment.<br>Your Independence team will add services here once they are arranged.</div>`;
+}
+
+// ── HISTORY ───────────────────────────────────────────────────
+function renderHistory(svcs) {
+  const done = svcs.filter(s => s.status === 'Completed');
+  $('history-content').innerHTML = done.length
+    ? done.map(s => `
+        <div class="service-item">
+          <div class="service-item-head">
+            <div>
+              <div class="service-item-name">${s.service_type}</div>
+              <div class="service-item-sub">${fmtDate(s.service_date)}${s.provider ? ' · ' + s.provider : ''}</div>
+            </div>
+            <div style="text-align:right;">
+              ${statusPill('Completed')}
+              ${s.amount ? `<div style="margin-top:6px;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--stone);">${fmtMoney(s.amount)}</div>` : ''}
+            </div>
+          </div>
+        </div>`).join('')
+    : `<div class="empty-state">No completed visits yet — they will appear here after each service.</div>`;
+}
+
+// ── REQUESTS ─────────────────────────────────────────────────
+function renderRequests(reqs) {
+  const open = reqs.filter(r => r.status === 'Pending');
+  $('requests-content').innerHTML = open.length
+    ? open.map(r => `
+        <div class="service-item">
+          <div class="service-item-head">
+            <div>
+              <div class="service-item-name">${r.service_type}</div>
+              <div class="service-item-sub">${r.preferred_date ? fmtDate(r.preferred_date) : 'Date flexible'}${r.preferred_time ? ' · ' + fmtTime(r.preferred_time) : ''}</div>
+            </div>
+            ${statusPill('Pending')}
+          </div>
+          ${r.notes ? `<div class="service-item-notes">${r.notes}</div>` : ''}
+        </div>`).join('')
+    : `<div class="empty-state">No open requests. Use the form to request a service and we will be in touch to confirm.</div>`;
+}
+
+// ── PAYMENTS ─────────────────────────────────────────────────
+function renderPayments(pays) {
+  const totalPaid = pays.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+  const outstanding = pays.filter(p => p.status === 'Outstanding').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+  $('pay-total').textContent       = fmtMoney(totalPaid);
+  $('pay-outstanding').textContent = fmtMoney(outstanding);
+  $('pay-plan').textContent        = S.profile.plan || '—';
+
+  $('payments-content').innerHTML = pays.length
+    ? pays.map(p => `
+        <div class="payment-item">
+          <div>
+            <div class="payment-desc">${p.description}</div>
+            <div class="payment-date">${fmtDate(p.payment_date)}</div>
+          </div>
+          <div class="payment-right">
+            <div class="payment-amount">${fmtMoney(p.amount)}</div>
+            <span class="status ${p.status === 'Paid' ? 'status-confirmed' : 'status-pending'}" style="font-size:.75rem;">${p.status}</span>
+          </div>
+        </div>`).join('')
+    : `<div class="empty-state">No payment records yet. Payments will appear here after each service.</div>`;
+}
+
+// ── REVIEWS ──────────────────────────────────────────────────
+function renderReviews(revs, svcs) {
+  // Populate service select with completed services
+  const sel = $('rev-service');
+  const done = svcs.filter(s => s.status === 'Completed');
+  sel.innerHTML = '<option value="General feedback">General feedback</option>' +
+    done.map(s => `<option value="${s.service_type}">${s.service_type}${s.service_date ? ' — ' + fmtDate(s.service_date) : ''}</option>`).join('');
+
+  $('reviews-content').innerHTML = revs.length
+    ? revs.map(r => `
+        <div class="service-item">
+          <div class="service-item-head">
+            <div>
+              <div class="service-item-name">${r.service_type || 'General feedback'}</div>
+              <div class="service-item-sub">${fmtDate(r.created_at)}</div>
+            </div>
+            <div style="color:var(--gold);font-size:1.1rem;">${'★'.repeat(r.rating || 5)}</div>
+          </div>
+          ${r.review_text ? `<div class="service-item-notes">"${r.review_text}"</div>` : ''}
+        </div>`).join('')
+    : `<div class="empty-state">You haven't left any reviews yet. We'd love to hear how things are going.</div>`;
+}
+
+// ── PROFILE ──────────────────────────────────────────────────
+function renderProfile() {
+  $('prof-name').value    = S.profile.full_name || '';
+  $('prof-phone').value   = S.profile.phone     || '';
+  $('prof-email').value   = S.user.email        || '';
+  $('prof-town').value    = S.profile.town      || '';
+  $('prof-address').value = S.profile.address   || '';
+  const planSel = $('prof-plan');
+  if (planSel) {
+    [...planSel.options].forEach(o => o.selected = o.value === S.profile.plan);
   }
+}
 
-  function renderServices(services) {
-    qs('service-count').textContent = services.filter(s => s.status !== 'Completed').length;
-    const el = qs('services-list');
-    const upcoming = services.filter(s => s.status !== 'Completed' && s.status !== 'Cancelled');
-    if (!upcoming.length) {
-      el.innerHTML = '<div class="empty-state">No upcoming services scheduled yet.</div>';
-      return;
-    }
-    el.innerHTML = upcoming.map(s =>
-      '<div class="item">' +
-        '<div class="item-head">' +
-          '<div><h3 class="item-title">' + s.service_type + '</h3>' +
-          '<div class="item-subtitle">' + (s.provider || '') + ' &nbsp;·&nbsp; ' + (s.location || '') + '</div></div>' +
-          '<span class="status ' + s.status.toLowerCase() + '">' + s.status + '</span>' +
-        '</div>' +
-        '<div class="meta-row">' +
-          '<span>📅 ' + fmt(s.service_date) + '</span>' +
-          '<span>🕐 ' + fmtTime(s.service_time) + '</span>' +
-        '</div>' +
-        (s.notes ? '<p style="margin:10px 0 0;color:var(--stone-mid);font-size:.95rem;">' + s.notes + '</p>' : '') +
-      '</div>'
-    ).join('');
+// ── FAMILY CONTACT ───────────────────────────────────────────
+function renderFamily(contact) {
+  $('family-content').innerHTML = contact
+    ? `<div class="service-item">
+        <div class="service-item-name">${contact.full_name}</div>
+        <div class="service-item-sub">${contact.relation || ''}</div>
+        <div class="service-item-meta" style="margin-top:10px;">
+          ${contact.phone ? `<span>📞 ${contact.phone}</span>` : ''}
+          ${contact.email ? `<span>✉ ${contact.email}</span>` : ''}
+        </div>
+      </div>`
+    : `<div class="empty-state">No family contact saved yet. Add one using the form so we know who to contact if needed.</div>`;
+
+  if (contact) {
+    $('fam-name').value     = contact.full_name || '';
+    $('fam-relation').value = contact.relation  || '';
+    $('fam-phone').value    = contact.phone     || '';
   }
+}
 
-  function renderHistory(services) {
-    const el = qs('history-list');
-    const done = services.filter(s => s.status === 'Completed');
-    if (!done.length) {
-      el.innerHTML = '<div class="empty-state">No completed services yet.</div>';
-      return;
-    }
-    el.innerHTML = done.map(s =>
-      '<div class="item">' +
-        '<div class="item-head">' +
-          '<div><h3 class="item-title">' + s.service_type + '</h3>' +
-          '<div class="item-subtitle">' + fmt(s.service_date) + ' · ' + (s.provider || '') + '</div></div>' +
-          '<span class="status completed">Completed</span>' +
-        '</div>' +
-        (s.amount ? '<div style="font-size:1.1rem;font-weight:600;color:var(--stone);margin-top:6px;">' + fmtMoney(s.amount) + '</div>' : '') +
-      '</div>'
-    ).join('');
-  }
-
-  function renderPayments(payments) {
-    const el = qs('payments-list');
-    if (!el) return;
-    if (!payments.length) {
-      el.innerHTML = '<div class="empty-state">No payment history yet.</div>';
-      return;
-    }
-    el.innerHTML = payments.map(p =>
-      '<div class="item">' +
-        '<div class="item-head">' +
-          '<div><h3 class="item-title">' + p.description + '</h3>' +
-          '<div class="item-subtitle">' + fmt(p.payment_date) + '</div></div>' +
-          '<div>' +
-            '<div style="font-size:1.15rem;font-weight:700;color:var(--stone);">' + fmtMoney(p.amount) + '</div>' +
-            '<span class="status ' + (p.status === 'Paid' ? 'confirmed' : 'pending') + '" style="font-size:.78rem;">' + p.status + '</span>' +
-          '</div>' +
-        '</div>' +
-      '</div>'
-    ).join('');
-
-    const total = payments.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
-    const outstanding = payments.filter(p => p.status === 'Outstanding').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
-    if (qs('payment-total')) qs('payment-total').textContent = fmtMoney(total) + ' billed';
-    if (qs('payment-outstanding')) qs('payment-outstanding').textContent = fmtMoney(outstanding) + ' outstanding';
-    if (qs('payment-plan') && state.profile) qs('payment-plan').textContent = state.profile.plan || '—';
-  }
-
-  function renderReviews(reviews) {
-    const el = qs('reviews-list');
-    if (!el) return;
-    if (!reviews.length) {
-      el.innerHTML = '<div class="empty-state">You haven't left any reviews yet. We'd love to hear how things are going.</div>';
-      return;
-    }
-    el.innerHTML = reviews.map(r =>
-      '<div class="item">' +
-        '<div class="item-head">' +
-          '<div><h3 class="item-title">' + (r.service_type || 'Service') + '</h3>' +
-          '<div class="item-subtitle">' + fmt(r.created_at) + '</div></div>' +
-          '<div style="color:var(--gold);font-size:1.1rem;">' + '★'.repeat(r.rating) + '</div>' +
-        '</div>' +
-        '<p style="margin:6px 0 0;color:var(--stone-mid);font-style:italic;">"' + r.review_text + '"</p>' +
-      '</div>'
-    ).join('');
-  }
-
-  function renderRequests(requests) {
-    const el = qs('request-list');
-    if (!el) return;
-    if (!requests.length) {
-      el.innerHTML = '<div class="empty-state">No open requests. Submit one using the form.</div>';
-      return;
-    }
-    el.innerHTML = requests.filter(r => r.status === 'Pending').map(r =>
-      '<div class="item">' +
-        '<div class="item-head">' +
-          '<div><h3 class="item-title">' + r.service_type + '</h3>' +
-          '<div class="item-subtitle">' + fmt(r.preferred_date) + (r.preferred_time ? ' · ' + fmtTime(r.preferred_time) : '') + '</div></div>' +
-          '<span class="status pending">Pending</span>' +
-        '</div>' +
-        (r.notes ? '<p style="margin:8px 0 0;color:var(--stone-mid);font-size:.95rem;">' + r.notes + '</p>' : '') +
-      '</div>'
-    ).join('');
-  }
-
-  function renderProfile(profile, userEmail) {
-    const pf = qs('profile-form');
-    if (!pf) return;
-    pf.querySelector('[name="name"]').value    = profile.full_name || '';
-    pf.querySelector('[name="phone"]').value   = profile.phone    || '';
-    pf.querySelector('[name="email"]').value   = userEmail        || '';
-    pf.querySelector('[name="plan"]').value    = profile.plan     || '';
-    pf.querySelector('[name="address"]').value = profile.address  || '';
-  }
-
-  function renderFamilyContact(contact) {
-    const ff = qs('family-form');
-    if (!ff || !contact) return;
-    ff.querySelector('[name="name"]').value     = contact.full_name || '';
-    ff.querySelector('[name="relation"]').value = contact.relation  || '';
-    ff.querySelector('[name="phone"]').value    = contact.phone     || '';
-  }
-
-  // Star picker
-  function renderStarPicker() {
-    const el = qs('star-picker');
-    if (!el) return;
-    el.innerHTML = [1,2,3,4,5].map(n =>
-      '<button type="button" class="star' + (n <= state.reviewRating ? ' active' : '') + '" ' +
-      'onclick="setStar(' + n + ')">' + '★' + '</button>'
-    ).join('');
-  }
-  function setStar(n) {
-    state.reviewRating = n;
-    renderStarPicker();
-  }
-
-  // Populate review service select from completed services
-  function populateReviewSelect(services) {
-    const sel = qs('review-service');
-    if (!sel) return;
-    const done = services.filter(s => s.status === 'Completed');
-    sel.innerHTML = '<option value="">Select a service…</option>' +
-      done.map(s => '<option value="' + s.service_type + '">' + s.service_type + ' — ' + fmt(s.service_date) + '</option>').join('');
-    if (!done.length) {
-      sel.innerHTML = '<option value="General feedback">General feedback</option>';
-    }
-  }
-
-  // ================================================================
-  // BOOT — load all data from Supabase
-  // ================================================================
-  async function boot() {
-    const { data: { session } } = await sb.auth.getSession();
-
-    if (!session) {
-      qs('auth-guard').classList.remove('hidden');
-      qs('dashboard-app').classList.remove('active');
-      return;
-    }
-
-    state.user = session.user;
-
-    // Load profile
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', state.user.id).single();
-    state.profile = profile || {};
-
-    // Load all data in parallel
-    const [servicesRes, requestsRes, paymentsRes, reviewsRes, notifsRes, familyRes] = await Promise.all([
-      sb.from('services').select('*').eq('client_id', state.user.id).order('service_date', { ascending: true }),
-      sb.from('service_requests').select('*').eq('client_id', state.user.id).order('created_at', { ascending: false }),
-      sb.from('payments').select('*').eq('client_id', state.user.id).order('payment_date', { ascending: false }),
-      sb.from('reviews').select('*').eq('client_id', state.user.id).order('created_at', { ascending: false }),
-      sb.from('notifications').select('*').eq('client_id', state.user.id).order('created_at', { ascending: false }),
-      sb.from('family_contacts').select('*').eq('client_id', state.user.id).limit(1)
-    ]);
-
-    const services  = servicesRes.data  || [];
-    const requests  = requestsRes.data  || [];
-    const payments  = paymentsRes.data  || [];
-    const reviews   = reviewsRes.data   || [];
-    const notifs    = notifsRes.data    || [];
-    const family    = familyRes.data    || [];
-
-    const stats = {
-      upcoming:  services.filter(s => s.status === 'Confirmed' || s.status === 'Pending').length,
-      completed: services.filter(s => s.status === 'Completed').length,
-      billed:    payments.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0),
-      requests:  requests.filter(r => r.status === 'Pending').length
-    };
-
-    // Show app
-    qs('auth-guard').classList.add('hidden');
-    qs('dashboard-app').classList.add('active');
-
-    // Render everything
-    renderOverview(state.profile, stats);
-    renderNextService(services);
-    renderNotifications(notifs);
-    renderServices(services);
-    renderHistory(services);
-    renderPayments(payments);
-    renderReviews(reviews);
-    renderRequests(requests);
-    renderProfile(state.profile, state.user.email);
-    renderFamilyContact(family[0]);
-    renderStarPicker();
-    populateReviewSelect(services);
-  }
-
-  // ================================================================
-  // FORM SUBMISSIONS → SUPABASE
-  // ================================================================
-
-  // Request support
-  qs('request-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    if (!state.user) return;
-    const fd = new FormData(e.currentTarget);
-    const service = (fd.get('service') || '').trim();
-    const date    = fd.get('date')    || '';
-    const time    = fd.get('time')    || '';
-    const notes   = (fd.get('notes')  || '').trim();
-
-    if (!service || !date || !time) {
-      showNotice('Please choose a service, date, and time.', 'error');
-      return;
-    }
-
-    const { error } = await sb.from('service_requests').insert({
-      client_id:      state.user.id,
-      service_type:   service,
-      preferred_date: date,
-      preferred_time: time,
-      notes:          notes
+// ── STARS ────────────────────────────────────────────────────
+function renderStars() {
+  $('star-row').innerHTML = [1,2,3,4,5].map(n =>
+    `<button type="button" class="star ${n <= S.starRating ? 'active' : ''}" data-star="${n}">★</button>`
+  ).join('');
+  $$('#star-row .star').forEach(btn => {
+    btn.addEventListener('click', () => {
+      S.starRating = parseInt(btn.dataset.star, 10);
+      renderStars();
     });
+  });
+}
 
-    if (error) { showNotice('Could not save your request. Please try again.', 'error'); return; }
+// ── FORM SUBMISSIONS ─────────────────────────────────────────
 
-    // Add notification
-    await sb.from('notifications').insert({
-      client_id: state.user.id,
-      icon:  '✦',
-      title: 'New request submitted',
-      detail: service + ' requested for ' + fmt(date) + '.'
-    });
+// Request support
+$('request-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.currentTarget);
+  const service = fd.get('service');
+  const date    = fd.get('date');
+  const time    = fd.get('time');
+  const notes   = fd.get('notes');
 
-    showNotice('Your request has been sent to your Independence team.', 'success');
-    e.currentTarget.reset();
-    await boot();
+  if (!service || !date || !time) {
+    notice('Please select a service, date, and time.', 'error'); return;
+  }
+
+  const btn = e.currentTarget.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  const { error } = await sb.from('service_requests').insert({
+    client_id: S.user.id, service_type: service,
+    preferred_date: date, preferred_time: time, notes
   });
 
-  // Update profile
-  qs('profile-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    if (!state.user) return;
-    const fd = new FormData(e.currentTarget);
+  btn.disabled = false; btn.textContent = 'Send my request';
 
-    const { error } = await sb.from('profiles').update({
-      full_name: (fd.get('name')    || '').trim(),
-      phone:     (fd.get('phone')   || '').trim(),
-      plan:      (fd.get('plan')    || '').trim(),
-      address:   (fd.get('address') || '').trim()
-    }).eq('id', state.user.id);
+  if (error) { notice('Something went wrong. Please try again.', 'error'); return; }
 
-    if (error) { showNotice('Could not update profile. Please try again.', 'error'); return; }
-    showNotice('Profile updated successfully.', 'success');
-    await boot();
+  await sb.from('notifications').insert({
+    client_id: S.user.id, icon: 'check',
+    title: 'Request received',
+    detail: `Your request for ${service} has been sent. We will be in touch to confirm.`
   });
 
-  // Family contact
-  qs('family-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    if (!state.user) return;
-    const fd = new FormData(e.currentTarget);
-    const payload = {
-      client_id: state.user.id,
-      full_name: (fd.get('name')     || '').trim(),
-      relation:  (fd.get('relation') || '').trim(),
-      phone:     (fd.get('phone')    || '').trim()
-    };
-
-    // Upsert — delete existing, insert new
-    await sb.from('family_contacts').delete().eq('client_id', state.user.id);
-    const { error } = await sb.from('family_contacts').insert(payload);
-
-    if (error) { showNotice('Could not save family contact. Please try again.', 'error'); return; }
-
-    await sb.from('notifications').insert({
-      client_id: state.user.id,
-      icon:  '☎',
-      title: 'Family contact updated',
-      detail: payload.full_name + ' saved as your family contact.'
-    });
-
-    showNotice('Family contact saved.', 'success');
-    await boot();
-  });
-
-  // Review
-  qs('review-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    if (!state.user) return;
-    const fd = new FormData(e.currentTarget);
-    const serviceType = (fd.get('service') || '').trim();
-    const text        = (fd.get('text')    || '').trim();
-
-    if (!text) { showNotice('Please add a short review before submitting.', 'error'); return; }
-
-    const { error } = await sb.from('reviews').insert({
-      client_id:   state.user.id,
-      service_type: serviceType || 'General feedback',
-      rating:      state.reviewRating,
-      review_text: text
-    });
-
-    if (error) { showNotice('Could not save your review. Please try again.', 'error'); return; }
-
-    await sb.from('notifications').insert({
-      client_id: state.user.id,
-      icon:  '★',
-      title: 'Review saved',
-      detail: 'Thank you for your feedback on ' + (serviceType || 'your recent service') + '.'
-    });
-
-    showNotice('Thank you — your review has been saved.', 'success');
-    e.currentTarget.reset();
-    state.reviewRating = 5;
-    await boot();
-  });
-
-  // ================================================================
-  // NAV & MOBILE
-  // ================================================================
-  document.querySelectorAll('[data-page]').forEach(btn => {
-    btn.addEventListener('click', () => switchPage(btn.dataset.page));
-  });
-  document.querySelectorAll('[data-page-jump]').forEach(btn => {
-    btn.addEventListener('click', () => switchPage(btn.dataset.pageJump));
-  });
-
-  qs('mobile-menu-button').addEventListener('click', function() {
-    const sb_el = qs('sidebar');
-    const ov = qs('mobile-overlay');
-    sb_el.classList.toggle('open');
-    ov.classList.toggle('active');
-  });
-  qs('mobile-overlay').addEventListener('click', function() {
-    qs('sidebar').classList.remove('open');
-    qs('mobile-overlay').classList.remove('active');
-  });
-
-  // Log out
-  qs('logout-button').addEventListener('click', async function() {
-    await sb.auth.signOut();
-    window.location.href = 'index.html';
-  });
-
-  // ================================================================
-  // START
-  // ================================================================
+  notice('Your request has been sent. We will contact you to confirm shortly.', 'success');
+  e.currentTarget.reset();
   boot();
-  </script>
+});
+
+// Update profile
+$('profile-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.currentTarget);
+  const btn = e.currentTarget.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const { error } = await sb.from('profiles').update({
+    full_name: fd.get('name'),
+    phone:     fd.get('phone'),
+    town:      fd.get('town'),
+    plan:      fd.get('plan'),
+    address:   fd.get('address')
+  }).eq('id', S.user.id);
+
+  btn.disabled = false; btn.textContent = 'Save my details';
+
+  if (error) { notice('Could not save profile. Please try again.', 'error'); return; }
+  notice('Your details have been updated.', 'success');
+  boot();
+});
+
+// Family contact
+$('family-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.currentTarget);
+  const btn = e.currentTarget.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  await sb.from('family_contacts').delete().eq('client_id', S.user.id);
+  const { error } = await sb.from('family_contacts').insert({
+    client_id: S.user.id,
+    full_name: fd.get('name'),
+    relation:  fd.get('relation'),
+    phone:     fd.get('phone')
+  });
+
+  btn.disabled = false; btn.textContent = 'Save family contact';
+
+  if (error) { notice('Could not save contact. Please try again.', 'error'); return; }
+  notice('Family contact saved.', 'success');
+  boot();
+});
+
+// Review
+$('review-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.currentTarget);
+  const text = (fd.get('text') || '').trim();
+  if (!text) { notice('Please write a short review before submitting.', 'error'); return; }
+
+  const btn = e.currentTarget.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const { error } = await sb.from('reviews').insert({
+    client_id:   S.user.id,
+    service_type: fd.get('service') || 'General feedback',
+    rating:       S.starRating,
+    review_text:  text
+  });
+
+  btn.disabled = false; btn.textContent = 'Submit my review';
+
+  if (error) { notice('Could not save review. Please try again.', 'error'); return; }
+  notice('Thank you — your review has been saved.', 'success');
+  e.currentTarget.reset();
+  S.starRating = 5;
+  boot();
+});
+
+// ── NAVIGATION EVENTS ────────────────────────────────────────
+$$('[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => goTo(btn.dataset.page));
+});
+
+$('hamburger').addEventListener('click', () => {
+  $('sidebar').classList.toggle('open');
+  $('mobile-overlay').classList.toggle('active');
+});
+$('mobile-overlay').addEventListener('click', closeSidebar);
+
+$('logout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  window.location.href = 'index.html';
+});
+
+// ── START ────────────────────────────────────────────────────
+boot();
+</script>
 </body>
 </html>
