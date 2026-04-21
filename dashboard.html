@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Independence — Customer Dashboard</title>
+<title>My Independence — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500&display=swap" rel="stylesheet">
 <style>
@@ -23,432 +23,608 @@
   --border-mid:  #c8bfb0;
   --danger:      #8f3535;
   --success-col: #2f6b39;
-  --sidebar-w:   272px;
-  --nav-h:       70px;
+  --blue:        #1a4a7a;
+  --blue-light:  #e8f0f8;
+  --sidebar-w:   280px;
+  --nav-h:       72px;
   --r:  16px;
   --rl: 22px;
   --shadow: 0 2px 16px rgba(45,74,45,.07);
 }
-*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 17px; scroll-behavior: smooth; }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:18px; scroll-behavior:smooth; }
 body {
-  font-family: "Source Serif 4", Georgia, serif;
-  background: var(--cream); color: var(--stone);
-  line-height: 1.72; overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  font-family:"Source Serif 4",Georgia,serif;
+  background:var(--cream); color:var(--stone);
+  line-height:1.72; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
-a { color: inherit; text-decoration: none; }
-button, input, select, textarea { font: inherit; }
+a { color:inherit; text-decoration:none; }
+button,input,select,textarea { font:inherit; }
 
-/* ── LOADING SCREEN ── */
+/* ── LOADING ── */
 #loading-screen {
-  position: fixed; inset: 0; z-index: 999;
-  background: var(--white);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 18px;
+  position:fixed; inset:0; z-index:999;
+  background:var(--white);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:20px;
 }
-#loading-screen .logo {
-  font-family: "Playfair Display", serif;
-  font-size: 1.8rem; font-weight: 700; color: var(--forest);
+.loading-logo {
+  font-family:"Playfair Display",serif;
+  font-size:2rem; font-weight:700; color:var(--forest);
 }
+.loading-sub { font-size:.9rem; color:var(--stone-light); }
 .spinner {
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 3px solid var(--forest-light);
-  border-top-color: var(--forest);
-  animation: spin .8s linear infinite;
+  width:40px; height:40px; border-radius:50%;
+  border:3px solid var(--forest-light);
+  border-top-color:var(--forest);
+  animation:spin .8s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-/* ── NOT SIGNED IN SCREEN ── */
+/* ── NOT SIGNED IN ── */
 #not-signed-in {
-  display: none; min-height: 100vh;
-  place-items: center; padding: 32px;
-  background: linear-gradient(170deg, var(--white) 0%, var(--cream) 100%);
+  display:none; min-height:100vh;
+  place-items:center; padding:32px;
+  background:linear-gradient(170deg,var(--white) 0%,var(--cream) 100%);
 }
-#not-signed-in.visible { display: grid; }
+#not-signed-in.visible { display:grid; }
 .guard-card {
-  width: min(520px, 100%); background: var(--white);
-  border-radius: 28px; border: 1.5px solid var(--border);
-  box-shadow: 0 8px 40px rgba(45,74,45,.1);
-  padding: 48px 44px; text-align: center;
+  width:min(500px,100%); background:var(--white);
+  border-radius:28px; border:1.5px solid var(--border);
+  box-shadow:0 8px 40px rgba(45,74,45,.1);
+  padding:48px 40px; text-align:center;
 }
 .guard-logo {
-  font-family: "Playfair Display", serif;
-  font-size: 1.5rem; font-weight: 700; color: var(--forest);
-  margin-bottom: 24px;
+  font-family:"Playfair Display",serif;
+  font-size:1.5rem; font-weight:700; color:var(--forest);
+  margin-bottom:24px;
 }
 .guard-card h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 2rem; color: var(--stone);
-  margin-bottom: 12px; line-height: 1.2;
+  font-family:"Playfair Display",serif;
+  font-size:1.9rem; color:var(--stone);
+  margin-bottom:12px; line-height:1.2;
 }
-.guard-card p {
-  color: var(--stone-mid); font-size: 1rem;
-  line-height: 1.7; margin-bottom: 28px;
-}
-.guard-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.guard-card p { color:var(--stone-mid); font-size:1rem; line-height:1.7; margin-bottom:28px; }
+.guard-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 
 /* ── BUTTONS ── */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 8px; border: none; border-radius: 999px;
-  padding: 14px 26px; cursor: pointer; font-size: 1rem;
-  font-weight: 500; transition: all .2s; text-decoration: none;
-  min-height: 50px; white-space: nowrap;
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:8px; border:none; border-radius:999px;
+  padding:14px 26px; cursor:pointer; font-size:1rem;
+  font-weight:500; transition:all .2s; text-decoration:none;
+  min-height:52px; white-space:nowrap; line-height:1;
 }
-.btn:hover { transform: translateY(-1px); }
-.btn-primary   { background: var(--forest); color: var(--white); box-shadow: 0 4px 16px rgba(45,74,45,.22); }
-.btn-primary:hover { background: #1f341f; }
-.btn-secondary { background: var(--gold-light); color: #7a5010; border: 1.5px solid #d8c090; }
-.btn-secondary:hover { background: var(--gold); color: var(--white); }
-.btn-outline   { background: transparent; color: var(--stone-mid); border: 1.5px solid var(--border-mid); }
-.btn-outline:hover { border-color: var(--forest); color: var(--forest); background: var(--forest-pale); }
-.btn-block { width: 100%; }
-.btn-sm { padding: 10px 18px; font-size: .9rem; min-height: 40px; }
+.btn:hover { transform:translateY(-1px); }
+.btn-primary   { background:var(--forest); color:var(--white); box-shadow:0 4px 16px rgba(45,74,45,.22); }
+.btn-primary:hover { background:#1f341f; }
+.btn-secondary { background:var(--gold-light); color:#7a5010; border:1.5px solid #d8c090; }
+.btn-secondary:hover { background:var(--gold); color:var(--white); }
+.btn-outline   { background:transparent; color:var(--stone-mid); border:1.5px solid var(--border-mid); }
+.btn-outline:hover { border-color:var(--forest); color:var(--forest); background:var(--forest-pale); }
+.btn-danger    { background:#fdf0ee; color:var(--danger); border:1.5px solid #e9b8b0; }
+.btn-danger:hover { background:var(--danger); color:var(--white); }
+.btn-stripe    { background:#635bff; color:var(--white); box-shadow:0 4px 16px rgba(99,91,255,.3); }
+.btn-stripe:hover { background:#4f46e5; }
+.btn-block { width:100%; }
+.btn-sm { padding:10px 18px; font-size:.9rem; min-height:44px; }
 
 /* ── APP SHELL ── */
-#app { display: none; min-height: 100vh; }
-#app.visible { display: flex; }
+#app { display:none; min-height:100vh; }
+#app.visible { display:flex; }
 
 /* ── SIDEBAR ── */
 .sidebar {
-  width: var(--sidebar-w); background: var(--forest); color: var(--white);
-  position: fixed; inset: 0 auto 0 0;
-  display: flex; flex-direction: column; z-index: 30;
-  transition: transform .25s ease;
-  box-shadow: 2px 0 20px rgba(45,74,45,.15);
+  width:var(--sidebar-w); background:var(--forest); color:var(--white);
+  position:fixed; inset:0 auto 0 0;
+  display:flex; flex-direction:column; z-index:30;
+  transition:transform .25s ease;
+  box-shadow:2px 0 20px rgba(45,74,45,.15);
+  overflow-y:auto;
 }
-.sidebar.hidden-mobile { transform: translateX(-100%); }
+.sidebar.hidden-mobile { transform:translateX(-100%); }
 .sidebar-brand {
-  padding: 28px 24px 22px;
-  border-bottom: 1px solid rgba(255,255,255,.1);
-  font-family: "Playfair Display", serif;
-  font-size: 1.35rem; font-weight: 700;
+  padding:26px 22px 20px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.sidebar-brand-name {
+  font-family:"Playfair Display",serif;
+  font-size:1.35rem; font-weight:700; line-height:1;
 }
 .sidebar-brand small {
-  display: block; margin-top: 3px;
-  font-family: "Source Serif 4", serif;
-  font-size: .58rem; letter-spacing: .16em;
-  text-transform: uppercase; color: rgba(255,255,255,.45);
-  font-weight: 400;
+  display:block; margin-top:4px;
+  font-family:"Source Serif 4",serif;
+  font-size:.56rem; letter-spacing:.18em;
+  text-transform:uppercase; color:rgba(255,255,255,.4);
 }
 .sidebar-user {
-  display: flex; align-items: center; gap: 13px;
-  padding: 18px 24px 20px;
-  border-bottom: 1px solid rgba(255,255,255,.1);
+  display:flex; align-items:center; gap:12px;
+  padding:16px 22px 18px;
+  border-bottom:1px solid rgba(255,255,255,.1);
 }
 .avatar {
-  width: 46px; height: 46px; border-radius: 50%;
-  background: rgba(255,255,255,.16);
-  display: flex; align-items: center; justify-content: center;
-  font-family: "Playfair Display", serif;
-  font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+  width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,.16);
+  display:flex; align-items:center; justify-content:center;
+  font-family:"Playfair Display",serif;
+  font-size:1.05rem; font-weight:700; flex-shrink:0;
 }
-.sidebar-user-name { font-size: 1rem; font-weight: 500; display: block; }
-.sidebar-user-sub  { font-size: .82rem; color: rgba(255,255,255,.55); }
-.nav-group { padding: 16px 14px; flex: 1; }
+.sidebar-user-name { font-size:.97rem; font-weight:500; display:block; line-height:1.3; }
+.sidebar-user-sub  { font-size:.78rem; color:rgba(255,255,255,.5); margin-top:2px; }
+
+/* Family mode banner in sidebar */
+.family-mode-pill {
+  margin:10px 16px 0;
+  background:rgba(181,129,60,.25); border:1px solid rgba(181,129,60,.4);
+  border-radius:8px; padding:8px 12px;
+  font-size:.78rem; color:rgba(255,255,255,.85); line-height:1.4;
+  display:none;
+}
+.family-mode-pill.show { display:block; }
+
+.nav-group { padding:14px 12px; flex:1; }
 .nav-section-label {
-  font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
-  color: rgba(255,255,255,.38); padding: 0 12px; margin: 12px 0 6px;
-  display: block;
+  font-size:.65rem; letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(255,255,255,.35); padding:0 10px; margin:14px 0 6px;
+  display:block;
 }
 .nav-btn {
-  width: 100%; border: none; background: transparent;
-  color: rgba(255,255,255,.72); display: flex; align-items: center;
-  gap: 11px; padding: 13px 14px; border-radius: 11px;
-  cursor: pointer; text-align: left; font-size: 1rem;
-  transition: background .18s, color .18s; margin-bottom: 2px;
+  width:100%; border:none; background:transparent;
+  color:rgba(255,255,255,.7); display:flex; align-items:center;
+  gap:11px; padding:12px 12px; border-radius:10px;
+  cursor:pointer; text-align:left; font-size:1rem;
+  transition:background .18s, color .18s; margin-bottom:2px;
 }
 .nav-btn:hover, .nav-btn.active {
-  background: rgba(255,255,255,.13); color: var(--white);
+  background:rgba(255,255,255,.13); color:var(--white);
 }
-.nav-icon { font-size: 1.05rem; width: 22px; text-align: center; flex-shrink: 0; }
+.nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
 .nav-badge {
-  margin-left: auto; padding: 2px 8px; border-radius: 999px;
-  background: var(--gold); color: var(--white);
-  font-size: .72rem; font-weight: 600;
+  margin-left:auto; padding:2px 8px; border-radius:999px;
+  background:var(--gold); color:var(--white);
+  font-size:.68rem; font-weight:700;
 }
 .sidebar-footer {
-  padding: 18px 22px 24px;
-  border-top: 1px solid rgba(255,255,255,.1);
-  display: flex; flex-direction: column; gap: 10px;
+  padding:16px 18px 22px;
+  border-top:1px solid rgba(255,255,255,.1);
+  display:flex; flex-direction:column; gap:10px;
 }
 
 /* ── MAIN SHELL ── */
 .main-shell {
-  margin-left: var(--sidebar-w);
-  width: calc(100% - var(--sidebar-w));
-  min-height: 100vh; display: flex; flex-direction: column;
+  margin-left:var(--sidebar-w);
+  width:calc(100% - var(--sidebar-w));
+  min-height:100vh; display:flex; flex-direction:column;
 }
 
 /* ── TOPBAR ── */
 .topbar {
-  position: sticky; top: 0; z-index: 25;
-  height: var(--nav-h);
-  background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
-  border-bottom: 1.5px solid var(--border);
-  box-shadow: 0 1px 8px rgba(45,74,45,.05);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px; gap: 16px;
+  position:sticky; top:0; z-index:25;
+  height:var(--nav-h);
+  background:rgba(255,255,255,.97); backdrop-filter:blur(12px);
+  border-bottom:1.5px solid var(--border);
+  box-shadow:0 1px 8px rgba(45,74,45,.05);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 32px; gap:16px;
 }
-.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-left { display:flex; align-items:center; gap:14px; }
 .hamburger {
-  display: none; width: 40px; height: 40px;
-  border: 1.5px solid var(--border); border-radius: 10px;
-  background: var(--white); cursor: pointer;
-  font-size: 1.1rem; align-items: center; justify-content: center;
+  display:none; width:40px; height:40px;
+  border:1.5px solid var(--border); border-radius:10px;
+  background:var(--white); cursor:pointer;
+  font-size:1.1rem; align-items:center; justify-content:center;
 }
 .topbar-title {
-  font-family: "Playfair Display", serif;
-  font-size: 1.4rem; font-weight: 700; color: var(--stone);
+  font-family:"Playfair Display",serif;
+  font-size:1.4rem; font-weight:700; color:var(--stone);
 }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
-.topbar-user-pill {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--forest-pale); border: 1.5px solid #c0d4c0;
-  border-radius: 999px; padding: 7px 14px;
-  font-size: .88rem; color: var(--forest);
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.topbar-pill {
+  display:flex; align-items:center; gap:7px;
+  background:var(--forest-pale); border:1.5px solid #c0d4c0;
+  border-radius:999px; padding:7px 14px;
+  font-size:.85rem; color:var(--forest);
 }
-.topbar-user-pill::before {
-  content: ""; width: 8px; height: 8px;
-  border-radius: 50%; background: #5fbb5f; flex-shrink: 0;
+.topbar-pill::before {
+  content:""; width:7px; height:7px;
+  border-radius:50%; background:#5fbb5f; flex-shrink:0;
 }
 
 /* ── CONTENT ── */
-.content { padding: 32px; flex: 1; }
-.page { display: none; }
-.page.active { display: block; animation: fadeIn .25s ease both; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+.content { padding:32px; flex:1; }
+.page { display:none; }
+.page.active { display:block; animation:fadeIn .25s ease both; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; } }
 
 /* ── NOTICE ── */
 .notice {
-  margin-bottom: 20px; padding: 14px 18px;
-  border-radius: 14px; font-size: .97rem;
-  display: none; line-height: 1.6;
+  margin-bottom:20px; padding:14px 18px;
+  border-radius:14px; font-size:.97rem;
+  display:none; line-height:1.6;
 }
-.notice.show { display: block; }
-.notice.success { background: #eef8ef; border: 1.5px solid #b7dbbd; color: var(--success-col); }
-.notice.error   { background: #fdf0ee; border: 1.5px solid #e9b8b0; color: var(--danger); }
+.notice.show { display:block; }
+.notice.success { background:#eef8ef; border:1.5px solid #b7dbbd; color:var(--success-col); }
+.notice.error   { background:#fdf0ee; border:1.5px solid #e9b8b0; color:var(--danger); }
 
 /* ── WELCOME BANNER ── */
 .welcome-banner {
-  background: linear-gradient(135deg, #2d4a2d 0%, #3a6040 100%);
-  border-radius: 24px; padding: 32px 36px; color: var(--white);
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 20px; box-shadow: 0 10px 36px rgba(45,74,45,.18);
-  position: relative; overflow: hidden; margin-bottom: 28px;
+  background:linear-gradient(135deg,#2d4a2d 0%,#3a6040 100%);
+  border-radius:24px; padding:30px 34px; color:var(--white);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:20px; box-shadow:0 10px 36px rgba(45,74,45,.18);
+  position:relative; overflow:hidden; margin-bottom:26px;
 }
 .welcome-banner::before {
-  content: ""; position: absolute; top: -60px; right: -60px;
-  width: 240px; height: 240px; border-radius: 50%;
-  background: rgba(255,255,255,.05); pointer-events: none;
+  content:""; position:absolute; top:-60px; right:-60px;
+  width:220px; height:220px; border-radius:50%;
+  background:rgba(255,255,255,.05); pointer-events:none;
 }
 .welcome-banner h2 {
-  font-family: "Playfair Display", serif;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  margin-bottom: 6px; line-height: 1.2;
+  font-family:"Playfair Display",serif;
+  font-size:clamp(1.4rem,3vw,1.9rem);
+  margin-bottom:5px; line-height:1.2;
 }
-.welcome-banner p { color: rgba(255,255,255,.72); font-size: .97rem; }
+.welcome-banner p { color:rgba(255,255,255,.72); font-size:.95rem; }
 .concierge-card {
-  background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.2);
-  border-radius: 16px; padding: 16px 20px; text-align: center; flex-shrink: 0;
+  background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.2);
+  border-radius:16px; padding:14px 18px; text-align:center; flex-shrink:0;
+  min-width:170px;
 }
-.concierge-card .label {
-  font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(255,255,255,.55); display: block; margin-bottom: 5px;
+.concierge-card .c-label {
+  font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(255,255,255,.5); display:block; margin-bottom:5px;
 }
-.concierge-card .name {
-  font-family: "Playfair Display", serif; font-size: 1.1rem; display: block;
+.concierge-card .c-name {
+  font-family:"Playfair Display",serif; font-size:1.05rem; display:block;
 }
-.concierge-card .avail {
-  display: flex; align-items: center; justify-content: center; gap: 5px;
-  font-size: .78rem; color: rgba(255,255,255,.6); margin-top: 4px;
+.concierge-card .c-avail {
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  font-size:.75rem; color:rgba(255,255,255,.6); margin-top:4px;
 }
-.concierge-card .avail::before {
-  content: ""; width: 7px; height: 7px; border-radius: 50%; background: #7bc47b;
+.concierge-card .c-avail::before {
+  content:""; width:6px; height:6px; border-radius:50%; background:#7bc47b;
 }
 
-/* ── STAT CARDS ── */
+/* ── VALUE STRIP ── */
+.value-strip {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
+  margin-bottom:26px;
+}
+.value-item {
+  background:var(--forest-pale); border:1.5px solid #c8d8c8;
+  border-radius:16px; padding:14px 18px;
+  display:flex; align-items:flex-start; gap:12px;
+}
+.value-icon { font-size:1.3rem; flex-shrink:0; margin-top:2px; }
+.value-text strong { display:block; font-size:.92rem; color:var(--forest); margin-bottom:3px; }
+.value-text span { font-size:.82rem; color:var(--stone-mid); line-height:1.5; }
+
+/* ── STATS GRID ── */
 .stats-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 18px; margin-bottom: 28px;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:16px; margin-bottom:26px;
 }
 .stat-card {
-  background: var(--white); border: 1.5px solid var(--border);
-  border-radius: var(--rl); padding: 22px 24px; box-shadow: var(--shadow);
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--rl); padding:20px 22px; box-shadow:var(--shadow);
 }
-.stat-card .stat-icon { font-size: 1.4rem; margin-bottom: 10px; }
+.stat-card .stat-icon { font-size:1.3rem; margin-bottom:10px; }
 .stat-card .stat-val {
-  font-family: "Playfair Display", serif;
-  font-size: 2.1rem; font-weight: 700; line-height: 1;
-  margin-bottom: 6px; color: var(--stone);
+  font-family:"Playfair Display",serif;
+  font-size:2rem; font-weight:700; line-height:1;
+  margin-bottom:5px; color:var(--stone);
 }
-.stat-card .stat-label { font-size: .9rem; color: var(--stone-light); }
-
-/* ── DASHBOARD GRID ── */
-.dash-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 22px; }
+.stat-card .stat-label { font-size:.86rem; color:var(--stone-light); }
 
 /* ── CARDS ── */
 .card {
-  background: var(--white); border: 1.5px solid var(--border);
-  border-radius: var(--rl); padding: 26px; box-shadow: var(--shadow);
+  background:var(--white); border:1.5px solid var(--border);
+  border-radius:var(--rl); padding:24px; box-shadow:var(--shadow);
 }
 .card-title {
-  font-family: "Playfair Display", serif;
-  font-size: 1.3rem; font-weight: 700; color: var(--stone);
-  margin-bottom: 16px;
+  font-family:"Playfair Display",serif;
+  font-size:1.25rem; font-weight:700; color:var(--stone);
+  margin-bottom:14px;
 }
-.card-sub { font-size: .95rem; color: var(--stone-light); margin-bottom: 18px; line-height: 1.6; }
+.card-sub { font-size:.92rem; color:var(--stone-light); margin-bottom:16px; line-height:1.6; }
+
+/* ── DASH GRID ── */
+.dash-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:20px; }
+.dash-col   { display:flex; flex-direction:column; gap:18px; }
 
 /* ── SERVICE ITEMS ── */
-.service-item {
-  border: 1.5px solid var(--border); border-radius: 16px;
-  padding: 18px 20px; margin-bottom: 14px;
-  background: var(--white); transition: border-color .2s;
+.svc-item {
+  border:1.5px solid var(--border); border-radius:16px;
+  padding:18px 20px; margin-bottom:13px;
+  background:var(--white); transition:border-color .2s;
+  position:relative;
 }
-.service-item:last-child { margin-bottom: 0; }
-.service-item:hover { border-color: var(--forest-mid); }
-.service-item-head {
-  display: flex; align-items: flex-start;
-  justify-content: space-between; gap: 12px; margin-bottom: 10px;
+.svc-item:last-child { margin-bottom:0; }
+.svc-item:hover { border-color:var(--forest-mid); }
+.svc-item.is-today { border-color:var(--forest); background:var(--forest-pale); }
+.svc-item-head {
+  display:flex; align-items:flex-start;
+  justify-content:space-between; gap:12px; margin-bottom:10px;
 }
-.service-item-name {
-  font-family: "Playfair Display", serif;
-  font-size: 1.1rem; font-weight: 700; color: var(--stone); margin-bottom: 2px;
+.svc-item-left { display:flex; align-items:flex-start; gap:14px; }
+.svc-icon-wrap {
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; flex-shrink:0;
 }
-.service-item-sub { font-size: .9rem; color: var(--stone-mid); }
-.service-item-meta {
-  display: flex; flex-wrap: wrap; gap: 10px 18px;
-  font-size: .9rem; color: var(--stone-mid);
+.svc-item-name {
+  font-family:"Playfair Display",serif;
+  font-size:1.08rem; font-weight:700; color:var(--stone); margin-bottom:2px;
 }
-.service-item-notes {
-  margin-top: 10px; font-size: .88rem;
-  color: var(--stone-light); font-style: italic; line-height: 1.6;
+.svc-item-sub { font-size:.88rem; color:var(--stone-mid); }
+.svc-item-meta {
+  display:flex; flex-wrap:wrap; gap:8px 16px;
+  font-size:.88rem; color:var(--stone-mid); margin-top:8px;
+}
+.svc-item-notes {
+  margin-top:10px; font-size:.85rem;
+  color:var(--stone-light); font-style:italic; line-height:1.6;
+  background:var(--cream); padding:10px 14px; border-radius:10px;
+}
+.today-badge {
+  position:absolute; top:14px; right:14px;
+  background:var(--forest); color:white;
+  font-size:.68rem; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; padding:3px 9px; border-radius:20px;
 }
 
 /* ── STATUS PILLS ── */
 .status {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px; border-radius: 999px;
-  font-size: .8rem; font-weight: 600; flex-shrink: 0;
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 12px; border-radius:999px;
+  font-size:.78rem; font-weight:600; flex-shrink:0;
 }
-.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
-.status-confirmed { background: var(--forest-light); color: var(--forest); }
-.status-confirmed::before { background: #4b8f4b; }
-.status-pending   { background: var(--gold-light); color: #7a5010; }
-.status-pending::before { background: var(--gold); }
-.status-completed { background: #ece8e3; color: var(--stone-mid); }
-.status-completed::before { background: var(--stone-light); }
+.status::before { content:""; width:6px; height:6px; border-radius:50%; }
+.s-confirmed { background:var(--forest-light); color:var(--forest); }
+.s-confirmed::before { background:#4b8f4b; }
+.s-pending   { background:var(--gold-light); color:#7a5010; }
+.s-pending::before { background:var(--gold); }
+.s-inprogress { background:var(--blue-light); color:var(--blue); }
+.s-inprogress::before { background:var(--blue); }
+.s-completed { background:#ece8e3; color:var(--stone-mid); }
+.s-completed::before { background:var(--stone-light); }
+.s-cancelled { background:#fdf0ee; color:var(--danger); }
+.s-cancelled::before { background:var(--danger); }
 
-/* ── QUICK ACTIONS ── */
-.quick-actions { display: flex; flex-direction: column; gap: 10px; }
-
-/* ── MINI LIST (notifications) ── */
-.mini-list { display: flex; flex-direction: column; gap: 10px; }
-.mini-item {
-  padding: 13px 16px; border-radius: 14px;
-  background: var(--cream); border: 1.5px solid var(--border);
+/* ── PROGRESS BAR (job tracking) ── */
+.job-progress {
+  margin-top:12px; padding-top:12px;
+  border-top:1px solid var(--border);
 }
-.mini-item strong { display: block; font-size: .97rem; margin-bottom: 3px; }
-.mini-item span   { font-size: .88rem; color: var(--stone-mid); line-height: 1.5; }
+.progress-steps {
+  display:flex; align-items:center; gap:0;
+  position:relative; margin-bottom:8px;
+}
+.progress-step {
+  display:flex; flex-direction:column; align-items:center;
+  flex:1; position:relative;
+}
+.progress-step:not(:last-child)::after {
+  content:""; position:absolute;
+  top:12px; left:50%; width:100%; height:2px;
+  background:var(--border);
+}
+.progress-step.done:not(:last-child)::after { background:var(--forest-mid); }
+.step-dot {
+  width:26px; height:26px; border-radius:50%;
+  border:2px solid var(--border); background:var(--white);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.7rem; z-index:1; position:relative;
+}
+.progress-step.done .step-dot {
+  background:var(--forest); border-color:var(--forest); color:white;
+}
+.progress-step.current .step-dot {
+  background:var(--gold); border-color:var(--gold); color:white;
+}
+.step-label {
+  font-size:.68rem; color:var(--stone-light);
+  margin-top:5px; text-align:center; line-height:1.3;
+}
+.progress-step.done .step-label { color:var(--forest-mid); font-weight:500; }
+.progress-step.current .step-label { color:var(--gold); font-weight:600; }
+
+/* ── NOTIFICATIONS ── */
+.notif-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:12px 14px; border-radius:13px;
+  background:var(--cream); border:1.5px solid var(--border);
+  margin-bottom:10px;
+}
+.notif-item:last-child { margin-bottom:0; }
+.notif-icon-wrap {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; flex-shrink:0;
+}
+.notif-content strong { display:block; font-size:.93rem; margin-bottom:2px; }
+.notif-content span { font-size:.83rem; color:var(--stone-mid); line-height:1.5; }
+.notif-time { font-size:.75rem; color:var(--stone-light); margin-top:3px; }
 
 /* ── EMPTY STATE ── */
 .empty-state {
-  padding: 32px 20px; text-align: center;
-  border: 1.5px dashed var(--border-mid); border-radius: 16px;
-  color: var(--stone-mid); font-size: .97rem; line-height: 1.65;
+  padding:32px 20px; text-align:center;
+  border:1.5px dashed var(--border-mid); border-radius:16px;
+  color:var(--stone-mid); font-size:.95rem; line-height:1.7;
 }
+.empty-state strong { display:block; font-size:1.05rem; margin-bottom:6px; color:var(--stone); }
 
 /* ── FORMS ── */
-.field { margin-bottom: 18px; }
+.field { margin-bottom:18px; }
 .field label {
-  display: block; margin-bottom: 8px;
-  font-size: .95rem; color: var(--stone-mid); font-weight: 400;
+  display:block; margin-bottom:8px;
+  font-size:.95rem; color:var(--stone-mid); font-weight:400;
 }
-.field input, .field select, .field textarea {
-  width: 100%; padding: 13px 16px; border-radius: 13px;
-  border: 1.5px solid var(--border-mid); background: var(--white);
-  color: var(--stone); outline: none; font-size: 1rem; min-height: 50px;
-  transition: border-color .2s, box-shadow .2s;
+.field input,.field select,.field textarea {
+  width:100%; padding:13px 16px; border-radius:13px;
+  border:1.5px solid var(--border-mid); background:var(--white);
+  color:var(--stone); outline:none; font-size:1rem; min-height:52px;
+  transition:border-color .2s, box-shadow .2s;
 }
-.field textarea { min-height: 110px; resize: vertical; }
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--forest);
-  box-shadow: 0 0 0 4px rgba(61,107,61,.1);
+.field textarea { min-height:110px; resize:vertical; }
+.field input:focus,.field select:focus,.field textarea:focus {
+  border-color:var(--forest); box-shadow:0 0 0 4px rgba(61,107,61,.1);
 }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field input[readonly] { background:var(--cream); color:var(--stone-light); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
-/* ── PAYMENT ITEMS ── */
-.payment-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 0; border-bottom: 1px solid var(--border); gap: 12px;
+/* ── SERVICE CHECKBOXES (multi-select) ── */
+.service-chips {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
+  margin-top:6px;
 }
-.payment-item:last-child { border-bottom: none; }
-.payment-desc { font-size: .97rem; color: var(--stone); }
-.payment-date { font-size: .85rem; color: var(--stone-light); margin-top: 2px; }
-.payment-right { text-align: right; flex-shrink: 0; }
-.payment-amount {
-  font-family: "Playfair Display", serif;
-  font-size: 1.1rem; font-weight: 700; color: var(--stone);
+.service-chip {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px; border:1.5px solid var(--border);
+  border-radius:13px; background:var(--cream);
+  cursor:pointer; transition:all .15s; user-select:none;
+}
+.service-chip:hover { border-color:var(--forest-mid); background:var(--forest-pale); }
+.service-chip input[type=checkbox] {
+  width:20px; height:20px; min-height:auto; accent-color:var(--forest); flex-shrink:0;
+}
+.service-chip-icon { font-size:1.2rem; }
+.service-chip-text strong { display:block; font-size:.93rem; color:var(--stone); }
+.service-chip-text span { font-size:.78rem; color:var(--stone-light); }
+
+/* ── PAYMENT SECTION ── */
+.pay-hero {
+  background:var(--forest);
+  border-radius:20px; padding:26px 28px;
+  color:white; margin-bottom:20px;
+  position:relative; overflow:hidden;
+}
+.pay-hero::before {
+  content:""; position:absolute;
+  top:-40px; right:-40px;
+  width:180px; height:180px; border-radius:50%;
+  background:rgba(255,255,255,.06);
+}
+.pay-hero .ph-label {
+  font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(255,255,255,.55); margin-bottom:8px;
+}
+.pay-hero .ph-amount {
+  font-family:"Playfair Display",serif;
+  font-size:2.4rem; font-weight:700; line-height:1;
+  margin-bottom:4px;
+}
+.pay-hero .ph-sub { font-size:.85rem; color:rgba(255,255,255,.6); }
+.pay-hero .ph-row {
+  display:flex; gap:12px; margin-top:18px; flex-wrap:wrap;
+}
+.pay-secure-note {
+  display:flex; align-items:flex-start; gap:10px;
+  background:var(--forest-pale); border:1.5px solid #c0d4c0;
+  border-radius:12px; padding:12px 16px;
+  font-size:.85rem; color:var(--forest-mid); line-height:1.6;
+  margin-top:14px;
+}
+.pay-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 0; border-bottom:1px solid var(--border); gap:12px;
+}
+.pay-item:last-child { border-bottom:none; }
+.pay-desc { font-size:.95rem; color:var(--stone); }
+.pay-date { font-size:.82rem; color:var(--stone-light); margin-top:2px; }
+.pay-right { text-align:right; flex-shrink:0; }
+.pay-amount {
+  font-family:"Playfair Display",serif;
+  font-size:1.05rem; font-weight:700; color:var(--stone);
 }
 
-/* ── STARS ── */
-.stars { display: flex; gap: 8px; margin: 10px 0 18px; }
+/* ── STRIPE PORTAL CARD ── */
+.stripe-card {
+  border:1.5px solid #e6e0ff; border-radius:18px;
+  padding:22px; background:linear-gradient(135deg,#fafafe,#f0eeff);
+  margin-bottom:20px;
+}
+.stripe-logo {
+  font-size:.8rem; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:#635bff; margin-bottom:10px;
+}
+.stripe-card h3 {
+  font-family:"Playfair Display",serif;
+  font-size:1.2rem; color:var(--stone); margin-bottom:8px;
+}
+.stripe-card p { font-size:.9rem; color:var(--stone-mid); line-height:1.6; margin-bottom:16px; }
+
+/* ── REVIEWS ── */
+.stars { display:flex; gap:8px; margin:10px 0 18px; }
 .star {
-  border: none; background: transparent;
-  font-size: 2.2rem; color: var(--border-mid);
-  cursor: pointer; padding: 2px; line-height: 1;
-  transition: color .15s; -webkit-tap-highlight-color: transparent;
+  border:none; background:transparent;
+  font-size:2.4rem; color:var(--border-mid);
+  cursor:pointer; padding:2px; line-height:1;
+  transition:color .15s; -webkit-tap-highlight-color:transparent;
 }
-.star.active { color: var(--gold); }
+.star.active { color:var(--gold); }
+.rev-item {
+  border:1.5px solid var(--border); border-radius:15px;
+  padding:16px 18px; margin-bottom:13px; background:var(--white);
+}
+.rev-item-head {
+  display:flex; align-items:flex-start;
+  justify-content:space-between; gap:10px; margin-bottom:8px;
+}
+.rev-name {
+  font-family:"Playfair Display",serif;
+  font-size:1.05rem; font-weight:700;
+}
+.rev-date { font-size:.82rem; color:var(--stone-light); margin-top:2px; }
+.rev-stars { color:var(--gold); font-size:1rem; }
+.rev-text { font-size:.9rem; color:var(--stone-mid); font-style:italic; line-height:1.65; }
 
-/* ── PAYMENT SUMMARY BOX ── */
-.pay-summary {
-  background: var(--forest); border-radius: 18px;
-  padding: 24px 26px; color: white; margin-bottom: 22px;
+/* ── FAMILY BANNER ── */
+.family-banner {
+  background:linear-gradient(135deg,#7a5010,#b5813c);
+  border-radius:18px; padding:18px 22px;
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:22px; color:white;
 }
-.pay-summary .label {
-  font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
-  color: rgba(255,255,255,.55); margin-bottom: 6px;
-}
-.pay-summary .amount {
-  font-family: "Playfair Display", serif;
-  font-size: 2.2rem; font-weight: 700; line-height: 1;
-}
-.pay-summary .sub { font-size: .88rem; color: rgba(255,255,255,.6); margin-top: 4px; }
+.family-banner-icon { font-size:1.8rem; flex-shrink:0; }
+.family-banner strong { display:block; font-size:1rem; margin-bottom:3px; }
+.family-banner span { font-size:.85rem; color:rgba(255,255,255,.75); }
 
 /* ── MOBILE OVERLAY ── */
 .overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(28,23,18,.4); z-index: 20;
+  display:none; position:fixed; inset:0;
+  background:rgba(28,23,18,.4); z-index:20;
 }
-.overlay.active { display: block; }
+.overlay.active { display:block; }
 
-/* ── HISTORY SECTION ── */
-.section-title-row {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 20px;
-}
+/* ── QUICK ACTIONS ── */
+.quick-actions { display:flex; flex-direction:column; gap:10px; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 1100px) {
-  .stats-grid   { grid-template-columns: repeat(2, 1fr); }
-  .dash-grid    { grid-template-columns: 1fr; }
-  .form-row     { grid-template-columns: 1fr; }
+@media (max-width:1200px) {
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .value-strip { grid-template-columns:1fr 1fr; }
 }
-@media (max-width: 900px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
-  .main-shell   { margin-left: 0; width: 100%; }
-  .hamburger    { display: flex; }
+@media (max-width:1000px) {
+  .dash-grid { grid-template-columns:1fr; }
+  .form-row  { grid-template-columns:1fr; }
 }
-@media (max-width: 600px) {
-  .topbar    { padding: 0 18px; }
-  .content   { padding: 20px 16px; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .welcome-banner { flex-direction: column; padding: 24px 22px; }
-  .concierge-card { width: 100%; }
-  .topbar-right { display: none; }
+@media (max-width:900px) {
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .main-shell { margin-left:0; width:100%; }
+  .hamburger  { display:flex; }
+}
+@media (max-width:640px) {
+  .topbar    { padding:0 18px; }
+  .content   { padding:20px 16px; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .welcome-banner { flex-direction:column; padding:22px 20px; }
+  .concierge-card { width:100%; }
+  .topbar-right { display:none; }
+  .value-strip { grid-template-columns:1fr; }
+  .service-chips { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -456,8 +632,9 @@ button, input, select, textarea { font: inherit; }
 
 <!-- LOADING -->
 <div id="loading-screen">
-  <div class="logo">Independence</div>
+  <div class="loading-logo">Independence</div>
   <div class="spinner"></div>
+  <div class="loading-sub">Loading your account…</div>
 </div>
 
 <!-- NOT SIGNED IN -->
@@ -465,9 +642,9 @@ button, input, select, textarea { font: inherit; }
   <div class="guard-card">
     <div class="guard-logo">Independence</div>
     <h1>Please sign in</h1>
-    <p>You need to be signed in to view your dashboard. Taking you to the sign in page now…</p>
+    <p>You need to be signed in to view your dashboard. Taking you to the sign-in page now…</p>
     <div class="guard-btns">
-      <a class="btn btn-primary" href="index.html">Sign in now</a>
+      <a class="btn btn-primary" id="guard-link">Sign in now</a>
     </div>
   </div>
 </div>
@@ -475,25 +652,26 @@ button, input, select, textarea { font: inherit; }
 <!-- MOBILE OVERLAY -->
 <div id="mobile-overlay" class="overlay"></div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div id="app">
 
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-      Independence
+      <div class="sidebar-brand-name">Independence</div>
       <small>My Account</small>
     </div>
-
     <div class="sidebar-user">
       <div class="avatar" id="user-avatar">—</div>
       <div>
         <span class="sidebar-user-name" id="user-name">Loading…</span>
-        <span class="sidebar-user-sub"  id="user-plan">Independence client</span>
+        <span class="sidebar-user-sub"  id="user-sub">Independence client</span>
       </div>
     </div>
-
-    <div class="nav-group">
+    <div class="family-mode-pill" id="family-mode-pill">
+      👨‍👩‍👧 Viewing on behalf of <span id="family-pill-name">your loved one</span>
+    </div>
+    <nav class="nav-group">
       <button class="nav-btn active" data-page="overview">
         <span class="nav-icon">🏠</span> Overview
       </button>
@@ -513,13 +691,17 @@ button, input, select, textarea { font: inherit; }
       <button class="nav-btn" data-page="reviews">
         <span class="nav-icon">⭐</span> Leave a review
       </button>
-      <span class="nav-section-label">My account</span>
+      <span class="nav-section-label">Account</span>
       <button class="nav-btn" data-page="profile">
         <span class="nav-icon">👤</span> My profile
       </button>
       <button class="nav-btn" data-page="family">
         <span class="nav-icon">👨‍👩‍👧</span> Family contact
       </button>
+    </nav>
+    <div style="margin:0 12px 12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 16px;">
+      <strong style="color:rgba(255,255,255,.9);display:block;font-size:.82rem;margin-bottom:4px;">🌿 Your Independence record</strong>
+      <p style="font-size:.76rem;color:rgba(255,255,255,.6);line-height:1.6;margin:0;">All your services, history, and preferences are saved here. Your team always knows exactly where things stand.</p>
     </div>
 
     <div class="sidebar-footer">
@@ -530,34 +712,59 @@ button, input, select, textarea { font: inherit; }
 
   <!-- MAIN -->
   <div class="main-shell">
-
-    <!-- TOPBAR -->
     <header class="topbar">
       <div class="topbar-left">
         <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
         <div class="topbar-title" id="page-title">Overview</div>
       </div>
       <div class="topbar-right">
-        <div class="topbar-user-pill" id="topbar-name">My account</div>
+        <div class="topbar-pill" id="topbar-name">My account</div>
         <button class="btn btn-primary btn-sm" data-page="request">📋 Request a service</button>
       </div>
     </header>
 
-    <!-- PAGES -->
     <main class="content">
       <div class="notice" id="notice"></div>
 
-      <!-- ══ OVERVIEW ══ -->
+      <!-- ══════════════════════════════════
+           OVERVIEW
+      ══════════════════════════════════ -->
       <section class="page active" id="page-overview">
+
         <div class="welcome-banner">
           <div>
-            <h2 id="welcome-name">Good day 🌿</h2>
+            <h2 id="welcome-name">Hello 🌿</h2>
             <p id="welcome-sub">Here is everything about your Independence services in one place.</p>
           </div>
           <div class="concierge-card">
-            <span class="label">Your concierge</span>
-            <span class="name" id="concierge-name">Mia Thompson</span>
-            <div class="avail">Available Mon–Sat</div>
+            <span class="c-label">Your concierge</span>
+            <span class="c-name" id="concierge-name">Mia Thompson</span>
+            <div class="c-avail">Available Mon–Sat, 8am–6pm</div>
+          </div>
+        </div>
+
+        <!-- Why Independence matters -->
+        <div class="value-strip" id="value-strip">
+          <div class="value-item">
+            <div class="value-icon">📖</div>
+            <div class="value-text">
+              <strong>Your complete service history</strong>
+              <span>Every visit, provider, and note is recorded here — yours to keep and reference.</span>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">🤝</div>
+            <div class="value-text">
+              <strong>One trusted team, always</strong>
+              <span>Your concierge coordinates everything so you never have to manage multiple providers yourself.</span>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">👨‍👩‍👧</div>
+            <div class="value-text">
+              <strong>Family can see everything</strong>
+              <span>Your family stays informed and reassured — with the same visibility you have.</span>
+            </div>
           </div>
         </div>
 
@@ -578,74 +785,90 @@ button, input, select, textarea { font: inherit; }
             <div class="stat-label">Total paid</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">✉</div>
-            <div class="stat-val" id="stat-requests">0</div>
-            <div class="stat-label">Open requests</div>
+            <div class="stat-icon">⭐</div>
+            <div class="stat-val" id="stat-rating">—</div>
+            <div class="stat-label">Your avg rating given</div>
           </div>
         </div>
 
         <div class="dash-grid">
-          <div class="card">
-            <div class="card-title">Next service</div>
-            <div id="next-service-content"></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:18px;">
+          <div>
+            <div class="card" style="margin-bottom:18px;">
+              <div class="card-title">Next service</div>
+              <div id="next-service-content"></div>
+            </div>
             <div class="card">
-              <div class="card-title">Notifications</div>
+              <div class="card-title">Recent activity</div>
               <div id="notifications-content"></div>
             </div>
+          </div>
+          <div class="dash-col">
             <div class="card">
               <div class="card-title">Quick actions</div>
               <div class="quick-actions">
                 <button class="btn btn-primary btn-block" data-page="request">📋 Request a service</button>
-                <button class="btn btn-outline btn-block" data-page="services">📅 View my services</button>
+                <button class="btn btn-outline btn-block" data-page="services">📅 View upcoming services</button>
+                <button class="btn btn-outline btn-block" data-page="payments">💳 View payments</button>
                 <button class="btn btn-outline btn-block" data-page="reviews">⭐ Leave a review</button>
               </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Need help?</div>
+              <p class="card-sub">Your Independence team is here for you. Call or email anytime during business hours.</p>
+              <a href="tel:0273259707" class="btn btn-primary btn-block" style="margin-bottom:10px;">📞 027 325 9707</a>
+              <a href="mailto:independenceservicesnz@gmail.com" class="btn btn-outline btn-block">✉ Send us an email</a>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ══ MY SERVICES (upcoming) ══ -->
+      <!-- ══════════════════════════════════
+           MY SERVICES (upcoming + tracking)
+      ══════════════════════════════════ -->
       <section class="page" id="page-services">
         <div class="card">
-          <div class="section-title-row">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:12px;">
             <div class="card-title" style="margin:0;">My upcoming services</div>
+            <button class="btn btn-primary btn-sm" data-page="request">+ Request a service</button>
           </div>
-          <p class="card-sub">Your confirmed and scheduled visits are shown below. Contact us if anything needs changing.</p>
+          <p class="card-sub">Your confirmed and scheduled visits. Each service shows its current status and progress so you always know what's happening.</p>
           <div id="services-content"></div>
         </div>
       </section>
 
-      <!-- ══ SERVICE HISTORY ══ -->
+      <!-- ══════════════════════════════════
+           SERVICE HISTORY
+      ══════════════════════════════════ -->
       <section class="page" id="page-history">
         <div class="card">
           <div class="card-title">Service history</div>
-          <p class="card-sub">A record of all completed visits and support sessions.</p>
+          <p class="card-sub">A complete record of every visit, provider, and service Independence has coordinated for you. This history belongs to you.</p>
           <div id="history-content"></div>
         </div>
       </section>
 
-      <!-- ══ REQUEST SUPPORT ══ -->
+      <!-- ══════════════════════════════════
+           REQUEST SUPPORT
+      ══════════════════════════════════ -->
       <section class="page" id="page-request">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:22px;">
           <div class="card">
             <div class="card-title">Request a service</div>
-            <p class="card-sub">Tell us what you need and when. Your Independence team will be in touch to confirm.</p>
+            <p class="card-sub">Tell us what you need and when. Your Independence concierge will contact you to confirm within a few hours.</p>
             <form id="request-form">
               <div class="field">
                 <label for="req-service">What type of support do you need?</label>
                 <select id="req-service" name="service" required>
                   <option value="">Please select…</option>
-                  <option>House cleaning</option>
-                  <option>Gardening &amp; lawns</option>
-                  <option>Home maintenance</option>
-                  <option>Transport to appointment</option>
-                  <option>Meal preparation</option>
-                  <option>Fitness &amp; personal training</option>
-                  <option>Pet assistance</option>
-                  <option>Companion visit</option>
-                  <option>Other — please describe in notes</option>
+                  <option value="House cleaning">🧹 House cleaning</option>
+                  <option value="Gardening &amp; lawns">🌿 Gardening &amp; lawns</option>
+                  <option value="Home maintenance">🔧 Home maintenance</option>
+                  <option value="Transport to appointment">🚗 Transport to appointment</option>
+                  <option value="Meal preparation">🍲 Meal preparation</option>
+                  <option value="Fitness &amp; personal training">💪 Fitness &amp; personal training</option>
+                  <option value="Pet assistance">🐾 Pet assistance</option>
+                  <option value="Companion visit">🤝 Companion visit</option>
+                  <option value="Other">Other — describe in notes below</option>
                 </select>
               </div>
               <div class="form-row">
@@ -670,41 +893,57 @@ button, input, select, textarea { font: inherit; }
                 </div>
               </div>
               <div class="field">
-                <label for="req-notes">Anything else we should know? (optional)</label>
-                <textarea id="req-notes" name="notes" placeholder="Any preferences, access details, or special requirements."></textarea>
+                <label for="req-notes">Anything helpful we should know? (optional)</label>
+                <textarea id="req-notes" name="notes" placeholder="Access details, preferences, mobility needs, or anything else that helps us prepare."></textarea>
               </div>
               <button class="btn btn-primary btn-block" type="submit">Send my request</button>
             </form>
           </div>
           <div class="card">
             <div class="card-title">Your open requests</div>
-            <p class="card-sub">We will contact you to confirm each request within a few hours.</p>
+            <p class="card-sub">We will contact you to confirm each request. You can see the status of each one here.</p>
             <div id="requests-content"></div>
           </div>
         </div>
       </section>
 
-      <!-- ══ PAYMENTS ══ -->
+      <!-- ══════════════════════════════════
+           PAYMENTS (Stripe)
+      ══════════════════════════════════ -->
       <section class="page" id="page-payments">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
           <div>
-            <div class="pay-summary">
-              <div class="label">Total paid to Independence</div>
-              <div class="amount" id="pay-total">$0.00</div>
-              <div class="sub">All payments are made securely to Independence</div>
+            <div class="pay-hero">
+              <div class="ph-label">Total paid to Independence</div>
+              <div class="ph-amount" id="pay-total">$0.00</div>
+              <div class="ph-sub">All payments processed securely</div>
+              <div class="ph-row">
+                <button class="btn btn-stripe btn-sm" id="stripe-pay-btn">💳 Pay now</button>
+                <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;" id="stripe-portal-btn">Manage billing</button>
+              </div>
             </div>
+
+            <div class="stripe-card">
+              <div class="stripe-logo">🔒 Powered by Stripe</div>
+              <h3>Secure payments</h3>
+              <p>Your payments go directly to Independence, who coordinate and pay all service providers on your behalf. Your card details are stored securely by Stripe — we never see or store them.</p>
+              <button class="btn btn-stripe btn-block" id="stripe-portal-btn-2">Manage my payment method</button>
+            </div>
+
             <div class="card">
-              <div class="card-title">Account details</div>
-              <div class="field" style="margin-bottom:8px;">
-                <label>Support plan</label>
-                <div id="pay-plan" style="padding:12px 0;font-size:1rem;color:var(--stone);font-weight:500;">—</div>
+              <div class="card-title">Account summary</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="padding:12px 14px;background:var(--cream);border:1.5px solid var(--border);border-radius:12px;">
+                  <div style="font-size:.8rem;color:var(--stone-light);margin-bottom:3px;">Support services</div>
+                  <div id="pay-services-summary" style="font-size:.95rem;color:var(--stone);font-weight:500;line-height:1.5;">—</div>
+                </div>
+                <div style="padding:12px 14px;background:var(--cream);border:1.5px solid var(--border);border-radius:12px;">
+                  <div style="font-size:.8rem;color:var(--stone-light);margin-bottom:3px;">Outstanding balance</div>
+                  <div id="pay-outstanding" style="font-size:1.1rem;color:var(--forest);font-weight:700;">$0.00</div>
+                </div>
               </div>
-              <div class="field" style="margin-bottom:0;">
-                <label>Outstanding balance</label>
-                <div id="pay-outstanding" style="padding:12px 0;font-size:1.2rem;color:var(--forest);font-weight:700;">$0.00</div>
-              </div>
-              <div style="margin-top:16px;padding:14px 16px;background:var(--forest-pale);border:1.5px solid #c0d4c0;border-radius:12px;font-size:.88rem;color:var(--forest-mid);line-height:1.6;">
-                🔒 All payments are made securely to Independence. We coordinate and pay your service providers on your behalf.
+              <div class="pay-secure-note">
+                🔒 Independence coordinates and pays your providers. You always pay Independence directly — never individual providers.
               </div>
             </div>
           </div>
@@ -715,12 +954,14 @@ button, input, select, textarea { font: inherit; }
         </div>
       </section>
 
-      <!-- ══ REVIEWS ══ -->
+      <!-- ══════════════════════════════════
+           REVIEWS
+      ══════════════════════════════════ -->
       <section class="page" id="page-reviews">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
           <div class="card">
             <div class="card-title">Leave a review</div>
-            <p class="card-sub">Your feedback helps us keep our providers excellent and improve our service for everyone.</p>
+            <p class="card-sub">Your feedback helps us keep our providers excellent and gives your family confidence in the service.</p>
             <form id="review-form">
               <div class="field">
                 <label for="rev-service">Which service would you like to review?</label>
@@ -734,23 +975,26 @@ button, input, select, textarea { font: inherit; }
               </div>
               <div class="field">
                 <label for="rev-text">Tell us about your experience</label>
-                <textarea id="rev-text" name="text" placeholder="What went well? Was your provider helpful and reliable? We'd love to hear from you." required></textarea>
+                <textarea id="rev-text" name="text" placeholder="What went well? Was your provider helpful, punctual, and respectful? We'd love to hear from you." required></textarea>
               </div>
               <button class="btn btn-primary btn-block" type="submit">Submit my review</button>
             </form>
           </div>
           <div class="card">
             <div class="card-title">Your previous reviews</div>
+            <p class="card-sub">Your reviews are shared with your concierge and help us improve for you and others.</p>
             <div id="reviews-content"></div>
           </div>
         </div>
       </section>
 
-      <!-- ══ PROFILE ══ -->
+      <!-- ══════════════════════════════════
+           PROFILE (multi-service focus)
+      ══════════════════════════════════ -->
       <section class="page" id="page-profile">
-        <div class="card" style="max-width:640px;">
+        <div class="card" style="max-width:700px;">
           <div class="card-title">My profile</div>
-          <p class="card-sub">Keep your details up to date so we can reach you and arrange services correctly.</p>
+          <p class="card-sub">Keep your details up to date. The more we know, the better we can match you with the right providers.</p>
           <form id="profile-form">
             <div class="form-row">
               <div class="field">
@@ -764,7 +1008,7 @@ button, input, select, textarea { font: inherit; }
             </div>
             <div class="field">
               <label for="prof-email">Email address</label>
-              <input id="prof-email" name="email" type="email" readonly style="background:var(--cream);color:var(--stone-light);">
+              <input id="prof-email" name="email" type="email" readonly>
             </div>
             <div class="form-row">
               <div class="field">
@@ -772,34 +1016,69 @@ button, input, select, textarea { font: inherit; }
                 <input id="prof-town" name="town" type="text">
               </div>
               <div class="field">
-                <label for="prof-plan">Service focus</label>
-                <select id="prof-plan" name="plan">
-                  <option>House cleaning</option>
-                  <option>Gardening</option>
-                  <option>Home maintenance</option>
-                  <option>Fitness and health</option>
-                  <option>Meals</option>
-                  <option>Transport</option>
-                  <option>Pet assistance</option>
-                  <option>Companion Care</option>
-                </select>
+                <label for="prof-address">Home address</label>
+                <input id="prof-address" name="address" type="text">
               </div>
             </div>
             <div class="field">
-              <label for="prof-address">Home address</label>
-              <input id="prof-address" name="address" type="text">
+              <label>Services I need support with</label>
+              <p style="font-size:.85rem;color:var(--stone-light);margin-bottom:10px;">Select all that apply — you can change these at any time.</p>
+              <div class="service-chips">
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="House cleaning">
+                  <span class="service-chip-icon">🧹</span>
+                  <span class="service-chip-text"><strong>House cleaning</strong><span>Regular home cleaning</span></span>
+                </label>
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="Gardening">
+                  <span class="service-chip-icon">🌿</span>
+                  <span class="service-chip-text"><strong>Gardening</strong><span>Lawns & garden upkeep</span></span>
+                </label>
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="Home maintenance">
+                  <span class="service-chip-icon">🔧</span>
+                  <span class="service-chip-text"><strong>Home maintenance</strong><span>Repairs & handyman</span></span>
+                </label>
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="Transport">
+                  <span class="service-chip-icon">🚗</span>
+                  <span class="service-chip-text"><strong>Transport</strong><span>Appointments & errands</span></span>
+                </label>
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="Meal preparation">
+                  <span class="service-chip-icon">🍲</span>
+                  <span class="service-chip-text"><strong>Meal preparation</strong><span>Cooking & food support</span></span>
+                </label>
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="Fitness and health">
+                  <span class="service-chip-icon">💪</span>
+                  <span class="service-chip-text"><strong>Fitness & health</strong><span>Training & wellbeing</span></span>
+                </label>
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="Pet assistance">
+                  <span class="service-chip-icon">🐾</span>
+                  <span class="service-chip-text"><strong>Pet assistance</strong><span>Walking & grooming</span></span>
+                </label>
+                <label class="service-chip">
+                  <input type="checkbox" name="services" value="Companion visit">
+                  <span class="service-chip-icon">🤝</span>
+                  <span class="service-chip-text"><strong>Companion visits</strong><span>Company & social support</span></span>
+                </label>
+              </div>
             </div>
-            <button class="btn btn-primary" type="submit">Save my details</button>
+            <button class="btn btn-primary" type="submit" style="margin-top:6px;">Save my details</button>
           </form>
         </div>
       </section>
 
-      <!-- ══ FAMILY CONTACT ══ -->
+      <!-- ══════════════════════════════════
+           FAMILY CONTACT
+      ══════════════════════════════════ -->
       <section class="page" id="page-family">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;">
           <div class="card">
             <div class="card-title">Family contact</div>
-            <p class="card-sub">Add a trusted family member or friend who we can contact if needed.</p>
+            <p class="card-sub">Your nominated family member will be kept informed and can see your service schedule. They can also contact Independence on your behalf.</p>
             <form id="family-form">
               <div class="field">
                 <label for="fam-name">Their full name</label>
@@ -815,12 +1094,43 @@ button, input, select, textarea { font: inherit; }
                   <input id="fam-phone" name="phone" type="tel" placeholder="e.g. 027 123 4567">
                 </div>
               </div>
+              <div class="field">
+                <label for="fam-email">Their email address (optional)</label>
+                <input id="fam-email" name="email" type="email" placeholder="e.g. sarah@email.com">
+              </div>
               <button class="btn btn-primary" type="submit">Save family contact</button>
             </form>
           </div>
-          <div class="card">
-            <div class="card-title">Saved contact</div>
-            <div id="family-content"></div>
+          <div>
+            <div class="card" style="margin-bottom:18px;">
+              <div class="card-title">Saved contact</div>
+              <div id="family-content"></div>
+            <div style="margin-top:22px;"><div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--stone);margin-bottom:14px;">This week at a glance</div><div id="family-services-summary"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-title">What your family can see</div>
+              <p class="card-sub">Your nominated family contact has visibility of:</p>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--stone-mid);">
+                  <span style="color:var(--forest);font-weight:700;">✓</span> All upcoming and past services
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--stone-mid);">
+                  <span style="color:var(--forest);font-weight:700;">✓</span> Service status and progress updates
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--stone-mid);">
+                  <span style="color:var(--forest);font-weight:700;">✓</span> Payment history
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--stone-mid);">
+                  <span style="color:var(--forest);font-weight:700;">✓</span> Notifications and alerts
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:.92rem;color:var(--stone-mid);">
+                  <span style="color:var(--forest);font-weight:700;">✓</span> Direct contact to your concierge
+                </div>
+              </div>
+              <div style="margin-top:16px;padding:13px 15px;background:var(--gold-light);border:1.5px solid #d8c090;border-radius:12px;font-size:.85rem;color:#7a5010;line-height:1.6;">
+                💛 Your family will be contacted by Independence if there are any changes to your services or if they need to be informed of anything important.
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -829,24 +1139,32 @@ button, input, select, textarea { font: inherit; }
   </div>
 </div>
 
-<!-- SUPABASE -->
+<!-- SUPABASE + STRIPE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/"></script>
 <script>
+// ================================================================
+// CONFIG
+// ================================================================
 const SUPABASE_URL  = 'https://bguflxzgzyderinbyupc.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJndWZseHpnenlkZXJpbmJ5dXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NjYzMzAsImV4cCI6MjA5MjE0MjMzMH0.Lak_7ox-5E0wLrxtzpXOUZn-csL9JoYOMpq8j-H8Mhc';
+
+// ── STRIPE: Replace with your own Stripe publishable key ──
+// Get it from: https://dashboard.stripe.com/apikeys
+const STRIPE_PUB_KEY = 'YOUR_STRIPE_PUBLISHABLE_KEY';
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// Reliable navigation helpers for GitHub Pages
-function goToIndex() {
-  const here = window.location.href;
-  const base = here.substring(0, here.lastIndexOf('/') + 1);
-  window.location.href = base + 'index.html';
-}
+// ── STRIPE: Get your key from dashboard.stripe.com > Developers > API keys ──
+const STRIPE_PK = 'pk_test_YOUR_STRIPE_PUBLISHABLE_KEY';
+let stripeInstance = null;
+try { if (typeof Stripe !== 'undefined') stripeInstance = Stripe(STRIPE_PK); } catch(e) {}
 
-// ── STATE ────────────────────────────────────────────────────
-let S = { user: null, profile: null, starRating: 5 };
+// ================================================================
+// STATE
+// ================================================================
+let S = { user: null, profile: null, starRating: 5, data: {} };
 
 const PAGE_TITLES = {
   overview: 'Overview', services: 'My services', history: 'Service history',
@@ -854,13 +1172,45 @@ const PAGE_TITLES = {
   reviews: 'Leave a review', profile: 'My profile', family: 'Family contact'
 };
 
-// ── HELPERS ──────────────────────────────────────────────────
+const SVC_ICONS = {
+  'House cleaning': '🧹', 'Gardening': '🌿', 'Gardening & lawns': '🌿',
+  'Home maintenance': '🔧', 'Transport': '🚗', 'Transport to appointment': '🚗',
+  'Meal preparation': '🍲', 'Fitness and health': '💪', 'Fitness & personal training': '💪',
+  'Pet assistance': '🐾', 'Companion visit': '🤝', 'Companion Care': '🤝',
+  'Daily Living Support': '🏡', 'Other': '📋'
+};
+
+const SVC_COLORS = {
+  'House cleaning': '#edf3ed', 'Gardening': '#eef4e8', 'Gardening & lawns': '#eef4e8',
+  'Home maintenance': '#f0ebe8', 'Transport': '#e8f0f8', 'Transport to appointment': '#e8f0f8',
+  'Meal preparation': '#fdf4e7', 'Fitness and health': '#f5edf8', 'Fitness & personal training': '#f5edf8',
+  'Pet assistance': '#faeaee', 'Companion visit': '#e8f4fb', 'default': '#f4f8f4'
+};
+
+// ================================================================
+// HELPERS
+// ================================================================
 const $  = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
 
+function base() {
+  const h = window.location.href;
+  return h.substring(0, h.lastIndexOf('/') + 1);
+}
+function goToIndex()     { window.location.href = base() + 'index.html'; }
+function goToDashboard() { window.location.href = base() + 'dashboard.html'; }
+
 function fmtDate(d) {
   if (!d) return '—';
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-NZ', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-NZ', {
+    weekday:'long', day:'numeric', month:'long', year:'numeric'
+  });
+}
+function fmtDateShort(d) {
+  if (!d) return '—';
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-NZ', {
+    day:'numeric', month:'short', year:'numeric'
+  });
 }
 function fmtTime(t) {
   if (!t) return '';
@@ -870,6 +1220,15 @@ function fmtTime(t) {
 }
 function fmtMoney(n) { return '$' + (parseFloat(n) || 0).toFixed(2); }
 
+function isToday(dateStr) {
+  if (!dateStr) return false;
+  const today = new Date();
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.getFullYear() === today.getFullYear() &&
+         d.getMonth()    === today.getMonth()    &&
+         d.getDate()     === today.getDate();
+}
+
 function notice(msg, type) {
   const el = $('notice');
   el.textContent = msg;
@@ -878,48 +1237,357 @@ function notice(msg, type) {
   el._t = setTimeout(() => el.className = 'notice', 5000);
 }
 
-function setLoading(show) {
-  $('loading-screen').style.display = show ? 'flex' : 'none';
+function statusClass(s) {
+  const m = { Confirmed:'s-confirmed', Pending:'s-pending', 'In Progress':'s-inprogress',
+               Completed:'s-completed', Cancelled:'s-cancelled' };
+  return m[s] || 's-pending';
 }
 
-function statusPill(status) {
-  const map = { Confirmed: 'confirmed', Pending: 'pending', Completed: 'completed' };
-  const cls = map[status] || 'pending';
-  return `<span class="status status-${cls}">${status}</span>`;
+function statusPill(s) {
+  return `<span class="status ${statusClass(s)}">${s}</span>`;
 }
 
-// ── NAVIGATION ───────────────────────────────────────────────
-function goTo(pageId) {
+// ── JOB PROGRESS TRACKER ──────────────────────────────────────
+function jobProgressHTML(status) {
+  const steps = [
+    { key:'Pending',     label:'Requested' },
+    { key:'Confirmed',   label:'Confirmed' },
+    { key:'In Progress', label:'In progress' },
+    { key:'Completed',   label:'Completed' }
+  ];
+  const order = ['Pending','Confirmed','In Progress','Completed'];
+  const currentIdx = order.indexOf(status);
+
+  return `<div class="job-progress">
+    <div class="progress-steps">
+      ${steps.map((step, i) => {
+        const isDone    = i < currentIdx;
+        const isCurrent = i === currentIdx;
+        const cls = isDone ? 'done' : isCurrent ? 'current' : '';
+        const dot = isDone ? '✓' : isCurrent ? '●' : '';
+        return `<div class="progress-step ${cls}">
+          <div class="step-dot">${dot}</div>
+          <div class="step-label">${step.label}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ── SERVICE ITEM HTML ─────────────────────────────────────────
+function svcItemHTML(s, showProgress = true) {
+  const icon  = SVC_ICONS[s.service_type]  || '📋';
+  const color = SVC_COLORS[s.service_type] || SVC_COLORS.default;
+  const today = isToday(s.service_date);
+
+  return `<div class="svc-item${today ? ' is-today' : ''}">
+    ${today ? '<div class="today-badge">Today</div>' : ''}
+    <div class="svc-item-head">
+      <div class="svc-item-left">
+        <div class="svc-icon-wrap" style="background:${color};">${icon}</div>
+        <div>
+          <div class="svc-item-name">${s.service_type}</div>
+          <div class="svc-item-sub">${s.provider || 'Provider to be confirmed'}</div>
+        </div>
+      </div>
+      ${statusPill(s.status)}
+    </div>
+    <div class="svc-item-meta">
+      ${s.service_date ? `<span>📅 ${fmtDate(s.service_date)}</span>` : ''}
+      ${s.service_time ? `<span>🕐 ${fmtTime(s.service_time)}</span>` : ''}
+      ${s.location     ? `<span>📍 ${s.location}</span>`              : ''}
+      ${s.amount       ? `<span>💰 ${fmtMoney(s.amount)}</span>`      : ''}
+    </div>
+    ${s.notes ? `<div class="svc-item-notes">"${s.notes}"</div>` : ''}
+    ${showProgress && s.status !== 'Cancelled' ? jobProgressHTML(s.status) : ''}
+  </div>`;
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function goTo(id) {
   $$('.page').forEach(p => p.classList.remove('active'));
   $$('.nav-btn').forEach(b => b.classList.remove('active'));
-  const page = $('page-' + pageId);
+  const page = $('page-' + id);
   if (page) page.classList.add('active');
-  const btn = document.querySelector(`[data-page="${pageId}"]`);
+  const btn = document.querySelector(`[data-page="${id}"]`);
   if (btn) btn.classList.add('active');
-  $('page-title').textContent = PAGE_TITLES[pageId] || '';
-  closeSidebar();
+  $('page-title').textContent = PAGE_TITLES[id] || '';
+  $('sidebar').classList.remove('open');
+  $('mobile-overlay').classList.remove('active');
   window.scrollTo(0, 0);
 }
 
-function closeSidebar() {
-  $('sidebar').classList.remove('open');
-  $('mobile-overlay').classList.remove('active');
+// ================================================================
+// RENDER FUNCTIONS
+// ================================================================
+
+function renderSidebar(profile, services) {
+  const name  = profile.full_name || S.user.email;
+  const first = name.split(' ')[0];
+  $('user-avatar').textContent = first.charAt(0).toUpperCase();
+  $('user-name').textContent   = name;
+  $('topbar-name').textContent = first;
+
+  // Show multiple services in sidebar sub
+  const svcList = profile.services_interested;
+  if (svcList && svcList.length) {
+    $('user-sub').textContent = svcList.slice(0, 2).join(' · ');
+  } else {
+    $('user-sub') && ($('user-sub').textContent = profile.plan || 'Independence client');
+
+  // Populate service tags
+  const tagsEl = $('sidebar-services');
+  if (tagsEl) {
+    const saved = parseSvcs(profile.services_interested);
+    const icons = {'House cleaning':'🧹','Gardening':'🌿','Home maintenance':'🔧','Transport':'🚗','Meals':'🍲','Fitness & health':'💪','Pet assistance':'🐾','Companion visits':'🤝'};
+    tagsEl.innerHTML = saved.length
+      ? saved.map(s => `<span style="font-size:.68rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:3px 10px;color:rgba(255,255,255,.8);">${icons[s]||'🌿'} ${s}</span>`).join('')
+      : '<span style="font-size:.68rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:3px 10px;color:rgba(255,255,255,.8);">🌿 Independence client</span>';
+  }
 }
 
-// ── BOOT ─────────────────────────────────────────────────────
+  // Badge
+  const upcoming = (services || []).filter(s => s.status !== 'Completed' && s.status !== 'Cancelled');
+  $('badge-services').textContent = upcoming.length;
+}
+
+function renderOverview(svcs, reqs, pays, revs, notifs) {
+  const first    = (S.profile.full_name || 'there').split(' ')[0];
+  $('welcome-name').textContent = 'Hello, ' + first + ' 🌿';
+  $('concierge-name').textContent = S.profile.concierge || 'Mia Thompson';
+
+  const upcoming  = svcs.filter(s => s.status !== 'Completed' && s.status !== 'Cancelled');
+  const completed = svcs.filter(s => s.status === 'Completed');
+  const totalPaid = pays.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+  const avgRating = revs.length ? (revs.reduce((a, r) => a + (r.rating || 0), 0) / revs.length).toFixed(1) : '—';
+
+  $('stat-upcoming').textContent  = upcoming.length;
+  $('stat-completed').textContent = completed.length;
+  $('stat-billed').textContent    = fmtMoney(totalPaid);
+  $('stat-rating').textContent    = avgRating === '—' ? '—' : avgRating + ' ★';
+
+  // Next service
+  const next = upcoming.sort((a, b) => new Date(a.service_date) - new Date(b.service_date))[0];
+  $('next-service-content').innerHTML = next
+    ? svcItemHTML(next, true)
+    : `<div class="empty-state"><strong>No upcoming services yet</strong>Use the Request a service button to arrange your next visit.</div>`;
+
+  // Notifications
+  $('notifications-content').innerHTML = notifs.length
+    ? notifs.slice(0, 5).map(n => `
+        <div class="notif-item">
+          <div class="notif-icon-wrap" style="background:var(--forest-light);">${n.icon === 'check' ? '✅' : '🔔'}</div>
+          <div class="notif-content">
+            <strong>${n.title}</strong>
+            <span>${n.detail || ''}</span>
+          </div>
+        </div>`).join('')
+    : `<div class="empty-state">No recent activity yet.</div>`;
+}
+
+function renderServices(svcs) {
+  const upcoming = svcs
+    .filter(s => s.status !== 'Completed' && s.status !== 'Cancelled')
+    .sort((a, b) => new Date(a.service_date) - new Date(b.service_date));
+
+  $('services-content').innerHTML = upcoming.length
+    ? upcoming.map(s => svcItemHTML(s, true)).join('')
+    : `<div class="empty-state"><strong>No upcoming services scheduled</strong>Your Independence team will add confirmed services here. You can also request one using the button above.</div>`;
+}
+
+function renderHistory(svcs) {
+  const done = svcs
+    .filter(s => s.status === 'Completed' || s.status === 'Cancelled')
+    .sort((a, b) => new Date(b.service_date) - new Date(a.service_date));
+
+  $('history-content').innerHTML = done.length
+    ? done.map(s => `
+        <div class="svc-item">
+          <div class="svc-item-head">
+            <div class="svc-item-left">
+              <div class="svc-icon-wrap" style="background:${SVC_COLORS[s.service_type] || SVC_COLORS.default};">
+                ${SVC_ICONS[s.service_type] || '📋'}
+              </div>
+              <div>
+                <div class="svc-item-name">${s.service_type}</div>
+                <div class="svc-item-sub">${fmtDateShort(s.service_date)}${s.provider ? ' · ' + s.provider : ''}</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              ${statusPill(s.status)}
+              ${s.amount ? `<div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--stone);margin-top:5px;">${fmtMoney(s.amount)}</div>` : ''}
+            </div>
+          </div>
+          ${s.notes ? `<div class="svc-item-notes">"${s.notes}"</div>` : ''}
+        </div>`).join('')
+    : `<div class="empty-state"><strong>No completed visits yet</strong>Your service history will build here over time — a permanent record of everything Independence has done for you.</div>`;
+}
+
+function renderRequests(reqs) {
+  const open = reqs.filter(r => r.status === 'Pending');
+  $('requests-content').innerHTML = open.length
+    ? open.map(r => `
+        <div class="svc-item">
+          <div class="svc-item-head">
+            <div>
+              <div class="svc-item-name">${r.service_type}</div>
+              <div class="svc-item-sub">${r.preferred_date ? fmtDate(r.preferred_date) : 'Date flexible'}${r.preferred_time ? ' · ' + fmtTime(r.preferred_time) : ''}</div>
+            </div>
+            ${statusPill('Pending')}
+          </div>
+          ${r.notes ? `<div class="svc-item-notes">${r.notes}</div>` : ''}
+        </div>`).join('')
+    : `<div class="empty-state">No open requests. Use the form to request a service and we will confirm with you shortly.</div>`;
+}
+
+function renderPayments(pays) {
+  const totalPaid   = pays.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+  const outstanding = pays.filter(p => p.status === 'Outstanding').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
+  $('pay-total').textContent       = fmtMoney(totalPaid);
+  $('pay-outstanding').textContent = fmtMoney(outstanding);
+
+  // Services summary
+  const svcList = S.profile.services_interested;
+  $('pay-services-summary').textContent = svcList && svcList.length
+    ? svcList.join(', ')
+    : S.profile.plan || '—';
+
+  $('payments-content').innerHTML = pays.length
+    ? pays.map(p => `
+        <div class="pay-item">
+          <div>
+            <div class="pay-desc">${p.description}</div>
+            <div class="pay-date">${fmtDateShort(p.payment_date)}</div>
+          </div>
+          <div class="pay-right">
+            <div class="pay-amount">${fmtMoney(p.amount)}</div>
+            <span class="status ${p.status === 'Paid' ? 's-confirmed' : 's-pending'}" style="font-size:.72rem;">${p.status}</span>
+          </div>
+        </div>`).join('')
+    : `<div class="empty-state">No payment records yet. Payments will appear here after each service is completed.</div>`;
+}
+
+function renderReviews(revs, svcs) {
+  const done = svcs.filter(s => s.status === 'Completed');
+  const sel  = $('rev-service');
+  sel.innerHTML = '<option value="General feedback">General feedback</option>' +
+    done.map(s => `<option value="${s.service_type}">${s.service_type}${s.service_date ? ' — ' + fmtDateShort(s.service_date) : ''}</option>`).join('');
+
+  $('reviews-content').innerHTML = revs.length
+    ? revs.map(r => `
+        <div class="rev-item">
+          <div class="rev-item-head">
+            <div>
+              <div class="rev-name">${r.service_type || 'General feedback'}</div>
+              <div class="rev-date">${fmtDateShort(r.created_at)}</div>
+            </div>
+            <div class="rev-stars">${'★'.repeat(r.rating || 5)}</div>
+          </div>
+          ${r.review_text ? `<div class="rev-text">"${r.review_text}"</div>` : ''}
+        </div>`).join('')
+    : `<div class="empty-state">You haven't left any reviews yet. Your feedback helps us keep providers excellent.</div>`;
+}
+
+function renderProfile(profile) {
+  $('prof-name').value    = profile.full_name || '';
+  $('prof-phone').value   = profile.phone     || '';
+  $('prof-email').value   = S.user.email      || '';
+  $('prof-town').value    = profile.town      || '';
+  $('prof-address').value = profile.address   || '';
+
+  // Tick the multi-service checkboxes
+  const saved = profile.services_interested || [];
+  $$('[name="services"]').forEach(cb => {
+    cb.checked = saved.includes(cb.value);
+  });
+}
+
+function renderFamily(contact) {
+  if (contact) {
+    $('family-content').innerHTML = `
+      <div class="svc-item">
+        <div class="svc-item-name">${contact.full_name}</div>
+        <div class="svc-item-sub">${contact.relation || ''}</div>
+        <div class="svc-item-meta" style="margin-top:10px;">
+          ${contact.phone ? `<span>📞 ${contact.phone}</span>` : ''}
+          ${contact.email ? `<span>✉ ${contact.email}</span>`  : ''}
+        </div>
+      </div>`;
+    $('fam-name').value     = contact.full_name || '';
+    $('fam-relation').value = contact.relation  || '';
+    $('fam-phone').value    = contact.phone     || '';
+    $('fam-email').value    = contact.email     || '';
+
+    // Show family mode indicator in sidebar
+    $('family-mode-pill').classList.remove('show');
+  } else {
+    $('family-content').innerHTML = `<div class="empty-state">No family contact saved yet. Add one using the form so we know who to contact if needed.</div>`;
+  }
+}
+
+function renderStars() {
+  $('star-row').innerHTML = [1,2,3,4,5].map(n =>
+    `<button type="button" class="star ${n <= S.starRating ? 'active' : ''}" data-star="${n}">★</button>`
+  ).join('');
+  $$('#star-row .star').forEach(btn => {
+    btn.addEventListener('click', () => {
+      S.starRating = parseInt(btn.dataset.star, 10);
+      renderStars();
+    });
+  });
+}
+
+// ================================================================
+// STRIPE INTEGRATION
+// ================================================================
+// NOTE: Stripe payments require a server-side backend to create
+// payment intents and customer portal sessions securely.
+// For GitHub Pages (static hosting), you have two options:
+//
+// Option A (recommended): Use Stripe Payment Links
+//   - Create a payment link in your Stripe Dashboard
+//   - Replace the button onclick to open that link
+//
+// Option B: Add a small backend (Vercel/Netlify function)
+//   - Create /api/create-checkout-session
+//   - Create /api/create-portal-session
+//
+// The buttons below are wired up and ready — just add your URLs.
+
+function handleStripePayment() {
+  // Replace with your Stripe Payment Link URL from dashboard.stripe.com
+  const stripePaymentLink = 'https://buy.stripe.com/YOUR_PAYMENT_LINK';
+  if (stripePaymentLink.includes('YOUR_PAYMENT_LINK')) {
+    notice('Stripe payments are being set up. Please call 027 325 9707 to arrange payment in the meantime.', 'error');
+    return;
+  }
+  window.open(stripePaymentLink, '_blank');
+}
+
+function handleStripePortal() {
+  // Replace with your Stripe Customer Portal link from dashboard.stripe.com/settings/billing/portal
+  const stripePortalLink = 'https://billing.stripe.com/YOUR_PORTAL_LINK';
+  if (stripePortalLink.includes('YOUR_PORTAL_LINK')) {
+    notice('The billing portal is being set up. Please call 027 325 9707 for payment help.', 'error');
+    return;
+  }
+  window.open(stripePortalLink, '_blank');
+}
+
+// ================================================================
+// BOOT
+// ================================================================
 async function boot() {
-  setLoading(true);
+  $('loading-screen').style.display = 'flex';
 
   const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
-    // No session — redirect straight to homepage login
-    setLoading(false);
+    $('loading-screen').style.display = 'none';
     $('not-signed-in').classList.add('visible');
-    // Auto-redirect after 3 seconds
-    setTimeout(() => {
-      goToIndex();
-    }, 3000);
+    setTimeout(goToIndex, 3000);
     return;
   }
 
@@ -936,252 +1604,49 @@ async function boot() {
     sb.from('family_contacts').select('*').eq('client_id', S.user.id).limit(1)
   ]);
 
-  S.profile  = profRes.data || {};
-  const svcs = svcRes.data  || [];
-  const reqs = reqRes.data  || [];
-  const pays = payRes.data  || [];
-  const revs = revRes.data  || [];
-  const notifs = notifRes.data || [];
-  const family = famRes.data   || [];
+  S.profile      = profRes.data || {};
+  S.data.svcs    = svcRes.data  || [];
+  S.data.reqs    = reqRes.data  || [];
+  S.data.pays    = payRes.data  || [];
+  S.data.revs    = revRes.data  || [];
+  S.data.notifs  = notifRes.data || [];
+  S.data.family  = (famRes.data || [])[0] || null;
 
-  // Show app
-  setLoading(false);
+  $('loading-screen').style.display = 'none';
   $('app').classList.add('visible');
 
-  renderSidebar();
-  renderOverview(svcs, reqs, pays, notifs);
-  renderServices(svcs);
-  renderHistory(svcs);
-  renderRequests(reqs);
-  renderPayments(pays);
-  renderReviews(revs, svcs);
-  renderProfile();
-  renderFamily(family[0]);
+  // Set links
+  $('site-link').href = base() + 'index.html';
+  const guardLink = $('guard-link');
+  if (guardLink) guardLink.href = base() + 'index.html';
+
+  // Render everything
+  renderSidebar(S.profile, S.data.svcs);
+  renderOverview(S.data.svcs, S.data.reqs, S.data.pays, S.data.revs, S.data.notifs);
+  renderServices(S.data.svcs);
+  renderHistory(S.data.svcs);
+  renderRequests(S.data.reqs);
+  renderPayments(S.data.pays);
+  renderReviews(S.data.revs, S.data.svcs);
+  renderProfile(S.profile);
+  renderFamily(S.data.family);
   renderStars();
 }
 
-// ── SIDEBAR & TOPBAR ─────────────────────────────────────────
-function renderSidebar() {
-  const name  = S.profile.full_name || S.user.email;
-  const first = name.split(' ')[0];
-  $('user-avatar').textContent = first.charAt(0).toUpperCase();
-  $('user-name').textContent   = name;
-  $('user-plan').textContent   = S.profile.plan || 'Independence client';
-  $('topbar-name').textContent = first;
-}
-
-// ── OVERVIEW ─────────────────────────────────────────────────
-function renderOverview(svcs, reqs, pays, notifs) {
-  const first = (S.profile.full_name || 'there').split(' ')[0];
-  $('welcome-name').textContent = 'Good day, ' + first + ' 🌿';
-  $('concierge-name').textContent = S.profile.concierge || 'Mia Thompson';
-
-  const upcoming  = svcs.filter(s => s.status === 'Confirmed' || s.status === 'Pending');
-  const completed = svcs.filter(s => s.status === 'Completed');
-  const openReqs  = reqs.filter(r => r.status === 'Pending');
-  const totalPaid = pays.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
-
-  $('stat-upcoming').textContent  = upcoming.length;
-  $('stat-completed').textContent = completed.length;
-  $('stat-billed').textContent    = fmtMoney(totalPaid);
-  $('stat-requests').textContent  = openReqs.length;
-  $('badge-services').textContent = upcoming.length;
-
-  // Next service
-  const next = upcoming[0];
-  $('next-service-content').innerHTML = next
-    ? `<div class="service-item">
-        <div class="service-item-head">
-          <div>
-            <div class="service-item-name">${next.service_type}</div>
-            <div class="service-item-sub">${next.provider || 'Provider to be confirmed'}</div>
-          </div>
-          ${statusPill(next.status)}
-        </div>
-        <div class="service-item-meta">
-          <span>📅 ${fmtDate(next.service_date)}</span>
-          ${next.service_time ? `<span>🕐 ${fmtTime(next.service_time)}</span>` : ''}
-          ${next.location ? `<span>📍 ${next.location}</span>` : ''}
-        </div>
-        ${next.notes ? `<div class="service-item-notes">"${next.notes}"</div>` : ''}
-      </div>`
-    : `<div class="empty-state">No upcoming services scheduled yet.<br>Use the <strong>Request a service</strong> button above to get started.</div>`;
-
-  // Notifications
-  $('notifications-content').innerHTML = notifs.length
-    ? notifs.slice(0, 4).map(n =>
-        `<div class="mini-item"><strong>${n.title}</strong><span>${n.detail || ''}</span></div>`
-      ).join('')
-    : `<div class="empty-state">No notifications yet.</div>`;
-}
-
-// ── MY SERVICES ───────────────────────────────────────────────
-function renderServices(svcs) {
-  const upcoming = svcs.filter(s => s.status !== 'Completed' && s.status !== 'Cancelled');
-  $('services-content').innerHTML = upcoming.length
-    ? upcoming.map(s => `
-        <div class="service-item">
-          <div class="service-item-head">
-            <div>
-              <div class="service-item-name">${s.service_type}</div>
-              <div class="service-item-sub">${s.provider || 'Provider to be confirmed'}</div>
-            </div>
-            ${statusPill(s.status)}
-          </div>
-          <div class="service-item-meta">
-            <span>📅 ${fmtDate(s.service_date)}</span>
-            ${s.service_time ? `<span>🕐 ${fmtTime(s.service_time)}</span>` : ''}
-            ${s.location ? `<span>📍 ${s.location}</span>` : ''}
-          </div>
-          ${s.notes ? `<div class="service-item-notes">"${s.notes}"</div>` : ''}
-        </div>`).join('')
-    : `<div class="empty-state">You have no upcoming services at the moment.<br>Your Independence team will add services here once they are arranged.</div>`;
-}
-
-// ── HISTORY ───────────────────────────────────────────────────
-function renderHistory(svcs) {
-  const done = svcs.filter(s => s.status === 'Completed');
-  $('history-content').innerHTML = done.length
-    ? done.map(s => `
-        <div class="service-item">
-          <div class="service-item-head">
-            <div>
-              <div class="service-item-name">${s.service_type}</div>
-              <div class="service-item-sub">${fmtDate(s.service_date)}${s.provider ? ' · ' + s.provider : ''}</div>
-            </div>
-            <div style="text-align:right;">
-              ${statusPill('Completed')}
-              ${s.amount ? `<div style="margin-top:6px;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--stone);">${fmtMoney(s.amount)}</div>` : ''}
-            </div>
-          </div>
-        </div>`).join('')
-    : `<div class="empty-state">No completed visits yet — they will appear here after each service.</div>`;
-}
-
-// ── REQUESTS ─────────────────────────────────────────────────
-function renderRequests(reqs) {
-  const open = reqs.filter(r => r.status === 'Pending');
-  $('requests-content').innerHTML = open.length
-    ? open.map(r => `
-        <div class="service-item">
-          <div class="service-item-head">
-            <div>
-              <div class="service-item-name">${r.service_type}</div>
-              <div class="service-item-sub">${r.preferred_date ? fmtDate(r.preferred_date) : 'Date flexible'}${r.preferred_time ? ' · ' + fmtTime(r.preferred_time) : ''}</div>
-            </div>
-            ${statusPill('Pending')}
-          </div>
-          ${r.notes ? `<div class="service-item-notes">${r.notes}</div>` : ''}
-        </div>`).join('')
-    : `<div class="empty-state">No open requests. Use the form to request a service and we will be in touch to confirm.</div>`;
-}
-
-// ── PAYMENTS ─────────────────────────────────────────────────
-function renderPayments(pays) {
-  const totalPaid = pays.filter(p => p.status === 'Paid').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
-  const outstanding = pays.filter(p => p.status === 'Outstanding').reduce((a, p) => a + parseFloat(p.amount || 0), 0);
-  $('pay-total').textContent       = fmtMoney(totalPaid);
-  $('pay-outstanding').textContent = fmtMoney(outstanding);
-  $('pay-plan').textContent        = S.profile.plan || '—';
-
-  $('payments-content').innerHTML = pays.length
-    ? pays.map(p => `
-        <div class="payment-item">
-          <div>
-            <div class="payment-desc">${p.description}</div>
-            <div class="payment-date">${fmtDate(p.payment_date)}</div>
-          </div>
-          <div class="payment-right">
-            <div class="payment-amount">${fmtMoney(p.amount)}</div>
-            <span class="status ${p.status === 'Paid' ? 'status-confirmed' : 'status-pending'}" style="font-size:.75rem;">${p.status}</span>
-          </div>
-        </div>`).join('')
-    : `<div class="empty-state">No payment records yet. Payments will appear here after each service.</div>`;
-}
-
-// ── REVIEWS ──────────────────────────────────────────────────
-function renderReviews(revs, svcs) {
-  // Populate service select with completed services
-  const sel = $('rev-service');
-  const done = svcs.filter(s => s.status === 'Completed');
-  sel.innerHTML = '<option value="General feedback">General feedback</option>' +
-    done.map(s => `<option value="${s.service_type}">${s.service_type}${s.service_date ? ' — ' + fmtDate(s.service_date) : ''}</option>`).join('');
-
-  $('reviews-content').innerHTML = revs.length
-    ? revs.map(r => `
-        <div class="service-item">
-          <div class="service-item-head">
-            <div>
-              <div class="service-item-name">${r.service_type || 'General feedback'}</div>
-              <div class="service-item-sub">${fmtDate(r.created_at)}</div>
-            </div>
-            <div style="color:var(--gold);font-size:1.1rem;">${'★'.repeat(r.rating || 5)}</div>
-          </div>
-          ${r.review_text ? `<div class="service-item-notes">"${r.review_text}"</div>` : ''}
-        </div>`).join('')
-    : `<div class="empty-state">You haven't left any reviews yet. We'd love to hear how things are going.</div>`;
-}
-
-// ── PROFILE ──────────────────────────────────────────────────
-function renderProfile() {
-  $('prof-name').value    = S.profile.full_name || '';
-  $('prof-phone').value   = S.profile.phone     || '';
-  $('prof-email').value   = S.user.email        || '';
-  $('prof-town').value    = S.profile.town      || '';
-  $('prof-address').value = S.profile.address   || '';
-  const planSel = $('prof-plan');
-  if (planSel) {
-    [...planSel.options].forEach(o => o.selected = o.value === S.profile.plan);
-  }
-}
-
-// ── FAMILY CONTACT ───────────────────────────────────────────
-function renderFamily(contact) {
-  $('family-content').innerHTML = contact
-    ? `<div class="service-item">
-        <div class="service-item-name">${contact.full_name}</div>
-        <div class="service-item-sub">${contact.relation || ''}</div>
-        <div class="service-item-meta" style="margin-top:10px;">
-          ${contact.phone ? `<span>📞 ${contact.phone}</span>` : ''}
-          ${contact.email ? `<span>✉ ${contact.email}</span>` : ''}
-        </div>
-      </div>`
-    : `<div class="empty-state">No family contact saved yet. Add one using the form so we know who to contact if needed.</div>`;
-
-  if (contact) {
-    $('fam-name').value     = contact.full_name || '';
-    $('fam-relation').value = contact.relation  || '';
-    $('fam-phone').value    = contact.phone     || '';
-  }
-}
-
-// ── STARS ────────────────────────────────────────────────────
-function renderStars() {
-  $('star-row').innerHTML = [1,2,3,4,5].map(n =>
-    `<button type="button" class="star ${n <= S.starRating ? 'active' : ''}" data-star="${n}">★</button>`
-  ).join('');
-  $$('#star-row .star').forEach(btn => {
-    btn.addEventListener('click', () => {
-      S.starRating = parseInt(btn.dataset.star, 10);
-      renderStars();
-    });
-  });
-}
-
-// ── FORM SUBMISSIONS ─────────────────────────────────────────
+// ================================================================
+// FORM HANDLERS
+// ================================================================
 
 // Request support
 $('request-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const fd = new FormData(e.currentTarget);
+  const fd      = new FormData(e.currentTarget);
   const service = fd.get('service');
   const date    = fd.get('date');
   const time    = fd.get('time');
   const notes   = fd.get('notes');
 
-  if (!service || !date || !time) {
-    notice('Please select a service, date, and time.', 'error'); return;
-  }
+  if (!service || !date || !time) { notice('Please select a service, date, and time.', 'error'); return; }
 
   const btn = e.currentTarget.querySelector('button[type=submit]');
   btn.disabled = true; btn.textContent = 'Sending…';
@@ -1190,7 +1655,6 @@ $('request-form').addEventListener('submit', async e => {
     client_id: S.user.id, service_type: service,
     preferred_date: date, preferred_time: time, notes
   });
-
   btn.disabled = false; btn.textContent = 'Send my request';
 
   if (error) { notice('Something went wrong. Please try again.', 'error'); return; }
@@ -1198,7 +1662,7 @@ $('request-form').addEventListener('submit', async e => {
   await sb.from('notifications').insert({
     client_id: S.user.id, icon: 'check',
     title: 'Request received',
-    detail: `Your request for ${service} has been sent. We will be in touch to confirm.`
+    detail: 'Your request for ' + service + ' has been received. We will be in touch to confirm.'
   });
 
   notice('Your request has been sent. We will contact you to confirm shortly.', 'success');
@@ -1206,23 +1670,24 @@ $('request-form').addEventListener('submit', async e => {
   boot();
 });
 
-// Update profile
+// Update profile (with multi-service)
 $('profile-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const fd = new FormData(e.currentTarget);
+  const fd  = new FormData(e.currentTarget);
   const btn = e.currentTarget.querySelector('button[type=submit]');
   btn.disabled = true; btn.textContent = 'Saving…';
 
+  const selectedServices = Array.from($$('[name="services"]:checked')).map(cb => cb.value);
+
   const { error } = await sb.from('profiles').update({
-    full_name: fd.get('name'),
-    phone:     fd.get('phone'),
-    town:      fd.get('town'),
-    plan:      fd.get('plan'),
-    address:   fd.get('address')
+    full_name:           fd.get('name'),
+    phone:               fd.get('phone'),
+    town:                fd.get('town'),
+    address:             fd.get('address'),
+    services_interested: selectedServices
   }).eq('id', S.user.id);
 
   btn.disabled = false; btn.textContent = 'Save my details';
-
   if (error) { notice('Could not save profile. Please try again.', 'error'); return; }
   notice('Your details have been updated.', 'success');
   boot();
@@ -1231,7 +1696,7 @@ $('profile-form').addEventListener('submit', async e => {
 // Family contact
 $('family-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const fd = new FormData(e.currentTarget);
+  const fd  = new FormData(e.currentTarget);
   const btn = e.currentTarget.querySelector('button[type=submit]');
   btn.disabled = true; btn.textContent = 'Saving…';
 
@@ -1240,9 +1705,9 @@ $('family-form').addEventListener('submit', async e => {
     client_id: S.user.id,
     full_name: fd.get('name'),
     relation:  fd.get('relation'),
-    phone:     fd.get('phone')
+    phone:     fd.get('phone'),
+    email:     fd.get('email')
   });
-
   btn.disabled = false; btn.textContent = 'Save family contact';
 
   if (error) { notice('Could not save contact. Please try again.', 'error'); return; }
@@ -1253,7 +1718,7 @@ $('family-form').addEventListener('submit', async e => {
 // Review
 $('review-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const fd = new FormData(e.currentTarget);
+  const fd   = new FormData(e.currentTarget);
   const text = (fd.get('text') || '').trim();
   if (!text) { notice('Please write a short review before submitting.', 'error'); return; }
 
@@ -1261,12 +1726,11 @@ $('review-form').addEventListener('submit', async e => {
   btn.disabled = true; btn.textContent = 'Saving…';
 
   const { error } = await sb.from('reviews').insert({
-    client_id:   S.user.id,
+    client_id:    S.user.id,
     service_type: fd.get('service') || 'General feedback',
     rating:       S.starRating,
     review_text:  text
   });
-
   btn.disabled = false; btn.textContent = 'Submit my review';
 
   if (error) { notice('Could not save review. Please try again.', 'error'); return; }
@@ -1276,7 +1740,16 @@ $('review-form').addEventListener('submit', async e => {
   boot();
 });
 
-// ── NAVIGATION EVENTS ────────────────────────────────────────
+// ================================================================
+// STRIPE BUTTON EVENTS
+// ================================================================
+$('stripe-pay-btn').addEventListener('click', handleStripePayment);
+$('stripe-portal-btn').addEventListener('click', handleStripePortal);
+$('stripe-portal-btn-2').addEventListener('click', handleStripePortal);
+
+// ================================================================
+// NAVIGATION
+// ================================================================
 $$('[data-page]').forEach(btn => {
   btn.addEventListener('click', () => goTo(btn.dataset.page));
 });
@@ -1285,21 +1758,21 @@ $('hamburger').addEventListener('click', () => {
   $('sidebar').classList.toggle('open');
   $('mobile-overlay').classList.toggle('active');
 });
-$('mobile-overlay').addEventListener('click', closeSidebar);
-
+$('mobile-overlay').addEventListener('click', () => {
+  $('sidebar').classList.remove('open');
+  $('mobile-overlay').classList.remove('active');
+});
 $('logout-btn').addEventListener('click', async () => {
   await sb.auth.signOut();
   goToIndex();
 });
 
-// ── START ────────────────────────────────────────────────────
-// Set site link href dynamically
-const siteLink = document.getElementById('site-link');
-if (siteLink) {
-  siteLink.href = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + 'index.html';
-}
-
+// ================================================================
+// START
+// ================================================================
 boot();
 </script>
 </body>
-</html>
+</html>    <div id="sidebar-services" style="display:flex;flex-wrap:wrap;gap:5px;padding:8px 22px 12px;border-bottom:1px solid rgba(255,255,255,.08);"></div>
+
+

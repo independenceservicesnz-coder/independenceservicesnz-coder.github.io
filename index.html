@@ -573,27 +573,62 @@ nav {
 .tpill-dot { width: 7px; height: 7px; border-radius: 50%; background: #7bc47b; flex-shrink: 0; }
 
 /* ─── TESTIMONIALS ────────────────── */
-.testi-sec { background: var(--cream); padding: 96px 0; }
-.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 52px; }
-.testi {
-  background: var(--white); border: 1.5px solid var(--border);
-  border-radius: var(--rl); padding: 34px 28px;
+/* ─── RESEARCH SECTION ──────────────── */
+.research-sec { background: var(--forest); padding: 96px 0; position: relative; overflow: hidden; }
+.research-sec::before {
+  content: ''; position: absolute; bottom: -120px; right: -120px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: rgba(255,255,255,.04); pointer-events: none;
 }
-.testi-stars { color: var(--gold); font-size: 17px; letter-spacing: 3px; margin-bottom: 16px; }
-.testi blockquote {
-  font-family: 'Playfair Display', serif; font-style: italic;
-  font-size: 17px; color: var(--stone); line-height: 1.65;
-  margin-bottom: 26px;
+.research-sec .eyebrow { color: rgba(255,255,255,.55); }
+.research-sec .eyebrow::before { background: rgba(255,255,255,.35); }
+.research-sec h2.sec { color: white; }
+.research-sec .lead { color: rgba(255,255,255,.68); margin-bottom: 52px; }
+.research-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 48px; }
+.research-card {
+  background: rgba(255,255,255,.07);
+  border: 1.5px solid rgba(255,255,255,.14);
+  border-radius: var(--rl); padding: 34px 30px;
+  position: relative;
 }
-.testi-author { display: flex; align-items: center; gap: 13px; }
-.ta {
-  width: 44px; height: 44px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 500; color: white; flex-shrink: 0;
+.research-number {
   font-family: 'Playfair Display', serif;
+  font-size: 52px; font-weight: 700;
+  color: rgba(255,255,255,.1); line-height: 1;
+  position: absolute; top: 20px; right: 24px;
 }
-.ta-name { font-size: 15px; font-weight: 400; color: var(--stone); }
-.ta-role { font-size: 13px; color: var(--stone-light); font-weight: 300; }
+.research-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 20px;
+}
+.research-finding {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 18px; color: white; line-height: 1.6;
+  margin-bottom: 20px;
+}
+.research-response {
+  font-size: 15px; color: rgba(255,255,255,.65);
+  line-height: 1.7; font-weight: 300;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.15);
+}
+.research-response strong { color: rgba(255,255,255,.9); font-weight: 500; }
+.research-cta {
+  margin-top: 52px;
+  background: rgba(255,255,255,.08);
+  border: 1.5px solid rgba(255,255,255,.18);
+  border-radius: var(--rl); padding: 32px 36px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 28px; flex-wrap: wrap;
+}
+.research-cta p {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 2.2vw, 24px);
+  color: white; line-height: 1.4; max-width: 640px; margin: 0;
+}
+.research-cta em { font-style: italic; color: #a8d8a8; }
 
 /* ─── CONTACT / CTA ───────────────── */
 .cta-sec { background: var(--white); padding: 96px 0; }
@@ -707,6 +742,12 @@ nav {
 .af-error { background:#fdf0ee; border:1px solid #e9b8b0; color:#8f3535; }
 .af-success { background:#eef8ef; border:1px solid #b7dbbd; color:#2f6b39; }
 .auth-note { font-size:13px; color: var(--stone-light); font-weight:300; line-height:1.5; margin-top: 12px; }
+.signup-chips { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+.signup-chip { display:flex; cursor:pointer; }
+.signup-chip input[type=checkbox] { position:absolute; opacity:0; width:0; height:0; }
+.signup-chip span { display:flex; align-items:center; gap:8px; width:100%; padding:11px 13px; border:1.5px solid var(--border); border-radius:12px; background:var(--cream); font-size:14px; color:var(--stone-mid); transition:all .18s; }
+.signup-chip span:hover { border-color:var(--forest-mid); background:var(--forest-pale); }
+.signup-chip input:checked + span { border-color:var(--forest); background:var(--forest-light); color:var(--forest); font-weight:500; }
 
 @media (max-width: 640px) {
   .af-grid { grid-template-columns: 1fr; }
@@ -1164,36 +1205,46 @@ footer { background: var(--stone); padding: 68px 0 38px; }
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="testi-sec" aria-labelledby="testi-h">
-  <div class="container">
-    <div class="eyebrow">What people say</div>
-    <h2 class="sec" id="testi-h">Real people. Real help. Real difference.</h2>
-    <p class="lead">From older New Zealanders and the families who love them.</p>
-    <div class="testi-grid">
-      <div class="testi reveal">
-        <div class="testi-stars" aria-label="Five stars">★★★★★</div>
-        <blockquote>"I was nervous about someone new coming into my home. But the cleaner they found was wonderful — so reliable and respectful. I've had her fortnightly ever since. I couldn't manage without it."</blockquote>
-        <div class="testi-author">
-          <div class="ta" style="background:var(--forest-mid)" aria-hidden="true">M</div>
-          <div><div class="ta-name">Margaret, 78</div><div class="ta-role">New Zealand — using cleaning &amp; transport</div></div>
+<section class="research-sec" aria-labelledby="research-h">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="eyebrow">What we heard</div>
+    <h2 class="sec" id="research-h">Shaped by real conversations with older New Zealanders</h2>
+    <p class="lead">Before building Independence, we went out and listened. We spoke with older people and their families across New Zealand about what support really looks like in practice. Here is what they told us.</p>
+
+    <div class="research-grid">
+
+      <div class="research-card reveal">
+        <div class="research-number">1</div>
+        <div class="research-icon">🏡</div>
+        <p class="research-finding">"People want to stay living in their own home for as long as possible, but need the right support to do so safely and confidently."</p>
+        <div class="research-response">
+          <strong>Independence was built for this.</strong> We coordinate trusted local support around you — so staying home isn't just a wish, it's a well-supported reality.
         </div>
       </div>
-      <div class="testi reveal">
-        <div class="testi-stars" aria-label="Five stars">★★★★★</div>
-        <blockquote>"Mum lives in New Plymouth and I'm in Wellington. Before Independence, I was constantly worried about how she was managing. Now I know someone trustworthy is looking after things. It's changed everything."</blockquote>
-        <div class="testi-author">
-          <div class="ta" style="background:var(--gold)" aria-hidden="true">S</div>
-          <div><div class="ta-name">Sarah T.</div><div class="ta-role">Daughter — coordinating care from Wellington</div></div>
+
+      <div class="research-card reveal">
+        <div class="research-number">2</div>
+        <div class="research-icon">🔍</div>
+        <p class="research-finding">"Finding reliable, trusted help is difficult, time consuming and often frustrating."</p>
+        <div class="research-response">
+          <strong>We do that work for you.</strong> Every provider in our network is police-checked, reference-checked, and personally vetted before they set foot in your home.
         </div>
       </div>
-      <div class="testi reveal">
-        <div class="testi-stars" aria-label="Five stars">★★★★★</div>
-        <blockquote>"The garden was getting away on me after my knee operation. One call and they had someone sorted within the week. Good bloke, does a proper job. I'll use them again without question."</blockquote>
-        <div class="testi-author">
-          <div class="ta" style="background:#5a7a9a" aria-hidden="true">B</div>
-          <div><div class="ta-name">Brian K., 74</div><div class="ta-role">New Zealand — gardening &amp; handyman</div></div>
+
+      <div class="research-card reveal">
+        <div class="research-number">3</div>
+        <div class="research-icon">👨‍👩‍👧</div>
+        <p class="research-finding">"Managing multiple services and providers creates stress, especially for families coordinating support from a distance."</p>
+        <div class="research-response">
+          <strong>One call. One team. Everything handled.</strong> Independence coordinates all your services through a single trusted contact — so families can stay informed without carrying the load.
         </div>
       </div>
+
+    </div>
+
+    <div class="research-cta reveal">
+      <p>Independence is the answer to every one of these challenges. <em>Built by listening. Designed to last.</em></p>
+      <a href="#booking-form" class="btn btn-green btn-lg">Book a free Needs Assessment</a>
     </div>
   </div>
 </section>
@@ -1457,22 +1508,21 @@ footer { background: var(--stone); padding: 68px 0 38px; }
             <label for="signup-email">Email address</label>
             <input id="signup-email" name="email" type="email" required>
           </div>
-          <div class="af-grid">
-            <div class="af-field">
-              <label for="signup-town">Town or city</label>
-              <input id="signup-town" name="town" required>
-            </div>
-            <div class="af-field">
-              <label for="signup-plan">Service focus</label>
-              <select id="signup-plan" name="plan" required>
-                <option value="Housecleaning">Housecleaning</option>
-                <option value="Gardening">Gardening</option>
-                <option value="Home maintenance">Home maintenance</option>
-                <option value="Fitness and health">Fitness and health</option>
-                <option value="Meals">Meals</option>
-                <option value="Transport">Transport</option>
-                <option value="Pet assistance">Pet assistance</option>
-              </select>
+          <div class="af-field">
+            <label for="signup-town">Town or city</label>
+            <input id="signup-town" name="town" required>
+          </div>
+          <div class="af-field">
+            <label>Services you are interested in <span style="color:var(--stone-light);font-size:12px;font-weight:300;">(select all that apply)</span></label>
+            <div class="signup-chips" id="signup-chips">
+              <label class="signup-chip"><input type="checkbox" name="services" value="House cleaning"><span>🧹 House cleaning</span></label>
+              <label class="signup-chip"><input type="checkbox" name="services" value="Gardening"><span>🌿 Gardening</span></label>
+              <label class="signup-chip"><input type="checkbox" name="services" value="Home maintenance"><span>🔧 Home maintenance</span></label>
+              <label class="signup-chip"><input type="checkbox" name="services" value="Transport"><span>🚗 Transport</span></label>
+              <label class="signup-chip"><input type="checkbox" name="services" value="Meals"><span>🍲 Meals</span></label>
+              <label class="signup-chip"><input type="checkbox" name="services" value="Fitness &amp; health"><span>💪 Fitness &amp; health</span></label>
+              <label class="signup-chip"><input type="checkbox" name="services" value="Pet assistance"><span>🐾 Pet assistance</span></label>
+              <label class="signup-chip"><input type="checkbox" name="services" value="Companion visits"><span>🤝 Companion visits</span></label>
             </div>
           </div>
           <div class="af-field">
@@ -1648,20 +1698,25 @@ document.getElementById('signup-form').addEventListener('submit', async function
   e.preventDefault();
   clearAuthMessage();
 
-  const fd           = new FormData(e.currentTarget);
-  const name         = (fd.get('name')         || '').trim();
-  const email        = (fd.get('email')         || '').trim().toLowerCase();
-  const phone        = (fd.get('phone')         || '').trim();
-  const town         = (fd.get('town')          || '').trim();
-  const plan         = (fd.get('plan')          || '').trim();
-  const address      = (fd.get('address')       || '').trim();
+  const fd             = new FormData(e.currentTarget);
+  const name           = (fd.get('name')         || '').trim();
+  const email          = (fd.get('email')         || '').trim().toLowerCase();
+  const phone          = (fd.get('phone')         || '').trim();
+  const town           = (fd.get('town')          || '').trim();
+  const address        = (fd.get('address')       || '').trim();
   const assessmentType = (fd.get('assessmentType') || '').trim();
-  const bestTime     = (fd.get('bestTime')      || '').trim();
-  const notes        = (fd.get('notes')         || '').trim();
-  const password     = (fd.get('password')      || '');
+  const bestTime       = (fd.get('bestTime')      || '').trim();
+  const notes          = (fd.get('notes')         || '').trim();
+  const password       = (fd.get('password')      || '');
+  const selectedServices = fd.getAll('services');
+  const plan = selectedServices.length ? selectedServices[0] : 'Independence client';
 
-  if (!name || !email || !phone || !town || !plan || !address || !assessmentType || !bestTime) {
+  if (!name || !email || !phone || !town || !address || !assessmentType || !bestTime) {
     showAuthMessage('Please complete every required field.', 'error');
+    return;
+  }
+  if (selectedServices.length === 0) {
+    showAuthMessage('Please select at least one service you are interested in.', 'error');
     return;
   }
   if (password.length < 6) {
@@ -1677,14 +1732,15 @@ document.getElementById('signup-form').addEventListener('submit', async function
     password,
     options: {
       data: {
-        full_name:       name,
+        full_name:           name,
         phone,
         address,
         town,
         plan,
-        assessment_type: assessmentType,
-        best_time:       bestTime,
-        intake_notes:    notes
+        assessment_type:     assessmentType,
+        best_time:           bestTime,
+        intake_notes:        notes,
+        services_interested: JSON.stringify(selectedServices)
       }
     }
   });
