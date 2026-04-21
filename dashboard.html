@@ -734,7 +734,7 @@ button,input,select,textarea { font:inherit; }
         <div class="welcome-banner">
           <div>
             <h2 id="welcome-name">Hello 🌿</h2>
-            <p id="welcome-sub">Here is everything about your Independence services in one place.</p>
+            <p id="welcome-sub">Your environment and capability services — everything in one place.</p>
           </div>
           <div class="concierge-card">
             <span class="c-label">Your concierge</span>
@@ -859,16 +859,31 @@ button,input,select,textarea { font:inherit; }
               <div class="field">
                 <label for="req-service">What type of support do you need?</label>
                 <select id="req-service" name="service" required>
-                  <option value="">Please select…</option>
-                  <option value="House cleaning">🧹 House cleaning</option>
-                  <option value="Gardening &amp; lawns">🌿 Gardening &amp; lawns</option>
-                  <option value="Home maintenance">🔧 Home maintenance</option>
-                  <option value="Transport to appointment">🚗 Transport to appointment</option>
-                  <option value="Meal preparation">🍲 Meal preparation</option>
-                  <option value="Fitness &amp; personal training">💪 Fitness &amp; personal training</option>
-                  <option value="Pet assistance">🐾 Pet assistance</option>
-                  <option value="Companion visit">🤝 Companion visit</option>
-                  <option value="Other">Other — describe in notes below</option>
+                  <option value="">Please select a service…</option>
+                  <optgroup label="🧹 Home Cleaning">
+                    <option value="Home Cleaning — Weekly">Weekly cleaning</option>
+                    <option value="Home Cleaning — Fortnightly">Fortnightly cleaning</option>
+                    <option value="Home Cleaning — Spring clean">Spring / deep clean</option>
+                  </optgroup>
+                  <optgroup label="🌿 Gardening &amp; Outdoor Maintenance">
+                    <option value="Gardening — Lawn mowing">Lawn mowing</option>
+                    <option value="Gardening — Weeding">Weeding</option>
+                    <option value="Gardening — Pruning">Pruning</option>
+                    <option value="Gardening — General upkeep">General garden upkeep</option>
+                  </optgroup>
+                  <optgroup label="🔧 Handyman &amp; Home Maintenance">
+                    <option value="Handyman — Minor repairs">Minor repairs</option>
+                    <option value="Handyman — Safety rails">Safety rails &amp; home modifications</option>
+                    <option value="Handyman — Odd jobs">Odd jobs (lightbulbs, taps, fixtures)</option>
+                  </optgroup>
+                  <optgroup label="✨ Fitness, Mobility &amp; Health">
+                    <option value="Fitness — Personal training">Personal training</option>
+                    <option value="Fitness — Gentle exercise">Gentle exercise programme</option>
+                    <option value="Fitness — Balance &amp; mobility">Balance &amp; mobility training</option>
+                    <option value="Fitness — Strength coaching">Strength coaching</option>
+                    <option value="Fitness — Health check-in">Health check-in</option>
+                  </optgroup>
+                  <option value="Not sure — please call me">Not sure — please call me on 027 325 9707</option>
                 </select>
               </div>
               <div class="form-row">
@@ -1025,44 +1040,24 @@ button,input,select,textarea { font:inherit; }
               <p style="font-size:.85rem;color:var(--stone-light);margin-bottom:10px;">Select all that apply — you can change these at any time.</p>
               <div class="service-chips">
                 <label class="service-chip">
-                  <input type="checkbox" name="services" value="House cleaning">
+                  <input type="checkbox" id="svc1" name="services" value="Home Cleaning">
                   <span class="service-chip-icon">🧹</span>
-                  <span class="service-chip-text"><strong>House cleaning</strong><span>Regular home cleaning</span></span>
+                  <span class="service-chip-text"><strong>Home Cleaning</strong><span>Weekly, fortnightly or spring clean</span></span>
                 </label>
                 <label class="service-chip">
-                  <input type="checkbox" name="services" value="Gardening">
+                  <input type="checkbox" id="svc2" name="services" value="Gardening &amp; Outdoors">
                   <span class="service-chip-icon">🌿</span>
-                  <span class="service-chip-text"><strong>Gardening</strong><span>Lawns & garden upkeep</span></span>
+                  <span class="service-chip-text"><strong>Gardening &amp; Outdoors</strong><span>Lawns, weeding, pruning, upkeep</span></span>
                 </label>
-                <label class="service-chip">
-                  <input type="checkbox" name="services" value="Home maintenance">
+                <label class="service-chip" style="border-color:var(--forest-mid);">
+                  <input type="checkbox" id="svc3" name="services" value="Handyman &amp; Maintenance">
                   <span class="service-chip-icon">🔧</span>
-                  <span class="service-chip-text"><strong>Home maintenance</strong><span>Repairs & handyman</span></span>
+                  <span class="service-chip-text"><strong>Handyman &amp; Maintenance</strong><span>Repairs, safety rails, odd jobs</span></span>
                 </label>
-                <label class="service-chip">
-                  <input type="checkbox" name="services" value="Transport">
-                  <span class="service-chip-icon">🚗</span>
-                  <span class="service-chip-text"><strong>Transport</strong><span>Appointments & errands</span></span>
-                </label>
-                <label class="service-chip">
-                  <input type="checkbox" name="services" value="Meal preparation">
-                  <span class="service-chip-icon">🍲</span>
-                  <span class="service-chip-text"><strong>Meal preparation</strong><span>Cooking & food support</span></span>
-                </label>
-                <label class="service-chip">
-                  <input type="checkbox" name="services" value="Fitness and health">
-                  <span class="service-chip-icon">💪</span>
-                  <span class="service-chip-text"><strong>Fitness & health</strong><span>Training & wellbeing</span></span>
-                </label>
-                <label class="service-chip">
-                  <input type="checkbox" name="services" value="Pet assistance">
-                  <span class="service-chip-icon">🐾</span>
-                  <span class="service-chip-text"><strong>Pet assistance</strong><span>Walking & grooming</span></span>
-                </label>
-                <label class="service-chip">
-                  <input type="checkbox" name="services" value="Companion visit">
-                  <span class="service-chip-icon">🤝</span>
-                  <span class="service-chip-text"><strong>Companion visits</strong><span>Company & social support</span></span>
+                <label class="service-chip" style="border-color:var(--forest);background:var(--forest-pale);">
+                  <input type="checkbox" id="svc4" name="services" value="Fitness, Mobility &amp; Health">
+                  <span class="service-chip-icon">✨</span>
+                  <span class="service-chip-text"><strong>Fitness, Mobility &amp; Health</strong><span>Personal training, balance &amp; mobility</span></span>
                 </label>
               </div>
             </div>
@@ -1173,18 +1168,24 @@ const PAGE_TITLES = {
 };
 
 const SVC_ICONS = {
-  'House cleaning': '🧹', 'Gardening': '🌿', 'Gardening & lawns': '🌿',
-  'Home maintenance': '🔧', 'Transport': '🚗', 'Transport to appointment': '🚗',
-  'Meal preparation': '🍲', 'Fitness and health': '💪', 'Fitness & personal training': '💪',
-  'Pet assistance': '🐾', 'Companion visit': '🤝', 'Companion Care': '🤝',
-  'Daily Living Support': '🏡', 'Other': '📋'
+  'Home Cleaning': '🧹',
+  'Home Cleaning — Weekly': '🧹', 'Home Cleaning — Fortnightly': '🧹', 'Home Cleaning — Spring clean': '🧹',
+  'Gardening & Outdoors': '🌿',
+  'Gardening — Lawn mowing': '🌿', 'Gardening — Weeding': '🌿', 'Gardening — Pruning': '🌿', 'Gardening — General upkeep': '🌿',
+  'Handyman & Maintenance': '🔧',
+  'Handyman — Minor repairs': '🔧', 'Handyman — Safety rails': '🔧', 'Handyman — Odd jobs': '🔧',
+  'Fitness, Mobility & Health': '✨',
+  'Fitness — Personal training': '✨', 'Fitness — Gentle exercise': '✨',
+  'Fitness — Balance & mobility': '✨', 'Fitness — Strength coaching': '✨', 'Fitness — Health check-in': '✨',
+  'Not sure — please call me': '📞'
 };
 
 const SVC_COLORS = {
-  'House cleaning': '#edf3ed', 'Gardening': '#eef4e8', 'Gardening & lawns': '#eef4e8',
-  'Home maintenance': '#f0ebe8', 'Transport': '#e8f0f8', 'Transport to appointment': '#e8f0f8',
-  'Meal preparation': '#fdf4e7', 'Fitness and health': '#f5edf8', 'Fitness & personal training': '#f5edf8',
-  'Pet assistance': '#faeaee', 'Companion visit': '#e8f4fb', 'default': '#f4f8f4'
+  'Home Cleaning': '#eef4e8', 'Home Cleaning — Weekly': '#eef4e8', 'Home Cleaning — Fortnightly': '#eef4e8', 'Home Cleaning — Spring clean': '#eef4e8',
+  'Gardening & Outdoors': '#eef4e8', 'Gardening — Lawn mowing': '#eef4e8', 'Gardening — Weeding': '#eef4e8', 'Gardening — Pruning': '#eef4e8', 'Gardening — General upkeep': '#eef4e8',
+  'Handyman & Maintenance': '#f0ebe8', 'Handyman — Minor repairs': '#f0ebe8', 'Handyman — Safety rails': '#f0ebe8', 'Handyman — Odd jobs': '#f0ebe8',
+  'Fitness, Mobility & Health': '#f5edf8', 'Fitness — Personal training': '#f5edf8', 'Fitness — Gentle exercise': '#f5edf8',
+  'Fitness — Balance & mobility': '#f5edf8', 'Fitness — Strength coaching': '#f5edf8', 'Fitness — Health check-in': '#f5edf8'
 };
 
 // ================================================================
@@ -1341,7 +1342,7 @@ function renderSidebar(profile, services) {
   const tagsEl = $('sidebar-services');
   if (tagsEl) {
     const saved = parseSvcs(profile.services_interested);
-    const icons = {'House cleaning':'🧹','Gardening':'🌿','Home maintenance':'🔧','Transport':'🚗','Meals':'🍲','Fitness & health':'💪','Pet assistance':'🐾','Companion visits':'🤝'};
+    const icons = {'Home Cleaning':'🧹','Gardening & Outdoors':'🌿','Handyman & Maintenance':'🔧','Fitness, Mobility & Health':'✨'};
     tagsEl.innerHTML = saved.length
       ? saved.map(s => `<span style="font-size:.68rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:3px 10px;color:rgba(255,255,255,.8);">${icons[s]||'🌿'} ${s}</span>`).join('')
       : '<span style="font-size:.68rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:3px 10px;color:rgba(255,255,255,.8);">🌿 Independence client</span>';
