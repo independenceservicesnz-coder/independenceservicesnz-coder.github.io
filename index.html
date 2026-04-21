@@ -487,6 +487,56 @@ nav {
   background: var(--cream); border: 1px solid var(--border);
   padding: 3px 10px; border-radius: 20px;
 }
+.svc-frame-strip {
+  display: flex; align-items: stretch; gap: 0;
+  border-radius: var(--rl); overflow: hidden;
+  margin: 32px 0 44px; border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+.svc-frame-half { flex: 1; padding: 28px 32px; }
+.svc-frame-env  { background: var(--forest-pale); border-right: 1.5px solid var(--border); }
+.svc-frame-cap  { background: #fdf4e7; }
+.svc-frame-plus {
+  display: flex; align-items: center; justify-content: center;
+  width: 52px; flex-shrink: 0;
+  background: white; border-left: 1.5px solid var(--border); border-right: 1.5px solid var(--border);
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; color: var(--stone-light);
+}
+.svc-frame-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700; margin-bottom: 8px;
+}
+.svc-frame-env .svc-frame-label { color: var(--forest); }
+.svc-frame-cap .svc-frame-label { color: #7a5010; }
+.svc-frame-desc { font-size: 15px; color: var(--stone-mid); font-weight: 300; line-height: 1.6; }
+.svc-frame-env-tag {
+  display: inline-flex; font-size: 11px; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--forest); background: var(--forest-light);
+  border-radius: 20px; padding: 4px 12px; margin-bottom: 14px;
+}
+.svc-frame-cap-tag {
+  display: inline-flex; font-size: 11px; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: #7a5010; background: #fdf4e7;
+  border-radius: 20px; padding: 4px 12px; margin-bottom: 14px;
+}
+.svc-card-capability {
+  border: 2px solid var(--gold) !important;
+  background: linear-gradient(170deg, #fffdf8, #fdf8ee) !important;
+}
+.svc-essential-note {
+  margin-top: 16px; padding: 12px 16px;
+  background: rgba(181,129,60,.1); border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  font-size: 14px; font-style: italic; color: #7a5010; line-height: 1.5;
+}
+@media (max-width: 700px) {
+  .svc-frame-strip { flex-direction: column; }
+  .svc-frame-env { border-right: none; border-bottom: 1.5px solid var(--border); }
+  .svc-frame-plus { width: 100%; height: 44px; border: none; border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border); }
+}
 .services-note {
   margin-top: 36px; padding: 24px 28px;
   background: var(--forest-pale); border: 1.5px solid #c0d8c0;
@@ -742,12 +792,23 @@ nav {
 .af-error { background:#fdf0ee; border:1px solid #e9b8b0; color:#8f3535; }
 .af-success { background:#eef8ef; border:1px solid #b7dbbd; color:#2f6b39; }
 .auth-note { font-size:13px; color: var(--stone-light); font-weight:300; line-height:1.5; margin-top: 12px; }
+.bk-chip { display:flex; cursor:pointer; }
+.bk-chip input[type=checkbox] { position:absolute; opacity:0; width:0; height:0; }
+.bk-chip span { display:flex; align-items:center; gap:8px; width:100%; padding:11px 14px; border:1.5px solid var(--border); border-radius:12px; background:var(--cream); font-size:15px; color:var(--stone-mid); transition:all .18s; font-family:'Source Serif 4',serif; }
+.bk-chip span:hover { border-color:var(--forest-mid); background:var(--forest-pale); }
+.bk-chip input:checked + span { border-color:var(--forest); background:var(--forest-light); color:var(--forest); font-weight:500; }
+.bk-chip-cap span { border-color:#d8c090; background:#fdf4e7; color:#7a5010; }
+.bk-chip-cap span:hover { border-color:var(--gold); background:#faecd0; }
+.bk-chip-cap input:checked + span { border-color:var(--gold); background:#faecd0; color:#7a5010; }
 .signup-chips { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
 .signup-chip { display:flex; cursor:pointer; }
 .signup-chip input[type=checkbox] { position:absolute; opacity:0; width:0; height:0; }
 .signup-chip span { display:flex; align-items:center; gap:8px; width:100%; padding:11px 13px; border:1.5px solid var(--border); border-radius:12px; background:var(--cream); font-size:14px; color:var(--stone-mid); transition:all .18s; }
 .signup-chip span:hover { border-color:var(--forest-mid); background:var(--forest-pale); }
 .signup-chip input:checked + span { border-color:var(--forest); background:var(--forest-light); color:var(--forest); font-weight:500; }
+.signup-chip-cap span { border-color:#d8c090; background:#fdf4e7; color:#7a5010; }
+.signup-chip-cap span:hover { border-color:var(--gold); background:#faecd0; }
+.signup-chip-cap input:checked + span { border-color:var(--gold); background:#faecd0; color:#7a5010; }
 
 @media (max-width: 640px) {
   .af-grid { grid-template-columns: 1fr; }
@@ -915,7 +976,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
           Aotearoa New Zealand
         </div>
         <h1 id="hero-h1">Stay in your home.<br><em>Live life fully.</em></h1>
-        <p class="hero-lead">We connect older New Zealanders with trusted, vetted local helpers — for everyday tasks that make staying home easier and safer. One call. One trusted contact. We handle the rest.</p>
+        <p class="hero-lead">Independence coordinates two things that matter most: your <strong>environment</strong> — a clean, safe, maintained home — and your <strong>capability</strong> — the strength and mobility to enjoy it. One trusted team. Everything handled.</p>
 
         <div class="hero-call-box">
           <div class="hero-call-label">The simplest way to get started</div>
@@ -950,41 +1011,28 @@ footer { background: var(--stone); padding: 68px 0 38px; }
 
       <div class="hero-right" aria-hidden="true">
         <div class="svc-preview-card">
-          <div class="svc-preview-head">Services we coordinate nationwide</div>
+          <div class="svc-preview-head">Four core services — nationwide</div>
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone-light);padding:0 0 8px;font-weight:500;">🏡 Environment</div>
           <div class="svc-row">
             <div class="svc-icon svi-a">🧹</div>
-            <span class="svc-row-name">House cleaning</span>
+            <span class="svc-row-name">Home cleaning</span>
             <span class="svc-row-tag">Available</span>
           </div>
           <div class="svc-row">
             <div class="svc-icon svi-b">🌿</div>
-            <span class="svc-row-name">Gardening &amp; lawns</span>
-            <span class="svc-row-tag">Available</span>
-          </div>
-          <div class="svc-row">
-            <div class="svc-icon svi-c">🚗</div>
-            <span class="svc-row-name">Transport &amp; driving</span>
-            <span class="svc-row-tag">Available</span>
-          </div>
-          <div class="svc-row">
-            <div class="svc-icon svi-d">🍲</div>
-            <span class="svc-row-name">Meal support</span>
+            <span class="svc-row-name">Gardening &amp; outdoor</span>
             <span class="svc-row-tag">Available</span>
           </div>
           <div class="svc-row">
             <div class="svc-icon svi-e">🔧</div>
-            <span class="svc-row-name">Handyman &amp; repairs</span>
+            <span class="svc-row-name">Handyman &amp; maintenance</span>
             <span class="svc-row-tag">Available</span>
           </div>
-          <div class="svc-row">
-            <div class="svc-icon svi-f">🐾</div>
-            <span class="svc-row-name">Pet assistance</span>
-            <span class="svc-row-tag">Available</span>
-          </div>
-          <div class="svc-row">
-            <div class="svc-icon svi-g">💪</div>
-            <span class="svc-row-name">Fitness &amp; personal training</span>
-            <span class="svc-row-tag">Available</span>
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone-light);padding:10px 0 8px;font-weight:500;">💪 Capability</div>
+          <div class="svc-row" style="border:1.5px solid var(--forest);border-radius:10px;padding:4px 8px;margin-bottom:0;">
+            <div class="svc-icon svi-g">🏋️</div>
+            <span class="svc-row-name" style="font-weight:500;">Fitness, mobility &amp; health</span>
+            <span class="svc-row-tag" style="background:var(--forest);color:white;">Essential</span>
           </div>
         </div>
         <div class="trust-mini-card">
@@ -1049,75 +1097,63 @@ footer { background: var(--stone); padding: 68px 0 38px; }
 <!-- SERVICES -->
 <section class="services" id="services" aria-labelledby="svc-h">
   <div class="container">
-    <div class="eyebrow">Our services</div>
-    <h2 class="sec" id="svc-h">Practical help for everyday life at home</h2>
-    <p class="lead">We focus on the everyday tasks that make a real difference — the ones that help you stay independent, comfortable, and safe in your own home.</p>
+    <div class="eyebrow">Our four core services</div>
+    <h2 class="sec" id="svc-h">Two things that keep you independent</h2>
+    <p class="lead">Staying home safely for longer requires two things: a well-maintained <strong>environment</strong>, and the physical <strong>capability</strong> to enjoy it. Independence provides both — through four focused services, done exceptionally well.</p>
+
+    <div class="svc-frame-strip reveal">
+      <div class="svc-frame-half svc-frame-env">
+        <div class="svc-frame-label">🏡 Environment</div>
+        <div class="svc-frame-desc">A clean, safe, well-maintained home is the foundation of independence.</div>
+      </div>
+      <div class="svc-frame-plus">+</div>
+      <div class="svc-frame-half svc-frame-cap">
+        <div class="svc-frame-label">💪 Capability</div>
+        <div class="svc-frame-desc">The strength, balance, and mobility to live fully in that home.</div>
+      </div>
+    </div>
+
     <div class="services-grid">
       <div class="svc-card reveal">
+        <div class="svc-frame-env-tag">🏡 Environment</div>
         <div class="svc-card-ico svi-a">🧹</div>
-        <h3>House cleaning</h3>
-        <p>Regular or one-off home cleaning by trustworthy local people who know what matters to older clients — reliability, care, and respect for your home.</p>
+        <h3>Home cleaning</h3>
+        <p>Regular or one-off cleaning by trusted local people who understand older clients. Reliability, care, and genuine respect for your home — every time.</p>
         <div class="svc-examples">
-          <span class="ex-tag">Weekly clean</span>
+          <span class="ex-tag">Weekly cleaning</span>
           <span class="ex-tag">Fortnightly</span>
-          <span class="ex-tag">Spring clean</span>
+          <span class="ex-tag">Spring / deep clean</span>
         </div>
       </div>
       <div class="svc-card reveal">
+        <div class="svc-frame-env-tag">🏡 Environment</div>
         <div class="svc-card-ico svi-b">🌿</div>
-        <h3>Gardening &amp; lawns</h3>
-        <p>Lawn mowing, weeding, pruning, and general garden upkeep — so your outdoor space stays tidy and manageable without it becoming a burden.</p>
+        <h3>Gardening &amp; outdoor maintenance</h3>
+        <p>Keeping outdoor spaces tidy, safe, and manageable. A well-kept garden is something to enjoy — not something to worry about.</p>
         <div class="svc-examples">
           <span class="ex-tag">Lawn mowing</span>
           <span class="ex-tag">Weeding</span>
           <span class="ex-tag">Pruning</span>
+          <span class="ex-tag">General upkeep</span>
         </div>
       </div>
       <div class="svc-card reveal">
+        <div class="svc-frame-env-tag">🏡 Environment</div>
         <div class="svc-card-ico svi-e">🔧</div>
-        <h3>Handyman &amp; repairs</h3>
-        <p>Minor repairs, odd jobs, light maintenance, and safety modifications — things like loose handrails, dripping taps, or replacing lightbulbs that are hard to reach.</p>
+        <h3>Handyman &amp; home maintenance</h3>
+        <p>Minor repairs, safety improvements, and practical help around the home — handled properly, with care, by people who know what they're doing.</p>
         <div class="svc-examples">
           <span class="ex-tag">Minor repairs</span>
           <span class="ex-tag">Safety rails</span>
+          <span class="ex-tag">Home modifications</span>
           <span class="ex-tag">Odd jobs</span>
         </div>
       </div>
-      <div class="svc-card reveal">
-        <div class="svc-card-ico svi-c">🚗</div>
-        <h3>Transport &amp; companion driving</h3>
-        <p>Safe, friendly transport to medical appointments, the supermarket, social outings, or wherever you need to go — with a driver who will walk you in if needed.</p>
-        <div class="svc-examples">
-          <span class="ex-tag">Medical appointments</span>
-          <span class="ex-tag">Shopping</span>
-          <span class="ex-tag">Social outings</span>
-        </div>
-      </div>
-      <div class="svc-card reveal">
-        <div class="svc-card-ico svi-d">🍲</div>
-        <h3>Meal support</h3>
-        <p>Help with preparing meals at home, or coordinating meal delivery — so that eating well stays easy and enjoyable even when cooking becomes more difficult.</p>
-        <div class="svc-examples">
-          <span class="ex-tag">Meal prep</span>
-          <span class="ex-tag">Delivery</span>
-          <span class="ex-tag">Grocery support</span>
-        </div>
-      </div>
-      <div class="svc-card reveal">
-        <div class="svc-card-ico svi-f">🐾</div>
-        <h3>Pet assistance</h3>
-        <p>We know how much pets mean to older people — the companionship, the routine, the joy. We coordinate trusted local helpers to keep your furry family members happy and well looked after.</p>
-        <div class="svc-examples">
-          <span class="ex-tag">Dog walking</span>
-          <span class="ex-tag">Pet grooming</span>
-          <span class="ex-tag">Vet transport</span>
-          <span class="ex-tag">Pet sitting</span>
-        </div>
-      </div>
-      <div class="svc-card reveal">
-        <div class="svc-card-ico svi-g">💪</div>
-        <h3>Fitness, personal training &amp; health</h3>
-        <p>Staying active is one of the most powerful ways to maintain independence at home. We connect you with qualified trainers and health professionals who specialise in working with older adults — at your pace, in your own home.</p>
+      <div class="svc-card svc-card-capability reveal">
+        <div class="svc-frame-cap-tag">💪 Capability — Essential</div>
+        <div class="svc-card-ico svi-g">🏋️</div>
+        <h3>Fitness, mobility &amp; health</h3>
+        <p>Strength and movement are not optional extras — they are what make staying home possible for longer. We connect you with specialists who understand exactly what older adults need, at exactly the right pace.</p>
         <div class="svc-examples">
           <span class="ex-tag">Personal training</span>
           <span class="ex-tag">Gentle exercise</span>
@@ -1125,10 +1161,11 @@ footer { background: var(--stone); padding: 68px 0 38px; }
           <span class="ex-tag">Strength coaching</span>
           <span class="ex-tag">Health check-ins</span>
         </div>
+        <div class="svc-essential-note">Movement is medicine. The stronger you are, the longer you stay home.</div>
       </div>
     </div>
     <div class="services-note reveal">
-      <strong>Not sure if we cover what you need?</strong> Just call us on 027 325 9707 and we'll tell you honestly whether we can help — or point you in the right direction if we can't. We're here to make things easier, not to give you the runaround.
+      <strong>Four services. Focused on what matters most.</strong> We have deliberately kept our offering simple so we can do each one exceptionally well. Call us on 027 325 9707 if you'd like to talk through which services would suit you best.
     </div>
   </div>
 </section>
@@ -1145,11 +1182,11 @@ footer { background: var(--stone); padding: 68px 0 38px; }
         <h3>You want to stay at home. We help make that possible.</h3>
         <p class="desc">Whether you're fully independent and just want occasional help, or finding some tasks harder than they used to be, Independence connects you with trusted local people who treat you with respect.</p>
         <div class="who-needs">
-          <div class="wn"><div class="wn-dot wnd-g">✓</div>Trusted local providers, vetted before they enter your home</div>
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>Cleaning, gardening, handyman, and fitness — all through one trusted team</div>
           <div class="wn"><div class="wn-dot wnd-g">✓</div>Simple booking — just phone us, no apps or computers needed</div>
-          <div class="wn"><div class="wn-dot wnd-g">✓</div>One familiar person to call if anything needs sorting</div>
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>All providers vetted, police-checked, and reference-checked</div>
+          <div class="wn"><div class="wn-dot wnd-g">✓</div>Fitness and mobility included — because staying strong means staying home</div>
           <div class="wn"><div class="wn-dot wnd-g">✓</div>No lock-in, no pressure — book what you need, when you need it</div>
-          <div class="wn"><div class="wn-dot wnd-g">✓</div>We follow up to make sure everything went well</div>
         </div>
       </div>
       <div class="who-card reveal">
@@ -1337,7 +1374,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
           </div>
           <div style="margin-bottom:20px">
             <label for="f-need" style="display:block;font-size:14px;color:var(--stone-light);margin-bottom:6px;font-weight:300">What kind of help are you looking for? (optional)</label>
-            <textarea id="f-need" name="help_needed" rows="3" placeholder="e.g. Help with cleaning and the garden, and transport to medical appointments" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;resize:vertical"></textarea>
+            <textarea id="f-need" name="help_needed" rows="3" placeholder="e.g. Weekly cleaning, garden upkeep, and fitness sessions at home" style="width:100%;padding:13px 16px;border:1.5px solid var(--border-mid);border-radius:var(--r);font-family:'Source Serif 4',serif;font-size:16px;color:var(--stone);background:var(--white);outline:none;resize:vertical"></textarea>
           </div>
           <p style="font-size:13px;color:var(--stone-light);margin-bottom:16px;font-weight:300"><span style="color:var(--gold)">*</span> Required fields</p>
           <button type="submit" class="btn btn-green" style="font-size:18px">Book my free Needs Assessment</button>
@@ -1395,7 +1432,7 @@ footer { background: var(--stone); padding: 68px 0 38px; }
             What areas do you cover?
             <div class="faq-arr" aria-hidden="true">+</div>
           </button>
-          <div class="faq-a" role="region">We are currently growing our network of local providers across the country. If you're not sure whether we cover your area yet, just call us on 027 325 9707 and we'll be honest with you about what we can arrange.</div>
+          <div class="faq-a" role="region">We are currently growing our network across New Zealand, focusing on our four core services — home cleaning, gardening and outdoor maintenance, handyman and home maintenance, and fitness and mobility. If you're not sure whether we cover your area yet, just call us on 027 325 9707 and we'll be honest with you about what we can arrange.</div>
         </div>
         <div class="faq-item" role="listitem">
           <button class="faq-q" onclick="faq(this)" aria-expanded="false">
@@ -1417,6 +1454,20 @@ footer { background: var(--stone); padding: 68px 0 38px; }
             <div class="faq-arr" aria-hidden="true">+</div>
           </button>
           <div class="faq-a" role="region">Just call us. That's what we're here for. We follow up after every job — so if something isn't right, we often find out before you even need to raise it. If you are ever unhappy with a provider, we'll sort it out: find a replacement, issue a refund if appropriate, and make sure it doesn't happen again. There are no complicated complaints processes — just one phone call to the same person who booked it in the first place.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            Why do you only offer four services?
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">Because doing fewer things exceptionally well is better than doing many things adequately. Our four services — home cleaning, gardening, handyman maintenance, and fitness and mobility — are the four things that matter most for staying safely and happily at home. By focusing here, we can vet our providers more carefully, coordinate more reliably, and guarantee a consistently high standard. We would rather be genuinely excellent at what matters most than spread ourselves thin.</div>
+        </div>
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" onclick="faq(this)" aria-expanded="false">
+            Why is fitness and mobility included? I thought that was optional.
+            <div class="faq-arr" aria-hidden="true">+</div>
+          </button>
+          <div class="faq-a" role="region">Our research and experience shows clearly that physical strength and mobility are the single most important factor in whether someone can continue living independently at home. A clean, safe home matters enormously — but if someone loses the strength to get up from a chair or the balance to walk safely, no amount of cleaning or gardening changes that. That is why we treat fitness and mobility as essential, not optional — and why we have built it into our core offering rather than leaving it as an afterthought.</div>
         </div>
         <div class="faq-item" role="listitem">
           <button class="faq-q" onclick="faq(this)" aria-expanded="false">
@@ -1442,14 +1493,12 @@ footer { background: var(--stone); padding: 68px 0 38px; }
         <a href="mailto:independenceservicesnz@gmail.com" style="display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.55);text-decoration:none;font-size:14px;margin-top:10px;font-weight:300;font-family:Source Serif 4,serif;">✉ independenceservicesnz@gmail.com</a>
       </div>
       <div class="foot-col">
-        <h4>Services</h4>
-        <a href="#">House cleaning</a>
-        <a href="#">Gardening &amp; lawns</a>
-        <a href="#">Handyman &amp; repairs</a>
-        <a href="#">Transport</a>
-        <a href="#">Meal support</a>
-        <a href="#">Pet assistance</a>
-        <a href="#">Fitness &amp; personal training</a>
+        <h4>Our services</h4>
+        <a href="#services">🧹 Home cleaning</a>
+        <a href="#services">🌿 Gardening &amp; outdoors</a>
+        <a href="#services">🔧 Handyman &amp; maintenance</a>
+        <a href="#services">💪 Fitness, mobility &amp; health</a>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:rgba(255,255,255,.4);line-height:1.6;">Independence = Environment + Capability</div>
       </div>
       <div class="foot-col">
         <h4>Company</h4>
@@ -1515,14 +1564,14 @@ footer { background: var(--stone); padding: 68px 0 38px; }
           <div class="af-field">
             <label>Services you are interested in <span style="color:var(--stone-light);font-size:12px;font-weight:300;">(select all that apply)</span></label>
             <div class="signup-chips" id="signup-chips">
-              <label class="signup-chip"><input type="checkbox" name="services" value="House cleaning"><span>🧹 House cleaning</span></label>
-              <label class="signup-chip"><input type="checkbox" name="services" value="Gardening"><span>🌿 Gardening</span></label>
-              <label class="signup-chip"><input type="checkbox" name="services" value="Home maintenance"><span>🔧 Home maintenance</span></label>
-              <label class="signup-chip"><input type="checkbox" name="services" value="Transport"><span>🚗 Transport</span></label>
-              <label class="signup-chip"><input type="checkbox" name="services" value="Meals"><span>🍲 Meals</span></label>
-              <label class="signup-chip"><input type="checkbox" name="services" value="Fitness &amp; health"><span>💪 Fitness &amp; health</span></label>
-              <label class="signup-chip"><input type="checkbox" name="services" value="Pet assistance"><span>🐾 Pet assistance</span></label>
-              <label class="signup-chip"><input type="checkbox" name="services" value="Companion visits"><span>🤝 Companion visits</span></label>
+              <label class="signup-chip signup-chip-env"><input type="checkbox" name="services" value="Home cleaning"><span>🧹 Home cleaning</span></label>
+              <label class="signup-chip signup-chip-env"><input type="checkbox" name="services" value="Gardening &amp; outdoor maintenance"><span>🌿 Gardening &amp; outdoors</span></label>
+              <label class="signup-chip signup-chip-env"><input type="checkbox" name="services" value="Handyman &amp; home maintenance"><span>🔧 Handyman &amp; maintenance</span></label>
+              <label class="signup-chip signup-chip-cap"><input type="checkbox" name="services" value="Fitness, mobility &amp; health"><span>💪 Fitness, mobility &amp; health</span></label>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:8px;font-size:12px;color:var(--stone-light);flex-wrap:wrap;">
+              <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--forest-light);border:1px solid var(--forest);"></span>Environment</span>
+              <span style="display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#fdf4e7;border:1px solid var(--gold);"></span>Capability — recommended for everyone</span>
             </div>
           </div>
           <div class="af-field">
