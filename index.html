@@ -1935,7 +1935,7 @@ async function resetPassword() {
     showAuthMessage('Please enter your email address above first, then click Reset.', 'error');
     return;
   }
-const { error } = await sb.auth.resetPasswordForEmail(email, {
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
     redirectTo: window.location.origin + window.location.pathname.replace('index.html','') + 'reset-password.html'
   });
   if (error) {
