@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Independence — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:      #2d4a2d;
+  --forest-mid:  #3d6b3d;
+  --forest-light:#edf3ed;
+  --forest-pale: #f4f8f4;
+  --gold:        #b5813c;
+  --gold-light:  #fdf4e7;
+  --cream:       #faf7f2;
+  --white:       #ffffff;
+  --stone:       #3a3228;
+  --stone-mid:   #6b5f52;
+  --stone-light: #a89880;
+  --border:      #e2ddd6;
+  --border-mid:  #c8bfb0;
+  --danger:      #8f3535;
+  --success-col: #2f6b39;
+  --sidebar-w:   280px;
+  --nav-h:       70px;
+  --r:  14px;
+  --rl: 20px;
+  --shadow: 0 2px 18px rgba(45,74,45,.07);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:16px; scroll-behavior:smooth; }
+body {
+  font-family:"Source Serif 4",Georgia,serif;
+  background:var(--cream); color:var(--stone);
+  line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+a { color:inherit; text-decoration:none; }
+button,input,select,textarea { font:inherit; }
+
+/* ── LOADING ── */
+#loading-screen {
+  position:fixed; inset:0; z-index:999;
+  background:var(--white);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:20px;
+}
+.loading-logo { font-family:"Playfair Display",serif; font-size:1.9rem; font-weight:700; color:var(--forest); }
+.loading-sub  { font-size:.85rem; color:var(--stone-light); }
+.spinner { width:36px; height:36px; border-radius:50%; border:3px solid var(--forest-light); border-top-color:var(--forest); animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── GUARD / SIGN IN ── */
+#not-admin, #signin-screen { display:none; min-height:100vh; place-items:center; padding:32px; background:linear-gradient(170deg,var(--white),var(--cream)); }
+#not-admin.visible, #signin-screen.visible { display:grid; }
+.guard-card { width:min(440px,100%); background:var(--white); border-radius:24px; border:1.5px solid var(--border); box-shadow:0 8px 40px rgba(45,74,45,.1); padding:40px 36px; text-align:center; }
+.guard-logo  { font-family:"Playfair Display",serif; font-size:1.4rem; font-weight:700; color:var(--forest); margin-bottom:8px; }
+.guard-sub   { font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; color:var(--stone-light); margin-bottom:24px; }
+.guard-card h1 { font-family:"Playfair Display",serif; font-size:1.6rem; color:var(--stone); margin-bottom:12px; line-height:1.2; }
+.guard-card p  { color:var(--stone-mid); font-size:.95rem; line-height:1.65; margin-bottom:24px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:8px; border:none; border-radius:999px;
+  padding:12px 22px; cursor:pointer; font-size:.95rem;
+  font-weight:500; transition:all .2s; text-decoration:none;
+  min-height:44px; white-space:nowrap; line-height:1;
+}
+.btn:hover { transform:translateY(-1px); }
+.btn:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+.btn-primary   { background:var(--forest); color:var(--white); box-shadow:0 3px 12px rgba(45,74,45,.18); }
+.btn-primary:hover { background:#1f341f; }
+.btn-secondary { background:var(--gold-light); color:#7a5010; border:1.5px solid #d8c090; }
+.btn-secondary:hover { background:var(--gold); color:var(--white); }
+.btn-outline   { background:transparent; color:var(--stone-mid); border:2px solid var(--border-mid); }
+.btn-outline:hover { border-color:var(--forest); color:var(--forest); background:var(--forest-pale); }
+.btn-gold      { background:var(--gold); color:var(--white); box-shadow:0 3px 12px rgba(181,129,60,.22); }
+.btn-gold:hover { background:#9a6c2e; }
+.btn-danger    { background:transparent; color:var(--danger); border:1.5px solid #e9b8b0; }
+.btn-danger:hover { background:var(--danger); color:var(--white); border-color:var(--danger); }
+.btn-block { width:100%; }
+.btn-sm { padding:9px 16px; font-size:.85rem; min-height:38px; }
+.btn-xs { padding:7px 12px; font-size:.8rem; min-height:32px; border-radius:8px; }
+
+/* ── SIGN IN FORM ── */
+.signin-field { margin-bottom:14px; text-align:left; }
+.signin-field label { display:block; font-size:.85rem; color:var(--stone-mid); margin-bottom:6px; font-weight:500; }
+.signin-field input { width:100%; padding:12px 14px; border-radius:12px; border:2px solid var(--border-mid); font-size:.95rem; outline:none; }
+.signin-field input:focus { border-color:var(--forest); }
+
+/* ── APP SHELL ── */
+#app { display:none; min-height:100vh; }
+#app.visible { display:flex; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:var(--sidebar-w); background:var(--forest); color:var(--white);
+  position:fixed; inset:0 auto 0 0;
+  display:flex; flex-direction:column; z-index:30;
+  transition:transform .25s; overflow-y:auto;
+  box-shadow:2px 0 24px rgba(45,74,45,.18);
+}
+.sidebar-brand { padding:24px 22px 20px; border-bottom:1px solid rgba(255,255,255,.1); font-family:"Playfair Display",serif; font-size:1.3rem; font-weight:700; }
+.sidebar-brand small { display:block; margin-top:3px; font-family:"Source Serif 4",serif; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); font-weight:400; }
+.sidebar-user { display:flex; align-items:center; gap:12px; padding:16px 22px; border-bottom:1px solid rgba(255,255,255,.1); }
+.avatar { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-family:"Playfair Display",serif; font-size:1.05rem; font-weight:700; flex-shrink:0; }
+.sidebar-user-name { font-size:.95rem; font-weight:600; display:block; }
+.sidebar-user-sub  { font-size:.75rem; color:rgba(255,255,255,.6); margin-top:2px; display:block; }
+
+.nav-group { padding:14px 12px; flex:1; }
+.nav-section-label { font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.38); padding:0 14px; margin:12px 0 6px; display:block; }
+.nav-btn {
+  width:100%; border:none; background:transparent; color:rgba(255,255,255,.78);
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border-radius:12px;
+  cursor:pointer; text-align:left; font-size:.95rem;
+  transition:background .18s,color .18s; margin-bottom:2px;
+  min-height:44px;
+}
+.nav-btn:hover,.nav-btn.active { background:rgba(255,255,255,.14); color:var(--white); }
+.nav-icon { font-size:1.05rem; width:22px; text-align:center; flex-shrink:0; }
+.nav-badge { margin-left:auto; padding:3px 9px; border-radius:999px; background:var(--gold); color:var(--white); font-size:.68rem; font-weight:700; min-width:26px; text-align:center; }
+.nav-badge.zero { background:rgba(255,255,255,.16); color:rgba(255,255,255,.6); }
+.sidebar-footer { padding:16px 18px 22px; border-top:1px solid rgba(255,255,255,.1); display:flex; flex-direction:column; gap:8px; }
+
+/* ── MAIN SHELL ── */
+.main-shell { margin-left:var(--sidebar-w); width:calc(100% - var(--sidebar-w)); min-height:100vh; display:flex; flex-direction:column; }
+
+/* ── TOPBAR ── */
+.topbar { position:sticky; top:0; z-index:25; height:var(--nav-h); background:rgba(255,255,255,.97); backdrop-filter:blur(12px); border-bottom:2px solid var(--border); box-shadow:0 1px 10px rgba(45,74,45,.06); display:flex; align-items:center; justify-content:space-between; padding:0 30px; gap:16px; }
+.topbar-left { display:flex; align-items:center; gap:14px; }
+.hamburger { display:none; width:42px; height:42px; border:2px solid var(--border); border-radius:12px; background:var(--white); cursor:pointer; font-size:1.1rem; align-items:center; justify-content:center; }
+.topbar-title { font-family:"Playfair Display",serif; font-size:1.35rem; font-weight:700; color:var(--stone); }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.live-pill { display:flex; align-items:center; gap:8px; background:var(--forest-pale); border:1.5px solid #c0d4c0; border-radius:999px; padding:7px 14px; font-size:.82rem; color:var(--forest); font-weight:500; }
+.live-pill::before { content:""; width:8px; height:8px; border-radius:50%; background:#5fbb5f; flex-shrink:0; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+
+/* ── CONTENT ── */
+.content { padding:28px 30px; flex:1; }
+.page { display:none; }
+.page.active { display:block; animation:fadeIn .2s ease both; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; } }
+
+/* ── NOTICE ── */
+.notice { margin-bottom:20px; padding:14px 18px; border-radius:14px; font-size:.95rem; display:none; line-height:1.55; }
+.notice.show { display:block; }
+.notice.success { background:#eef8ef; border:2px solid #b7dbbd; color:var(--success-col); }
+.notice.error   { background:#fdf0ee; border:2px solid #e9b8b0; color:var(--danger); }
+.notice.info    { background:var(--gold-light); border:2px solid #d8c090; color:#7a5010; }
+
+/* ── PAGE HEADER ── */
+.page-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:22px; flex-wrap:wrap; }
+.page-title-big { font-family:"Playfair Display",serif; font-size:1.7rem; font-weight:700; color:var(--stone); }
+.page-sub { font-size:.92rem; color:var(--stone-light); margin-top:4px; }
+
+/* ── STATS GRID ── */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.stat-card  { background:var(--white); border:1.5px solid var(--border); border-radius:var(--rl); padding:20px 20px; box-shadow:var(--shadow); cursor:pointer; transition:all .2s; }
+.stat-card:hover { border-color:var(--forest-mid); box-shadow:0 6px 20px rgba(45,74,45,.1); transform:translateY(-2px); }
+.stat-card.is-alert { border-color:var(--gold); background:linear-gradient(180deg,#fffdf8,var(--white)); }
+.stat-icon  { font-size:1.4rem; margin-bottom:8px; }
+.stat-val   { font-family:"Playfair Display",serif; font-size:2rem; font-weight:700; line-height:1; margin-bottom:5px; color:var(--stone); }
+.stat-label { font-size:.85rem; color:var(--stone-light); }
+
+/* ── CARDS ── */
+.card { background:var(--white); border:1.5px solid var(--border); border-radius:var(--rl); padding:24px; box-shadow:var(--shadow); }
+.card + .card { margin-top:18px; }
+.card-title { font-family:"Playfair Display",serif; font-size:1.2rem; font-weight:700; color:var(--stone); margin-bottom:12px; }
+.card-sub   { font-size:.88rem; color:var(--stone-light); margin-bottom:16px; line-height:1.6; }
+.card-row   { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:12px; flex-wrap:wrap; }
+.card-row .card-title { margin-bottom:0; }
+
+.two-col { display:grid; grid-template-columns:1.3fr 1fr; gap:20px; }
+
+/* ── REQUEST / SERVICE ITEMS ── */
+.req-item {
+  border:2px solid var(--border); border-radius:16px;
+  padding:20px 22px; margin-bottom:14px;
+  background:var(--white); transition:border-color .2s, box-shadow .2s;
+}
+.req-item:last-child { margin-bottom:0; }
+.req-item:hover { border-color:var(--forest-mid); box-shadow:0 4px 14px rgba(45,74,45,.06); }
+.req-item.is-new { border-color:var(--gold); background:linear-gradient(180deg,#fffdf8,var(--white)); }
+.new-badge { display:inline-block; background:var(--gold); color:white; font-size:.68rem; font-weight:700; padding:3px 10px; border-radius:999px; margin-bottom:10px; letter-spacing:.04em; text-transform:uppercase; }
+.req-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:12px; flex-wrap:wrap; }
+.req-left { display:flex; align-items:center; gap:14px; flex:1; min-width:0; }
+.req-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.35rem; flex-shrink:0; background:#eef4e8; }
+.req-name { font-family:"Playfair Display",serif; font-size:1.1rem; font-weight:700; color:var(--stone); margin-bottom:3px; }
+.req-client { font-size:.88rem; color:var(--stone-mid); }
+.req-client strong { color:var(--forest); font-weight:600; }
+.req-meta { display:flex; flex-wrap:wrap; gap:8px 18px; font-size:.87rem; color:var(--stone-mid); margin-bottom:10px; padding-top:10px; border-top:1px solid var(--border); }
+.req-notes { margin-top:10px; font-size:.88rem; color:var(--stone-mid); line-height:1.55; padding:10px 14px; background:var(--cream); border-radius:10px; border-left:3px solid var(--border-mid); }
+.req-actions { display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+
+/* ── STATUS PILLS ── */
+.status { display:inline-flex; align-items:center; gap:7px; padding:6px 14px; border-radius:999px; font-size:.78rem; font-weight:700; flex-shrink:0; }
+.status::before { content:""; width:8px; height:8px; border-radius:50%; }
+.s-confirmed   { background:var(--forest-light); color:var(--forest); }
+.s-confirmed::before { background:#4b8f4b; }
+.s-pending     { background:var(--gold-light); color:#7a5010; }
+.s-pending::before { background:var(--gold); }
+.s-inprogress  { background:#e8f0f8; color:#1a4a7a; }
+.s-inprogress::before { background:#3a7abf; }
+.s-completed   { background:#ece8e3; color:var(--stone-mid); }
+.s-completed::before { background:var(--stone-light); }
+.s-cancelled   { background:#fdf0ee; color:var(--danger); }
+.s-cancelled::before { background:var(--danger); }
+
+/* ── TABLES ── */
+.table-wrap { overflow-x:auto; border:1.5px solid var(--border); border-radius:var(--rl); background:var(--white); }
+table { width:100%; border-collapse:collapse; font-size:.92rem; min-width:620px; }
+thead { background:var(--forest-pale); }
+th { text-align:left; padding:13px 18px; font-weight:600; color:var(--forest); font-size:.8rem; letter-spacing:.04em; text-transform:uppercase; border-bottom:2px solid var(--border); }
+td { padding:14px 18px; border-bottom:1px solid var(--border); color:var(--stone); vertical-align:middle; }
+tbody tr { transition:background .15s; }
+tbody tr:hover { background:var(--forest-pale); cursor:pointer; }
+tbody tr:last-child td { border-bottom:none; }
+td.num { font-variant-numeric:tabular-nums; font-family:"Playfair Display",serif; font-weight:600; }
+
+/* ── FILTERS ── */
+.filter-row { display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center; }
+.filter-chip { padding:8px 16px; border:1.5px solid var(--border-mid); border-radius:999px; background:var(--white); color:var(--stone-mid); cursor:pointer; font-size:.85rem; font-weight:500; transition:all .15s; }
+.filter-chip:hover { border-color:var(--forest); color:var(--forest); }
+.filter-chip.active { background:var(--forest); color:var(--white); border-color:var(--forest); }
+.filter-search { padding:10px 14px; border:1.5px solid var(--border-mid); border-radius:12px; background:var(--white); font-size:.9rem; min-width:240px; outline:none; transition:border-color .15s; }
+.filter-search:focus { border-color:var(--forest); }
+
+/* ── EMPTY STATE ── */
+.empty-state { padding:36px 20px; text-align:center; border:2px dashed var(--border-mid); border-radius:16px; color:var(--stone-mid); line-height:1.6; }
+.empty-state strong { display:block; font-size:1.05rem; margin-bottom:6px; color:var(--stone); font-family:"Playfair Display",serif; }
+.empty-icon { font-size:2.2rem; margin-bottom:10px; }
+
+/* ── MODAL ── */
+.modal-backdrop { display:none; position:fixed; inset:0; z-index:80; background:rgba(28,23,18,.6); padding:20px; align-items:center; justify-content:center; overflow-y:auto; }
+.modal-backdrop.active { display:flex; }
+.modal { background:var(--white); border-radius:22px; width:min(560px,100%); padding:30px 32px; box-shadow:0 20px 60px rgba(0,0,0,.25); max-height:90vh; overflow-y:auto; }
+.modal h2 { font-family:"Playfair Display",serif; font-size:1.4rem; color:var(--stone); margin-bottom:4px; }
+.modal .modal-sub { font-size:.9rem; color:var(--stone-light); margin-bottom:22px; }
+.modal .field { margin-bottom:16px; }
+.modal label { display:block; margin-bottom:6px; font-size:.88rem; color:var(--stone-mid); font-weight:500; }
+.modal input,.modal select,.modal textarea {
+  width:100%; padding:11px 14px; border-radius:12px;
+  border:1.5px solid var(--border-mid); background:var(--white);
+  color:var(--stone); outline:none; font-size:.95rem;
+  transition:border-color .2s;
+}
+.modal textarea { min-height:90px; resize:vertical; }
+.modal input:focus, .modal select:focus, .modal textarea:focus { border-color:var(--forest); box-shadow:0 0 0 3px rgba(61,107,61,.1); }
+.modal-form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.modal-actions { display:flex; gap:10px; margin-top:22px; justify-content:flex-end; flex-wrap:wrap; }
+
+/* ── CLIENT DRAWER ── */
+.drawer-backdrop { display:none; position:fixed; inset:0; z-index:70; background:rgba(28,23,18,.45); }
+.drawer-backdrop.active { display:block; }
+.drawer {
+  position:fixed; top:0; right:0; bottom:0; width:min(540px,100%);
+  background:var(--cream); z-index:75; transform:translateX(100%);
+  transition:transform .28s ease; display:flex; flex-direction:column;
+  box-shadow:-4px 0 24px rgba(45,74,45,.15);
+}
+.drawer.active { transform:translateX(0); }
+.drawer-header { padding:22px 26px; background:var(--white); border-bottom:1.5px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+.drawer-close { width:36px; height:36px; border-radius:10px; border:1.5px solid var(--border); background:var(--white); cursor:pointer; font-size:1.2rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.drawer-body { padding:22px 26px; overflow-y:auto; flex:1; }
+.drawer-section { margin-bottom:22px; }
+.drawer-section h3 { font-family:"Playfair Display",serif; font-size:1.05rem; color:var(--forest); margin-bottom:10px; }
+
+/* ── KEY/VALUE LINES ── */
+.kv-line { display:flex; padding:8px 0; border-bottom:1px solid var(--border); font-size:.9rem; gap:12px; }
+.kv-line:last-child { border-bottom:none; }
+.kv-label { color:var(--stone-light); min-width:120px; }
+.kv-val   { color:var(--stone); font-weight:500; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:1100px) {
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .two-col    { grid-template-columns:1fr; }
+  .modal-form-row { grid-template-columns:1fr; }
+}
+@media (max-width:900px) {
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .main-shell { margin-left:0; width:100%; }
+  .hamburger  { display:flex; }
+}
+@media (max-width:640px) {
+  .topbar,.content { padding-left:18px; padding-right:18px; }
+  .stats-grid  { grid-template-columns:1fr 1fr; }
+  .live-pill { display:none; }
+}
+
+.overlay { display:none; position:fixed; inset:0; background:rgba(28,23,18,.45); z-index:20; }
+.overlay.active { display:block; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo">Independence</div>
+  <div class="spinner"></div>
+  <div class="loading-sub">Loading admin console…</div>
+</div>
+
+<!-- SIGN IN -->
+<div id="signin-screen">
+  <div class="guard-card">
+    <div class="guard-logo">Independence</div>
+    <div class="guard-sub">Admin console</div>
+    <h1>Sign in</h1>
+    <p>Sign in with your Independence business email to manage requests and clients.</p>
+    <form id="signin-form">
+      <div class="signin-field">
+        <label for="si-email">Email</label>
+        <input id="si-email" type="email" required autocomplete="email" value="independenceservicesnz@gmail.com">
+      </div>
+      <div class="signin-field">
+        <label for="si-password">Password</label>
+        <input id="si-password" type="password" required autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="signin-btn" style="margin-top:6px;">Sign in</button>
+    </form>
+    <p id="signin-error" style="color:var(--danger);font-size:.85rem;margin-top:14px;display:none;"></p>
+  </div>
+</div>
+
+<!-- NOT ADMIN -->
+<div id="not-admin">
+  <div class="guard-card">
+    <div class="guard-logo">Independence</div>
+    <div class="guard-sub">Admin console</div>
+    <h1>Admin access required</h1>
+    <p>The account you're signed in with isn't marked as an admin. Contact the Independence team if you think this is a mistake.</p>
+    <button class="btn btn-outline btn-block" id="signout-btn" style="margin-top:6px;">Sign out</button>
+  </div>
+</div>
+
+<div id="mobile-overlay" class="overlay"></div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      Independence
+      <small>Admin console</small>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar" id="admin-avatar">M</div>
+      <div>
+        <span class="sidebar-user-name" id="admin-name">Loading…</span>
+        <span class="sidebar-user-sub" id="admin-sub">Business owner</span>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <button class="nav-btn active" data-page="overview">
+        <span class="nav-icon">🏠</span> Overview
+      </button>
+      <button class="nav-btn" data-page="requests">
+        <span class="nav-icon">📥</span> New requests
+        <span class="nav-badge zero" id="badge-requests">0</span>
+      </button>
+      <button class="nav-btn" data-page="scheduled">
+        <span class="nav-icon">📅</span> Scheduled services
+        <span class="nav-badge zero" id="badge-scheduled">0</span>
+      </button>
+      <button class="nav-btn" data-page="clients">
+        <span class="nav-icon">👥</span> Clients
+      </button>
+      <button class="nav-btn" data-page="message">
+        <span class="nav-icon">✉</span> Send message
+      </button>
+      <span class="nav-section-label">History</span>
+      <button class="nav-btn" data-page="completed">
+        <span class="nav-icon">📖</span> Completed
+      </button>
+      <button class="nav-btn" data-page="payments">
+        <span class="nav-icon">💳</span> Payments
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-outline btn-sm" id="refresh-btn" style="color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.25);background:transparent;">🔄 Refresh</button>
+      <button class="btn btn-secondary btn-sm" id="logout-btn">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Open menu">☰</button>
+        <div class="topbar-title" id="page-title">Overview</div>
+      </div>
+      <div class="topbar-right">
+        <div class="live-pill" id="live-pill">Live updates</div>
+        <button class="btn btn-primary btn-sm" data-page="requests">📥 View requests</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="notice" id="notice"></div>
+
+      <!-- ══ OVERVIEW ══ -->
+      <section class="page active" id="page-overview">
+        <div class="page-header">
+          <div>
+            <div class="page-title-big" id="overview-greeting">Good morning</div>
+            <div class="page-sub">Here's what's happening across Independence today.</div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card" data-page="requests">
+            <div class="stat-icon">📥</div>
+            <div class="stat-val" id="s-pending">0</div>
+            <div class="stat-label">Pending requests</div>
+          </div>
+          <div class="stat-card" data-page="scheduled">
+            <div class="stat-icon">📅</div>
+            <div class="stat-val" id="s-today">0</div>
+            <div class="stat-label">Services today</div>
+          </div>
+          <div class="stat-card" data-page="scheduled">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-val" id="s-week">0</div>
+            <div class="stat-label">This week</div>
+          </div>
+          <div class="stat-card" data-page="payments">
+            <div class="stat-icon">💰</div>
+            <div class="stat-val" id="s-outstanding">$0</div>
+            <div class="stat-label">Outstanding payments</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <div class="card">
+              <div class="card-row">
+                <div class="card-title">Recent requests to confirm</div>
+                <button class="btn btn-outline btn-sm" data-page="requests">View all →</button>
+              </div>
+              <p class="card-sub">Requests from clients waiting for you to confirm. Clicking Confirm schedules the service and emails the client automatically.</p>
+              <div id="overview-requests"></div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-title">Next up</div>
+              <p class="card-sub">Your nearest scheduled services.</p>
+              <div id="overview-upcoming"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ REQUESTS ══ -->
+      <section class="page" id="page-requests">
+        <div class="page-header">
+          <div>
+            <div class="page-title-big">New requests</div>
+            <div class="page-sub">Confirm a request to schedule the service and automatically notify the client by email.</div>
+          </div>
+          <button class="btn btn-outline btn-sm" id="requests-refresh">🔄 Refresh</button>
+        </div>
+
+        <div class="filter-row">
+          <button class="filter-chip active" data-rf="Pending">Pending</button>
+          <button class="filter-chip" data-rf="Confirmed">Confirmed</button>
+          <button class="filter-chip" data-rf="Cancelled">Cancelled</button>
+          <button class="filter-chip" data-rf="all">All</button>
+          <input type="search" class="filter-search" id="requests-search" placeholder="Search by client name or service…">
+        </div>
+
+        <div id="requests-list"></div>
+      </section>
+
+      <!-- ══ SCHEDULED ══ -->
+      <section class="page" id="page-scheduled">
+        <div class="page-header">
+          <div>
+            <div class="page-title-big">Scheduled services</div>
+            <div class="page-sub">Every service that's been confirmed. Click a row to see the client's full record or change status.</div>
+          </div>
+          <button class="btn btn-outline btn-sm" id="scheduled-refresh">🔄 Refresh</button>
+        </div>
+
+        <div class="filter-row">
+          <button class="filter-chip active" data-sf="active">Active</button>
+          <button class="filter-chip" data-sf="Confirmed">Confirmed</button>
+          <button class="filter-chip" data-sf="In Progress">In Progress</button>
+          <button class="filter-chip" data-sf="today">Today</button>
+          <button class="filter-chip" data-sf="week">This week</button>
+          <input type="search" class="filter-search" id="scheduled-search" placeholder="Search client or service…">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="scheduled-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══ CLIENTS ══ -->
+      <section class="page" id="page-clients">
+        <div class="page-header">
+          <div>
+            <div class="page-title-big">Clients</div>
+            <div class="page-sub">Everyone registered with Independence. Click a client to see their full record.</div>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <input type="search" class="filter-search" id="clients-search" placeholder="Search name, email, or town…" style="min-width:320px;">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Town</th>
+                <th>Upcoming</th>
+                <th>Total paid</th>
+              </tr>
+            </thead>
+            <tbody id="clients-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══ SEND MESSAGE ══ -->
+      <section class="page" id="page-message">
+        <div class="page-header">
+          <div>
+            <div class="page-title-big">Send a message</div>
+            <div class="page-sub">Post an update to a client's dashboard and optionally email it to them.</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title">Compose message</div>
+            <p class="card-sub">The client will see this in their Independence dashboard immediately. If you tick "Email too," they also get it in their inbox.</p>
+            <form id="message-form">
+              <div class="field" style="margin-bottom:16px;">
+                <label>Send to</label>
+                <select id="msg-client" required style="width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--border-mid);font-size:.95rem;outline:none;background:var(--white);"></select>
+              </div>
+              <div class="field" style="margin-bottom:16px;">
+                <label>Title</label>
+                <input id="msg-title" type="text" required placeholder="e.g. Your cleaning service is confirmed" style="width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--border-mid);font-size:.95rem;outline:none;">
+              </div>
+              <div class="field" style="margin-bottom:16px;">
+                <label>Message</label>
+                <textarea id="msg-body" required rows="5" placeholder="Write the update you want to send…" style="width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--border-mid);font-size:.95rem;outline:none;resize:vertical;min-height:120px;"></textarea>
+              </div>
+              <div class="field" style="margin-bottom:18px;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" id="msg-email" checked style="width:18px;height:18px;accent-color:var(--forest);">
+                  <span>Email too (delivers to their inbox as well)</span>
+                </label>
+              </div>
+              <button class="btn btn-primary btn-block" type="submit">Send message</button>
+            </form>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-title">Quick templates</div>
+              <p class="card-sub">Click a template to fill in the message.</p>
+              <div id="templates-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ COMPLETED ══ -->
+      <section class="page" id="page-completed">
+        <div class="page-header">
+          <div>
+            <div class="page-title-big">Completed services</div>
+            <div class="page-sub">All finished work, most recent first.</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Client</th><th>Service</th><th>Date</th><th>Amount</th><th>Rating</th></tr>
+            </thead>
+            <tbody id="completed-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══ PAYMENTS ══ -->
+      <section class="page" id="page-payments">
+        <div class="page-header">
+          <div>
+            <div class="page-title-big">Payments</div>
+            <div class="page-sub">Outstanding first, then paid.</div>
+          </div>
+        </div>
+        <div class="filter-row">
+          <button class="filter-chip active" data-pf="Outstanding">Outstanding</button>
+          <button class="filter-chip" data-pf="Paid">Paid</button>
+          <button class="filter-chip" data-pf="all">All</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Client</th><th>Description</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="payments-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════ CONFIRM REQUEST MODAL ══════════ -->
+<div class="modal-backdrop" id="confirm-modal">
+  <div class="modal">
+    <h2>Confirm request</h2>
+    <div class="modal-sub" id="confirm-sub">Schedule this service and notify the client.</div>
+    <form id="confirm-form">
+      <div class="field">
+        <label>Client</label>
+        <input id="cm-client" type="text" readonly style="background:var(--cream);color:var(--stone-mid);">
+      </div>
+      <div class="field">
+        <label>Service</label>
+        <input id="cm-service" type="text" readonly style="background:var(--cream);color:var(--stone-mid);">
+      </div>
+      <div class="modal-form-row">
+        <div class="field">
+          <label>Confirmed date</label>
+          <input id="cm-date" type="date" required>
+        </div>
+        <div class="field">
+          <label>Time</label>
+          <input id="cm-time" type="time" required>
+        </div>
+      </div>
+      <div class="modal-form-row">
+        <div class="field">
+          <label>Provider / worker</label>
+          <input id="cm-provider" type="text" placeholder="e.g. Sarah M.">
+        </div>
+        <div class="field">
+          <label>Price ($NZ)</label>
+          <input id="cm-amount" type="number" step="0.01" min="0" placeholder="0.00">
+        </div>
+      </div>
+      <div class="field">
+        <label>Note to client (optional — appears in email &amp; dashboard)</label>
+        <textarea id="cm-note" rows="3" placeholder="e.g. See you at 10am. We'll bring all supplies."></textarea>
+      </div>
+      <div class="field">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;">
+          <input type="checkbox" id="cm-email" checked style="width:18px;height:18px;accent-color:var(--forest);">
+          <span>Email the client the confirmation</span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary" id="cm-submit">Confirm &amp; notify</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════ CLIENT DRAWER ══════════ -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="drawer" id="client-drawer">
+  <div class="drawer-header">
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--stone);" id="cd-name">Client</div>
+      <div style="font-size:.85rem;color:var(--stone-light);margin-top:3px;" id="cd-email"></div>
+    </div>
+    <button class="drawer-close" id="cd-close" aria-label="Close">✕</button>
+  </div>
+  <div class="drawer-body" id="cd-body"></div>
+</aside>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ================================================================
+// CONFIG — matches dashboard-4.html / index.html
+// ================================================================
+const SUPABASE_URL  = 'https://bguflxzgzyderinbyupc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJndWZseHpnenlkZXJpbmJ5dXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NjYzMzAsImV4cCI6MjA5MjE0MjMzMH0.Lak_7ox-5E0wLrxtzpXOUZn-csL9JoYOMpq8j-H8Mhc';
+
+// Admin emails (anyone with one of these can access the admin console)
+// You can also set profiles.is_admin = true for a user in the database.
+const ADMIN_EMAILS = ['independenceservicesnz@gmail.com'];
+
+// Edge Function name (deployed in Supabase) that sends emails via Resend.
+// If not deployed yet, the dashboard still works — it just skips email.
+const EMAIL_FN = 'send-client-email';
+
+// Business details used in email "from" / signature
+const BUSINESS = {
+  name:  'Independence Services NZ',
+  phone: '027 325 9707',
+  email: 'independenceservicesnz@gmail.com'
+};
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ================================================================
+// STATE
+// ================================================================
+const S = {
+  user: null,
+  profile: null,
+  data: { reqs: [], svcs: [], profiles: [], payments: [], reviews: [] },
+  filters: { requests: 'Pending', scheduled: 'active', payments: 'Outstanding' },
+  search:  { requests: '', scheduled: '', clients: '' },
+  currentConfirm: null,
+  channels: []
+};
+
+const PAGE_TITLES = {
+  overview:  'Overview',
+  requests:  'New requests',
+  scheduled: 'Scheduled services',
+  clients:   'Clients',
+  message:   'Send message',
+  completed: 'Completed services',
+  payments:  'Payments'
+};
+
+const SVC_ICONS = {
+  'Home Cleaning':'🧹','Home Cleaning — Weekly':'🧹','Home Cleaning — Fortnightly':'🧹','Home Cleaning — Spring clean':'🧹',
+  'Gardening & Outdoors':'🌿','Gardening — Lawn mowing':'🌿','Gardening — Weeding':'🌿','Gardening — Pruning':'🌿','Gardening — General upkeep':'🌿',
+  'Handyman & Maintenance':'🔧','Handyman — Minor repairs':'🔧','Handyman — Safety rails':'🔧','Handyman — Odd jobs':'🔧',
+  'Fitness, Mobility & Health':'✨','Fitness — Personal training':'✨','Fitness — Gentle exercise':'✨',
+  'Fitness — Balance & mobility':'✨','Fitness — Strength coaching':'✨','Fitness — Health check-in':'✨',
+  'Not sure — please call me':'📞'
+};
+
+// ================================================================
+// HELPERS
+// ================================================================
+const $  = id  => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function fmtDate(d){ if(!d)return '—'; return new Date(d+'T12:00:00').toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
+function fmtDateShort(d){ if(!d)return '—'; return new Date(d+'T12:00:00').toLocaleDateString('en-NZ',{day:'numeric',month:'short',year:'numeric'}); }
+function fmtTime(t){ if(!t)return ''; const [h,m]=t.split(':'); const hr=parseInt(h,10); return (hr%12||12)+':'+m+(hr>=12?'pm':'am'); }
+function fmtDateTime(d){ if(!d)return ''; try { return new Date(d).toLocaleString('en-NZ',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}); } catch { return d; } }
+function fmtMoney(n){ return '$' + (parseFloat(n)||0).toFixed(2); }
+
+function isToday(d){ if(!d)return false; const t=new Date(); const dd=new Date(d+'T12:00:00'); return dd.getFullYear()===t.getFullYear()&&dd.getMonth()===t.getMonth()&&dd.getDate()===t.getDate(); }
+function isThisWeek(d){ if(!d)return false; const now=new Date(); const ws=new Date(now); ws.setHours(0,0,0,0); ws.setDate(now.getDate()-now.getDay()); const we=new Date(ws); we.setDate(ws.getDate()+7); const dd=new Date(d+'T12:00:00'); return dd>=ws && dd<=we; }
+
+function notice(msg, type){
+  const el = $('notice'); el.textContent = msg;
+  el.className = 'notice show ' + (type||'success');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = 'notice', 5000);
+}
+
+function statusClass(s){ return {Confirmed:'s-confirmed',Pending:'s-pending','In Progress':'s-inprogress',Completed:'s-completed',Cancelled:'s-cancelled'}[s] || 's-pending'; }
+function statusPill(s){ return '<span class="status ' + statusClass(s) + '">' + esc(s) + '</span>'; }
+
+function clientName(clientId){
+  const p = S.data.profiles.find(p => p.id === clientId);
+  return p ? (p.full_name || p.email || 'Unnamed client') : 'Unknown client';
+}
+function clientEmail(clientId){
+  const p = S.data.profiles.find(p => p.id === clientId);
+  return p ? (p.email || '') : '';
+}
+
+// ================================================================
+// AUTH
+// ================================================================
+async function boot(){
+  $('loading-screen').style.display = 'flex';
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session){
+    $('loading-screen').style.display = 'none';
+    $('signin-screen').classList.add('visible');
+    return;
+  }
+  S.user = session.user;
+  await loadProfile();
+  if (!isAdmin()){
+    $('loading-screen').style.display = 'none';
+    $('not-admin').classList.add('visible');
+    return;
+  }
+  await loadAll();
+  renderAll();
+  setupRealtime();
+  $('loading-screen').style.display = 'none';
+  $('app').classList.add('visible');
+}
+
+function isAdmin(){
+  if (!S.user) return false;
+  if (ADMIN_EMAILS.includes((S.user.email||'').toLowerCase())) return true;
+  if (S.profile && S.profile.is_admin === true) return true;
+  return false;
+}
+
+async function loadProfile(){
+  const { data } = await sb.from('profiles').select('*').eq('id', S.user.id).single();
+  S.profile = data || { id: S.user.id, email: S.user.email };
+}
+
+async function loadAll(){
+  const [reqs, svcs, profs, pays, revs] = await Promise.all([
+    sb.from('service_requests').select('*').order('created_at',{ascending:false}),
+    sb.from('services').select('*').order('service_date',{ascending:true}),
+    sb.from('profiles').select('*').order('full_name'),
+    sb.from('payments').select('*').order('payment_date',{ascending:false}),
+    sb.from('reviews').select('*').order('created_at',{ascending:false})
+  ]);
+  S.data.reqs     = reqs.data     || [];
+  S.data.svcs     = svcs.data     || [];
+  S.data.profiles = profs.data    || [];
+  S.data.payments = pays.data     || [];
+  S.data.reviews  = revs.data     || [];
+}
+
+function setupRealtime(){
+  // Tear down any old subscriptions
+  S.channels.forEach(c => sb.removeChannel(c));
+  S.channels = [];
+
+  const ch = sb.channel('admin-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'service_requests' },
+        () => refresh('reqs'))
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'services' },
+        () => refresh('svcs'))
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' },
+        () => refresh('profiles'))
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'payments' },
+        () => refresh('payments'))
+    .subscribe();
+  S.channels.push(ch);
+}
+
+async function refresh(which){
+  const map = {
+    reqs:     () => sb.from('service_requests').select('*').order('created_at',{ascending:false}),
+    svcs:     () => sb.from('services').select('*').order('service_date',{ascending:true}),
+    profiles: () => sb.from('profiles').select('*').order('full_name'),
+    payments: () => sb.from('payments').select('*').order('payment_date',{ascending:false})
+  };
+  if (which && map[which]){
+    const { data } = await map[which]();
+    S.data[which] = data || [];
+  } else {
+    await loadAll();
+  }
+  renderAll();
+}
+
+// ================================================================
+// RENDER
+// ================================================================
+function renderAll(){
+  renderAdminInfo();
+  renderBadges();
+  renderOverview();
+  renderRequests();
+  renderScheduled();
+  renderClients();
+  renderMessageTargets();
+  renderTemplates();
+  renderCompleted();
+  renderPayments();
+}
+
+function renderAdminInfo(){
+  const name = (S.profile && S.profile.full_name) || S.user.email || 'Admin';
+  $('admin-name').textContent = name;
+  $('admin-avatar').textContent = (name.charAt(0)||'A').toUpperCase();
+  $('admin-sub').textContent = S.user.email;
+}
+
+function renderBadges(){
+  const pending = S.data.reqs.filter(r => r.status === 'Pending').length;
+  const scheduled = S.data.svcs.filter(s => s.status === 'Confirmed' || s.status === 'In Progress').length;
+  const bReq = $('badge-requests'), bSch = $('badge-scheduled');
+  bReq.textContent = pending; bReq.classList.toggle('zero', pending === 0);
+  bSch.textContent = scheduled; bSch.classList.toggle('zero', scheduled === 0);
+}
+
+// ── OVERVIEW ──
+function renderOverview(){
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const first = ((S.profile && S.profile.full_name) || S.user.email || '').split(/[\s@]/)[0];
+  $('overview-greeting').textContent = greet + ', ' + (first ? first.charAt(0).toUpperCase()+first.slice(1) : 'there');
+
+  const pending = S.data.reqs.filter(r => r.status === 'Pending');
+  const today   = S.data.svcs.filter(s => isToday(s.service_date) && s.status !== 'Cancelled' && s.status !== 'Completed');
+  const week    = S.data.svcs.filter(s => isThisWeek(s.service_date) && s.status !== 'Cancelled');
+  const outstanding = S.data.payments.filter(p => p.status === 'Outstanding').reduce((a,p) => a + parseFloat(p.amount||0), 0);
+
+  $('s-pending').textContent = pending.length;
+  $('s-today').textContent   = today.length;
+  $('s-week').textContent    = week.length;
+  $('s-outstanding').textContent = fmtMoney(outstanding);
+  $('s-pending').parentElement.classList.toggle('is-alert', pending.length > 0);
+
+  // Recent requests to confirm (top 3)
+  const recent = pending.slice(0, 3);
+  $('overview-requests').innerHTML = recent.length
+    ? recent.map(r => requestCardHTML(r, true)).join('')
+    : '<div class="empty-state"><div class="empty-icon">✨</div><strong>No pending requests</strong>When a client submits a booking, it will appear here for you to confirm.</div>';
+
+  // Next up — 5 soonest confirmed/in-progress
+  const upcoming = S.data.svcs
+    .filter(s => (s.status === 'Confirmed' || s.status === 'In Progress') && s.service_date)
+    .sort((a,b) => new Date(a.service_date) - new Date(b.service_date))
+    .slice(0, 5);
+
+  $('overview-upcoming').innerHTML = upcoming.length
+    ? upcoming.map(s => '<div class="req-item" style="padding:14px 16px;">' +
+        '<div class="req-head" style="margin-bottom:6px;"><div class="req-left">' +
+          '<div class="req-icon" style="width:36px;height:36px;font-size:1.05rem;">' + (SVC_ICONS[s.service_type]||'📋') + '</div>' +
+          '<div><div class="req-name" style="font-size:.98rem;">' + esc(s.service_type) + '</div>' +
+          '<div class="req-client"><strong>' + esc(clientName(s.client_id)) + '</strong></div></div>' +
+        '</div>' + statusPill(s.status) + '</div>' +
+        '<div class="req-meta" style="border-top:none;padding-top:4px;font-size:.82rem;">' +
+          '<span>📅 ' + fmtDateShort(s.service_date) + '</span>' +
+          (s.service_time ? '<span>🕐 ' + fmtTime(s.service_time) + '</span>' : '') +
+        '</div></div>').join('')
+    : '<div class="empty-state"><div class="empty-icon">📅</div><strong>No upcoming services</strong>Once you confirm a request, it will show up here.</div>';
+}
+
+function requestCardHTML(r, short){
+  const icon = SVC_ICONS[r.service_type] || '📋';
+  const isPending = r.status === 'Pending';
+  const name = clientName(r.client_id);
+  const email = clientEmail(r.client_id);
+  return '<div class="req-item' + (isPending ? ' is-new' : '') + '">' +
+    (isPending ? '<div class="new-badge">New</div>' : '') +
+    '<div class="req-head">' +
+      '<div class="req-left">' +
+        '<div class="req-icon">' + icon + '</div>' +
+        '<div>' +
+          '<div class="req-name">' + esc(r.service_type) + '</div>' +
+          '<div class="req-client"><strong>' + esc(name) + '</strong>' + (email ? ' · ' + esc(email) : '') + '</div>' +
+        '</div>' +
+      '</div>' +
+      statusPill(r.status) +
+    '</div>' +
+    '<div class="req-meta">' +
+      (r.preferred_date ? '<span>📅 Preferred: ' + fmtDateShort(r.preferred_date) + '</span>' : '') +
+      (r.preferred_time ? '<span>🕐 ' + fmtTime(r.preferred_time) + '</span>' : '') +
+      '<span>📥 Received: ' + fmtDateTime(r.created_at) + '</span>' +
+    '</div>' +
+    (r.notes ? '<div class="req-notes">' + esc(r.notes) + '</div>' : '') +
+    (isPending ? '<div class="req-actions">' +
+      '<button class="btn btn-primary btn-sm" data-confirm="' + r.id + '">✓ Confirm &amp; schedule</button>' +
+      (!short ? '<button class="btn btn-outline btn-sm" data-view-client="' + r.client_id + '">View client</button>' : '') +
+      '<button class="btn btn-danger btn-sm" data-cancel="' + r.id + '">Cancel request</button>' +
+    '</div>' : '') +
+  '</div>';
+}
+
+// ── REQUESTS ──
+function renderRequests(){
+  const filter = S.filters.requests;
+  const q = (S.search.requests || '').toLowerCase();
+  let list = S.data.reqs;
+  if (filter !== 'all') list = list.filter(r => r.status === filter);
+  if (q) {
+    list = list.filter(r => {
+      const name = clientName(r.client_id).toLowerCase();
+      const svc  = (r.service_type||'').toLowerCase();
+      return name.includes(q) || svc.includes(q);
+    });
+  }
+  $('requests-list').innerHTML = list.length
+    ? list.map(r => requestCardHTML(r, false)).join('')
+    : '<div class="empty-state"><div class="empty-icon">📥</div><strong>No ' + esc(filter.toLowerCase()) + ' requests</strong>New requests from clients will appear here instantly.</div>';
+}
+
+// ── SCHEDULED ──
+function renderScheduled(){
+  const filter = S.filters.scheduled;
+  const q = (S.search.scheduled || '').toLowerCase();
+  let list = S.data.svcs;
+  if (filter === 'active')      list = list.filter(s => s.status === 'Confirmed' || s.status === 'In Progress');
+  else if (filter === 'today')  list = list.filter(s => isToday(s.service_date) && s.status !== 'Cancelled' && s.status !== 'Completed');
+  else if (filter === 'week')   list = list.filter(s => isThisWeek(s.service_date) && s.status !== 'Cancelled');
+  else                          list = list.filter(s => s.status === filter);
+
+  if (q){
+    list = list.filter(s => {
+      const name = clientName(s.client_id).toLowerCase();
+      const svc  = (s.service_type||'').toLowerCase();
+      return name.includes(q) || svc.includes(q);
+    });
+  }
+
+  const body = $('scheduled-body');
+  if (!list.length){
+    body.innerHTML = '<tr><td colspan="7"><div class="empty-state" style="border:none;padding:24px 12px;"><strong>No services match</strong>Try a different filter.</div></td></tr>';
+    return;
+  }
+  body.innerHTML = list.map(s => {
+    const todayBadge = isToday(s.service_date) ? '<span style="display:inline-block;background:var(--gold);color:white;padding:2px 8px;border-radius:6px;font-size:.7rem;font-weight:700;margin-left:8px;">TODAY</span>' : '';
+    return '<tr data-client="' + esc(s.client_id) + '" data-svc="' + esc(s.id) + '">' +
+      '<td><strong>' + esc(clientName(s.client_id)) + '</strong></td>' +
+      '<td>' + (SVC_ICONS[s.service_type]||'📋') + ' ' + esc(s.service_type) + '</td>' +
+      '<td>' + fmtDateShort(s.service_date) + todayBadge + '</td>' +
+      '<td>' + (s.service_time ? fmtTime(s.service_time) : '—') + '</td>' +
+      '<td>' + statusPill(s.status) + '</td>' +
+      '<td class="num">' + (s.amount ? fmtMoney(s.amount) : '—') + '</td>' +
+      '<td><button class="btn btn-outline btn-xs" data-status-change="' + esc(s.id) + '" onclick="event.stopPropagation()">Change status</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ── CLIENTS ──
+function renderClients(){
+  const q = (S.search.clients || '').toLowerCase();
+  let list = S.data.profiles;
+  if (q){
+    list = list.filter(p =>
+      (p.full_name||'').toLowerCase().includes(q) ||
+      (p.email||'').toLowerCase().includes(q) ||
+      (p.town||'').toLowerCase().includes(q)
+    );
+  }
+  const body = $('clients-body');
+  if (!list.length){
+    body.innerHTML = '<tr><td colspan="6"><div class="empty-state" style="border:none;padding:24px 12px;"><strong>No clients found</strong></div></td></tr>';
+    return;
+  }
+  body.innerHTML = list.map(p => {
+    const upcoming = S.data.svcs.filter(s => s.client_id === p.id && (s.status === 'Confirmed' || s.status === 'In Progress')).length;
+    const paid     = S.data.payments.filter(pay => pay.client_id === p.id && pay.status === 'Paid').reduce((a,x)=>a+parseFloat(x.amount||0),0);
+    return '<tr data-client="' + esc(p.id) + '">' +
+      '<td><strong>' + esc(p.full_name || '—') + '</strong></td>' +
+      '<td>' + esc(p.email || '—') + '</td>' +
+      '<td>' + esc(p.phone || '—') + '</td>' +
+      '<td>' + esc(p.town || '—') + '</td>' +
+      '<td>' + upcoming + '</td>' +
+      '<td class="num">' + fmtMoney(paid) + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ── MESSAGE PAGE ──
+function renderMessageTargets(){
+  const sel = $('msg-client');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Choose a client…</option>' +
+    S.data.profiles.map(p =>
+      '<option value="' + esc(p.id) + '">' + esc(p.full_name || p.email) + '</option>'
+    ).join('');
+}
+
+const TEMPLATES = [
+  { title:'Your service is confirmed', body:'Hi! Just confirming your upcoming Independence service. If you need to change anything, call us on 027 325 9707.' },
+  { title:'Running a few minutes late', body:"Our provider is running a few minutes behind schedule today and will be with you shortly. Apologies for any inconvenience — you can reach us on 027 325 9707 if you need anything." },
+  { title:'Weather update', body:"With the forecast looking changeable, we're double-checking everything runs smoothly for your service. We'll reach out directly if anything needs to change." },
+  { title:'Friendly check-in', body:"Just checking in to see how everything went with your recent service. Please reply or call us on 027 325 9707 if there's anything we can improve." },
+  { title:'Upcoming visit reminder', body:"This is a friendly reminder that your Independence service is scheduled shortly. If you need to reschedule, just let us know." }
+];
+function renderTemplates(){
+  $('templates-list').innerHTML = TEMPLATES.map((t,i) =>
+    '<div class="req-item" style="padding:14px 16px;margin-bottom:10px;cursor:pointer;" data-tpl="' + i + '">' +
+      '<div style="font-family:\'Playfair Display\',serif;font-size:.98rem;font-weight:700;color:var(--stone);margin-bottom:3px;">' + esc(t.title) + '</div>' +
+      '<div style="font-size:.85rem;color:var(--stone-mid);line-height:1.5;">' + esc(t.body) + '</div>' +
+    '</div>').join('');
+}
+
+// ── COMPLETED ──
+function renderCompleted(){
+  const list = S.data.svcs.filter(s => s.status === 'Completed').sort((a,b) => new Date(b.service_date) - new Date(a.service_date));
+  const body = $('completed-body');
+  if (!list.length){ body.innerHTML = '<tr><td colspan="5"><div class="empty-state" style="border:none;padding:24px 12px;"><strong>No completed services yet</strong></div></td></tr>'; return; }
+  body.innerHTML = list.map(s => {
+    const rev = S.data.reviews.find(r => r.client_id === s.client_id && r.service_type === s.service_type);
+    const stars = rev ? '★'.repeat(rev.rating||0).padEnd(5,'☆') : '—';
+    return '<tr data-client="' + esc(s.client_id) + '">' +
+      '<td><strong>' + esc(clientName(s.client_id)) + '</strong></td>' +
+      '<td>' + (SVC_ICONS[s.service_type]||'📋') + ' ' + esc(s.service_type) + '</td>' +
+      '<td>' + fmtDateShort(s.service_date) + '</td>' +
+      '<td class="num">' + (s.amount ? fmtMoney(s.amount) : '—') + '</td>' +
+      '<td style="color:var(--gold);font-size:1rem;letter-spacing:1px;">' + stars + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ── PAYMENTS ──
+function renderPayments(){
+  const f = S.filters.payments;
+  let list = S.data.payments.slice();
+  if (f !== 'all') list = list.filter(p => p.status === f);
+  const body = $('payments-body');
+  if (!list.length){ body.innerHTML = '<tr><td colspan="6"><div class="empty-state" style="border:none;padding:24px 12px;"><strong>No ' + esc(f.toLowerCase()) + ' payments</strong></div></td></tr>'; return; }
+  body.innerHTML = list.map(p => {
+    return '<tr data-client="' + esc(p.client_id) + '">' +
+      '<td><strong>' + esc(clientName(p.client_id)) + '</strong></td>' +
+      '<td>' + esc(p.description||'—') + '</td>' +
+      '<td>' + fmtDateShort(p.payment_date) + '</td>' +
+      '<td class="num">' + fmtMoney(p.amount) + '</td>' +
+      '<td>' + statusPill(p.status === 'Paid' ? 'Completed' : 'Pending') + '</td>' +
+      '<td>' + (p.status === 'Outstanding'
+        ? '<button class="btn btn-outline btn-xs" data-mark-paid="' + esc(p.id) + '" onclick="event.stopPropagation()">Mark paid</button>'
+        : '') + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ================================================================
+// CONFIRM REQUEST FLOW
+// ================================================================
+function openConfirmModal(reqId){
+  const r = S.data.reqs.find(x => x.id === reqId);
+  if (!r) return;
+  S.currentConfirm = r;
+  $('cm-client').value   = clientName(r.client_id) + (clientEmail(r.client_id) ? ' (' + clientEmail(r.client_id) + ')' : '');
+  $('cm-service').value  = r.service_type || '';
+  $('cm-date').value     = r.preferred_date || '';
+  $('cm-time').value     = r.preferred_time || '';
+  $('cm-provider').value = '';
+  $('cm-amount').value   = '';
+  $('cm-note').value     = '';
+  $('cm-email').checked  = true;
+  $('confirm-sub').textContent = 'Schedule this service and notify ' + clientName(r.client_id) + '.';
+  $('confirm-modal').classList.add('active');
+}
+
+function closeConfirmModal(){
+  $('confirm-modal').classList.remove('active');
+  S.currentConfirm = null;
+}
+
+async function submitConfirm(e){
+  e.preventDefault();
+  const r = S.currentConfirm;
+  if (!r) return;
+
+  const btn = $('cm-submit');
+  btn.disabled = true; btn.textContent = 'Confirming…';
+
+  const date     = $('cm-date').value;
+  const time     = $('cm-time').value;
+  const provider = $('cm-provider').value.trim();
+  const amount   = parseFloat($('cm-amount').value) || 0;
+  const note     = $('cm-note').value.trim();
+  const doEmail  = $('cm-email').checked;
+
+  try {
+    // 1. Update the request
+    const { error: e1 } = await sb.from('service_requests')
+      .update({ status: 'Confirmed' })
+      .eq('id', r.id);
+    if (e1) throw e1;
+
+    // 2. Create scheduled service row
+    const svcPayload = {
+      client_id:    r.client_id,
+      service_type: r.service_type,
+      service_date: date,
+      service_time: time,
+      provider:     provider || null,
+      amount:       amount || null,
+      status:       'Confirmed',
+      notes:        note || r.notes || null
+    };
+    const { error: e2 } = await sb.from('services').insert(svcPayload);
+    if (e2) throw e2;
+
+    // 3. Insert in-app notification
+    const { error: e3 } = await sb.from('notifications').insert({
+      client_id: r.client_id,
+      icon: 'check',
+      title: 'Your ' + r.service_type + ' is confirmed',
+      detail: 'Scheduled for ' + fmtDate(date) + (time ? ' at ' + fmtTime(time) : '') + (provider ? ' with ' + provider : '') + '.' + (note ? ' — ' + note : '')
+    });
+    if (e3) console.warn('notification insert failed', e3);
+
+    // 4. Email the client (via Edge Function)
+    if (doEmail){
+      const email = clientEmail(r.client_id);
+      if (email){
+        const emailOk = await sendEmail({
+          to:      email,
+          subject: 'Your ' + r.service_type + ' is confirmed — Independence',
+          heading: 'Your service is confirmed',
+          body:    buildConfirmationEmail(r, date, time, provider, amount, note)
+        });
+        if (!emailOk){
+          notice('Request confirmed — but email failed to send. Check your Edge Function or call the client on ' + BUSINESS.phone + '.', 'info');
+        }
+      }
+    }
+
+    notice('Request confirmed — client has been notified.', 'success');
+    closeConfirmModal();
+    await refresh();
+  } catch (err){
+    console.error(err);
+    notice('Could not confirm the request: ' + (err.message || 'please try again'), 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Confirm & notify';
+  }
+}
+
+function buildConfirmationEmail(r, date, time, provider, amount, note){
+  const name = clientName(r.client_id).split(' ')[0] || 'there';
+  const lines = [
+    'Hi ' + name + ',',
+    '',
+    'Great news — your Independence service is now confirmed. Here are the details:',
+    '',
+    '   Service:  ' + r.service_type,
+    '   Date:     ' + fmtDate(date),
+    time     ? '   Time:     ' + fmtTime(time) : null,
+    provider ? '   With:     ' + provider      : null,
+    amount   ? '   Price:    ' + fmtMoney(amount) + ' (paid after the visit)' : null,
+    '',
+    note ? ('A note from your team: ' + note) : '',
+    '',
+    'You can always view progress and add more bookings in your dashboard.',
+    '',
+    'If anything changes or you have questions, just call us on ' + BUSINESS.phone + '.',
+    '',
+    'Warmly,',
+    'The Independence team'
+  ].filter(x => x !== null);
+  return lines.join('\n');
+}
+
+async function cancelRequest(reqId){
+  if (!confirm('Cancel this request? The client will be notified.')) return;
+  try {
+    await sb.from('service_requests').update({ status: 'Cancelled' }).eq('id', reqId);
+    const r = S.data.reqs.find(x => x.id === reqId);
+    if (r){
+      await sb.from('notifications').insert({
+        client_id: r.client_id,
+        icon: 'bell',
+        title: 'Request cancelled',
+        detail: 'Your request for ' + r.service_type + ' has been cancelled. Call us on ' + BUSINESS.phone + ' if you would like to rebook.'
+      });
+    }
+    notice('Request cancelled.', 'success');
+    await refresh('reqs');
+  } catch (err){
+    notice('Could not cancel request: ' + err.message, 'error');
+  }
+}
+
+// ================================================================
+// STATUS CHANGES (In Progress, Completed, Cancelled)
+// ================================================================
+async function cycleStatus(svcId){
+  const s = S.data.svcs.find(x => x.id === svcId);
+  if (!s) return;
+  const order = ['Confirmed','In Progress','Completed','Cancelled'];
+  const idx = order.indexOf(s.status);
+  const choice = prompt(
+    'Change status for ' + s.service_type + ' (' + clientName(s.client_id) + ')\n\n' +
+    'Type: 1 = Confirmed,  2 = In Progress,  3 = Completed,  4 = Cancelled',
+    String((idx < 0 ? 0 : idx) + 1)
+  );
+  const map = {1:'Confirmed',2:'In Progress',3:'Completed',4:'Cancelled'};
+  const newStatus = map[choice];
+  if (!newStatus) return;
+  try {
+    await sb.from('services').update({ status: newStatus }).eq('id', svcId);
+
+    // If marking complete, create an Outstanding payment if amount present
+    if (newStatus === 'Completed' && s.amount){
+      await sb.from('payments').insert({
+        client_id:    s.client_id,
+        description:  s.service_type + ' — ' + fmtDateShort(s.service_date),
+        amount:       s.amount,
+        payment_date: s.service_date,
+        status:       'Outstanding'
+      });
+    }
+
+    // Notify client on meaningful transitions
+    if (newStatus === 'In Progress' || newStatus === 'Completed' || newStatus === 'Cancelled'){
+      const titleMap = { 'In Progress':'Your service has started', Completed:'Your service is complete', Cancelled:'Your service was cancelled' };
+      await sb.from('notifications').insert({
+        client_id: s.client_id,
+        icon: 'check',
+        title: titleMap[newStatus],
+        detail: s.service_type + ' — ' + fmtDateShort(s.service_date) + (s.provider ? ' with ' + s.provider : '')
+      });
+    }
+    notice('Status updated to ' + newStatus + '.', 'success');
+    await refresh();
+  } catch (err){
+    notice('Could not update status: ' + err.message, 'error');
+  }
+}
+
+async function markPaid(payId){
+  try {
+    await sb.from('payments').update({ status:'Paid' }).eq('id', payId);
+    notice('Marked as paid.', 'success');
+    await refresh('payments');
+  } catch (err){
+    notice('Could not update: ' + err.message, 'error');
+  }
+}
+
+// ================================================================
+// SEND MESSAGE
+// ================================================================
+async function submitMessage(e){
+  e.preventDefault();
+  const clientId = $('msg-client').value;
+  const title    = $('msg-title').value.trim();
+  const body     = $('msg-body').value.trim();
+  const doEmail  = $('msg-email').checked;
+  if (!clientId || !title || !body) return;
+
+  const btn = e.currentTarget.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  try {
+    await sb.from('notifications').insert({
+      client_id: clientId,
+      icon: 'bell',
+      title: title,
+      detail: body
+    });
+
+    if (doEmail){
+      const email = clientEmail(clientId);
+      if (email){
+        const firstName = (clientName(clientId).split(' ')[0]) || 'there';
+        const emailBody = 'Hi ' + firstName + ',\n\n' + body + '\n\nWarmly,\nThe Independence team\n' + BUSINESS.phone;
+        await sendEmail({ to: email, subject: title, heading: title, body: emailBody });
+      }
+    }
+    notice('Message delivered to ' + clientName(clientId) + '.', 'success');
+    e.currentTarget.reset();
+    $('msg-email').checked = true;
+  } catch (err){
+    notice('Could not send: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send message';
+  }
+}
+
+// ================================================================
+// EMAIL — via Supabase Edge Function
+// ================================================================
+async function sendEmail({ to, subject, heading, body }){
+  try {
+    const { data, error } = await sb.functions.invoke(EMAIL_FN, {
+      body: { to, subject, heading, body, from_name: BUSINESS.name, reply_to: BUSINESS.email }
+    });
+    if (error){ console.warn('Email function error', error); return false; }
+    return data && data.ok !== false;
+  } catch (err){
+    console.warn('Email invoke failed', err);
+    return false;
+  }
+}
+
+// ================================================================
+// CLIENT DRAWER
+// ================================================================
+function openClientDrawer(clientId){
+  const p = S.data.profiles.find(x => x.id === clientId);
+  if (!p) return;
+  $('cd-name').textContent = p.full_name || 'Unnamed client';
+  $('cd-email').textContent = p.email || '';
+
+  const mySvcs = S.data.svcs.filter(s => s.client_id === clientId).sort((a,b) => new Date(b.service_date) - new Date(a.service_date));
+  const myReqs = S.data.reqs.filter(r => r.client_id === clientId).sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  const myPays = S.data.payments.filter(pay => pay.client_id === clientId);
+  const outstanding = myPays.filter(p => p.status === 'Outstanding').reduce((a,x)=>a+parseFloat(x.amount||0),0);
+  const paidTotal   = myPays.filter(p => p.status === 'Paid').reduce((a,x)=>a+parseFloat(x.amount||0),0);
+
+  $('cd-body').innerHTML =
+    '<div class="drawer-section"><h3>Contact</h3>' +
+      '<div class="kv-line"><div class="kv-label">Phone</div><div class="kv-val">' + esc(p.phone || '—') + '</div></div>' +
+      '<div class="kv-line"><div class="kv-label">Town</div><div class="kv-val">' + esc(p.town || '—') + '</div></div>' +
+      '<div class="kv-line"><div class="kv-label">Address</div><div class="kv-val">' + esc(p.address || '—') + '</div></div>' +
+      '<div class="kv-line"><div class="kv-label">Outstanding</div><div class="kv-val">' + fmtMoney(outstanding) + '</div></div>' +
+      '<div class="kv-line"><div class="kv-label">Total paid</div><div class="kv-val">' + fmtMoney(paidTotal) + '</div></div>' +
+    '</div>' +
+    '<div class="drawer-section"><h3>Open requests (' + myReqs.filter(r => r.status === 'Pending').length + ')</h3>' +
+      (myReqs.filter(r => r.status === 'Pending').length
+        ? myReqs.filter(r => r.status === 'Pending').map(r => requestCardHTML(r, true)).join('')
+        : '<div class="empty-state" style="padding:14px;">No open requests.</div>'
+      ) +
+    '</div>' +
+    '<div class="drawer-section"><h3>All services (' + mySvcs.length + ')</h3>' +
+      (mySvcs.length
+        ? '<div class="table-wrap"><table><thead><tr><th>Service</th><th>Date</th><th>Status</th></tr></thead><tbody>' +
+          mySvcs.map(s =>
+            '<tr><td>' + (SVC_ICONS[s.service_type]||'📋') + ' ' + esc(s.service_type) + '</td>' +
+            '<td>' + fmtDateShort(s.service_date) + '</td>' +
+            '<td>' + statusPill(s.status) + '</td></tr>'
+          ).join('') + '</tbody></table></div>'
+        : '<div class="empty-state" style="padding:14px;">No services yet.</div>'
+      ) +
+    '</div>' +
+    '<div class="drawer-section" style="display:flex;gap:10px;">' +
+      '<button class="btn btn-primary btn-sm" data-message-client="' + esc(clientId) + '">✉ Send message</button>' +
+      (p.phone ? '<a class="btn btn-outline btn-sm" href="tel:' + esc(p.phone) + '">📞 Call</a>' : '') +
+    '</div>';
+
+  $('drawer-backdrop').classList.add('active');
+  $('client-drawer').classList.add('active');
+}
+function closeClientDrawer(){
+  $('drawer-backdrop').classList.remove('active');
+  $('client-drawer').classList.remove('active');
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function goTo(id){
+  $$('.page').forEach(p => p.classList.remove('active'));
+  $$('.nav-btn').forEach(b => b.classList.remove('active'));
+  const page = $('page-' + id);
+  if (page) page.classList.add('active');
+  const btn = document.querySelector('.nav-btn[data-page="' + id + '"]');
+  if (btn) btn.classList.add('active');
+  $('page-title').textContent = PAGE_TITLES[id] || '';
+  $('sidebar').classList.remove('open');
+  $('mobile-overlay').classList.remove('active');
+  window.scrollTo(0, 0);
+}
+
+// ================================================================
+// EVENT WIRING
+// ================================================================
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-page]');
+  if (t){ goTo(t.dataset.page); return; }
+
+  const confirmBtn = e.target.closest('[data-confirm]');
+  if (confirmBtn){ openConfirmModal(confirmBtn.dataset.confirm); return; }
+
+  const cancelBtn = e.target.closest('[data-cancel]');
+  if (cancelBtn){ cancelRequest(cancelBtn.dataset.cancel); return; }
+
+  const viewClient = e.target.closest('[data-view-client]');
+  if (viewClient){ openClientDrawer(viewClient.dataset.viewClient); return; }
+
+  const messageClient = e.target.closest('[data-message-client]');
+  if (messageClient){ goTo('message'); $('msg-client').value = messageClient.dataset.messageClient; closeClientDrawer(); return; }
+
+  const statusChange = e.target.closest('[data-status-change]');
+  if (statusChange){ cycleStatus(statusChange.dataset.statusChange); return; }
+
+  const markPaidBtn = e.target.closest('[data-mark-paid]');
+  if (markPaidBtn){ markPaid(markPaidBtn.dataset.markPaid); return; }
+
+  const tpl = e.target.closest('[data-tpl]');
+  if (tpl){
+    const t = TEMPLATES[parseInt(tpl.dataset.tpl,10)];
+    if (t){ $('msg-title').value = t.title; $('msg-body').value = t.body; }
+    return;
+  }
+
+  const modalClose = e.target.closest('[data-modal-close]');
+  if (modalClose){ closeConfirmModal(); return; }
+
+  // Row click -> open client drawer for scheduled/clients/completed/payments tables
+  const row = e.target.closest('tbody tr[data-client]');
+  if (row && !e.target.closest('button, a')){
+    openClientDrawer(row.dataset.client);
+    return;
+  }
+});
+
+// Filters and search
+$$('[data-rf]').forEach(b => b.addEventListener('click', () => {
+  $$('[data-rf]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  S.filters.requests = b.dataset.rf;
+  renderRequests();
+}));
+$$('[data-sf]').forEach(b => b.addEventListener('click', () => {
+  $$('[data-sf]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  S.filters.scheduled = b.dataset.sf;
+  renderScheduled();
+}));
+$$('[data-pf]').forEach(b => b.addEventListener('click', () => {
+  $$('[data-pf]').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  S.filters.payments = b.dataset.pf;
+  renderPayments();
+}));
+
+$('requests-search') .addEventListener('input', e => { S.search.requests  = e.target.value; renderRequests();  });
+$('scheduled-search').addEventListener('input', e => { S.search.scheduled = e.target.value; renderScheduled(); });
+$('clients-search')  .addEventListener('input', e => { S.search.clients   = e.target.value; renderClients();   });
+
+$('requests-refresh').addEventListener('click', () => refresh());
+$('scheduled-refresh').addEventListener('click', () => refresh());
+$('refresh-btn').addEventListener('click', () => refresh());
+
+$('confirm-form').addEventListener('submit', submitConfirm);
+$('message-form').addEventListener('submit', submitMessage);
+
+$('cd-close').addEventListener('click', closeClientDrawer);
+$('drawer-backdrop').addEventListener('click', closeClientDrawer);
+$('confirm-modal').addEventListener('click', e => { if (e.target === $('confirm-modal')) closeConfirmModal(); });
+
+$('hamburger').addEventListener('click', () => {
+  $('sidebar').classList.toggle('open');
+  $('mobile-overlay').classList.toggle('active');
+});
+$('mobile-overlay').addEventListener('click', () => {
+  $('sidebar').classList.remove('open');
+  $('mobile-overlay').classList.remove('active');
+});
+
+$('logout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  window.location.reload();
+});
+$('signout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  window.location.reload();
+});
+
+// Sign-in form
+$('signin-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('signin-btn');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  $('signin-error').style.display = 'none';
+  const email    = $('si-email').value.trim();
+  const password = $('si-password').value;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error){
+    $('signin-error').textContent = error.message || 'Sign in failed.';
+    $('signin-error').style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Sign in';
+    return;
+  }
+  // Success — reload to run boot() as admin
+  window.location.reload();
+});
+
+// Keyboard: Escape closes modal / drawer
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){
+    closeConfirmModal();
+    closeClientDrawer();
+  }
+});
+
+// GO
+boot();
+</script>
+</body>
+</html>
